@@ -11,6 +11,9 @@ app.get("/", (req, res) => {
   res.send("Chronos server is running");
 });
 
+app.use('/api/auth', require('./routes/authRoutes'));
+
+
 async function startServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
@@ -32,9 +35,11 @@ async function startServer() {
 app.use((err,req,res,next) => {
   res.status(err.status || 500).json(
   {
-    success: false,
-    message: err.message || "server error"
-  })
+  error: {
+    message: "Server error",
+    code: "SERVER_ERROR"
+  }
+})
 })
 
 startServer();

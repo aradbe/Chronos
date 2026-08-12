@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
+    timestamps: true,// אוטומטית מתי המשתמש נוצר ומתי עודכן.
   },
 );
 
