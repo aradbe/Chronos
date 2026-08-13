@@ -1,13 +1,12 @@
 import { makeAutoObservable } from "mobx";
+import { AuthStore } from "./authStore";
 
 export class RootStore {
-  authStore = null;
+  authStore;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
-  }
-
-  setAuthStore(authStore) {
-    this.authStore = authStore;
+    this.authStore = new AuthStore(this);
+    this.authStore.loadStoredAuth();
   }
 }
