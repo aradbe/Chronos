@@ -3,6 +3,7 @@ import { AppShell } from "../components/layout/AppShell";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { MyGamesPage } from "../pages/games/MyGamesPage";
+import { ScenarioListPage } from "../pages/scenarios/ScenarioListPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export function AppRouter() {
@@ -12,6 +13,7 @@ export function AppRouter() {
         <Route path="/" element={<Navigate to="/register" replace />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/scenarios" element={<ScenarioListPage />} />
         <Route
           path="/my-games"
           element={
