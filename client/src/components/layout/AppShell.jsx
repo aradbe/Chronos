@@ -1,0 +1,53 @@
+import { observer } from "mobx-react-lite";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useStores } from "../../stores/useStores";
+import "./AppShell.css";
+
+export const AppShell = observer(function AppShell() {
+  const { authStore } = useStores();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    authStore.logout();
+    navigate("/login", { replace: true });
+  };
+
+  return (
+    <div className="app-shell">
+      <header className="app-shell__header">
+        <NavLink className="app-shell__brand" to="/register">
+          Chronos
+        </NavLink>
+
+        <nav className="app-shell__nav" aria-label="Primary navigation">
+          {authStore.isAuthenticated ? (
+            <>
+              <NavLink className="app-shell__link" to="/my-games">
+                My Games
+              </NavLink>
+              <span className="app-shell__user">{authStore.user?.name}</span>
+              <button
+                className="app-shell__logout"
+                onClick={handleLogout}
+                type="button"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink className="app-shell__link" to="/register">
+                Register
+              </NavLink>
+              <NavLink className="app-shell__link" to="/login">
+                Login
+              </NavLink>
+            </>
+          )}
+        </nav>
+      </header>
+
+      <Outlet />
+    </div>
+  );
+});
