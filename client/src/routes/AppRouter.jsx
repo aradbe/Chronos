@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -17,15 +18,7 @@ export function AppRouter() {
     <Routes>
       <Route path="/" element={<Navigate to="/register" replace />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route
-        path="/login"
-        element={
-          <PlaceholderPage
-            title="Login"
-            description="Login page will follow the same auth architecture."
-          />
-        }
-      />
+      <Route path="/login" element={<LoginPage />} />
       <Route
         path="/my-games"
         element={
