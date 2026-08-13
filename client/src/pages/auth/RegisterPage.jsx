@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
-import "./RegisterPage.css";
+import "./AuthPage.css";
 
 const initialForm = {
   name: "",
@@ -43,9 +43,9 @@ export const RegisterPage = observer(function RegisterPage() {
   };
 
   return (
-    <main className="register-page">
-      <section className="register-page__intro" aria-labelledby="register-title">
-        <p className="register-page__eyebrow">Chronos</p>
+    <main className="auth-page">
+      <section className="auth-page__intro" aria-labelledby="register-title">
+        <p className="auth-page__eyebrow">Chronos</p>
         <h1 id="register-title">Create your account</h1>
         <p>
           Start your journey through historical scenarios, track your progress,
@@ -53,9 +53,9 @@ export const RegisterPage = observer(function RegisterPage() {
         </p>
       </section>
 
-      <section className="register-page__panel" aria-label="Create account form">
-        <form className="register-form" onSubmit={handleSubmit}>
-          <label className="register-form__field">
+      <section className="auth-page__panel" aria-label="Create account form">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label className="auth-form__field">
             <span>Name</span>
             <input
               autoComplete="name"
@@ -68,7 +68,7 @@ export const RegisterPage = observer(function RegisterPage() {
             />
           </label>
 
-          <label className="register-form__field">
+          <label className="auth-form__field">
             <span>Email</span>
             <input
               autoComplete="email"
@@ -81,7 +81,7 @@ export const RegisterPage = observer(function RegisterPage() {
             />
           </label>
 
-          <label className="register-form__field">
+          <label className="auth-form__field">
             <span>Password</span>
             <input
               autoComplete="new-password"
@@ -96,26 +96,26 @@ export const RegisterPage = observer(function RegisterPage() {
           </label>
 
           {authStore.error ? (
-            <p className="register-form__message register-form__message--error">
+            <p className="auth-form__message auth-form__message--error">
               {authStore.error.message}
             </p>
           ) : null}
 
           {successMessage ? (
-            <p className="register-form__message register-form__message--success">
+            <p className="auth-form__message auth-form__message--success">
               {successMessage}
             </p>
           ) : null}
 
           <button
-            className="register-form__submit"
+            className="auth-form__submit"
             disabled={authStore.loading}
             type="submit"
           >
             {authStore.loading ? "Creating account..." : "Create account"}
           </button>
 
-          <p className="register-form__footer">
+          <p className="auth-form__footer">
             Already have an account? <Link to="/login">Log in</Link>
           </p>
         </form>

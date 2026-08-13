@@ -32,10 +32,9 @@ client/src/
 
   pages/
     auth/
+      AuthPage.css
       RegisterPage.jsx
-      RegisterPage.css
       LoginPage.jsx
-      LoginPage.css
 
     games/
       MyGamesPage.jsx
@@ -422,6 +421,16 @@ RegisterPage.css
 Button.jsx
 Button.css
 ```
+
+When several pages in the same feature use the same layout and form structure,
+the feature folder may define a shared CSS file:
+
+```text
+pages/auth/AuthPage.css
+```
+
+Use this only when the shared styling is clear. Do not create shared CSS before
+there is real duplication.
 
 Shared styles belong in:
 

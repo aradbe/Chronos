@@ -2,7 +2,7 @@ import { useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
-import "./LoginPage.css";
+import "./AuthPage.css";
 
 const initialForm = {
   email: "",
@@ -41,9 +41,9 @@ export const LoginPage = observer(function LoginPage() {
   };
 
   return (
-    <main className="login-page">
-      <section className="login-page__intro" aria-labelledby="login-title">
-        <p className="login-page__eyebrow">Chronos</p>
+    <main className="auth-page">
+      <section className="auth-page__intro" aria-labelledby="login-title">
+        <p className="auth-page__eyebrow">Chronos</p>
         <h1 id="login-title">Log in to continue</h1>
         <p>
           Return to your saved games, continue active scenarios, and keep your
@@ -51,9 +51,9 @@ export const LoginPage = observer(function LoginPage() {
         </p>
       </section>
 
-      <section className="login-page__panel" aria-label="Login form">
-        <form className="login-form" onSubmit={handleSubmit}>
-          <label className="login-form__field">
+      <section className="auth-page__panel" aria-label="Login form">
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <label className="auth-form__field">
             <span>Email</span>
             <input
               autoComplete="email"
@@ -66,7 +66,7 @@ export const LoginPage = observer(function LoginPage() {
             />
           </label>
 
-          <label className="login-form__field">
+          <label className="auth-form__field">
             <span>Password</span>
             <input
               autoComplete="current-password"
@@ -80,26 +80,26 @@ export const LoginPage = observer(function LoginPage() {
           </label>
 
           {authStore.error ? (
-            <p className="login-form__message login-form__message--error">
+            <p className="auth-form__message auth-form__message--error">
               {authStore.error.message}
             </p>
           ) : null}
 
           {successMessage ? (
-            <p className="login-form__message login-form__message--success">
+            <p className="auth-form__message auth-form__message--success">
               {successMessage}
             </p>
           ) : null}
 
           <button
-            className="login-form__submit"
+            className="auth-form__submit"
             disabled={authStore.loading}
             type="submit"
           >
             {authStore.loading ? "Logging in..." : "Log in"}
           </button>
 
-          <p className="login-form__footer">
+          <p className="auth-form__footer">
             Need an account? <Link to="/register">Create one</Link>
           </p>
         </form>
