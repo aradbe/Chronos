@@ -25,6 +25,8 @@ client/src/
   stores/
     RootStore.js
     StoreProvider.jsx
+    StoreContext.js
+    useStores.js
     authStore.js
     gamesStore.js
 
@@ -236,6 +238,7 @@ The required pattern is:
 ```text
 RootStore.js
 StoreProvider.jsx
+StoreContext.js
 useStores()
 ```
 
@@ -245,6 +248,8 @@ stores and one clear way for pages and components to access them.
 Expected usage:
 
 ```js
+import { useStores } from "../../stores/useStores";
+
 const { authStore } = useStores();
 ```
 
