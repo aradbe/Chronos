@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
 import "./AuthPage.css";
 
@@ -11,8 +11,8 @@ const initialForm = {
 
 export const LoginPage = observer(function LoginPage() {
   const { authStore } = useStores();
+  const navigate = useNavigate();
   const [form, setForm] = useState(initialForm);
-  const [successMessage, setSuccessMessage] = useState("");
 
   const updateField = (event) => {
     const { name, value } = event.target;
@@ -25,18 +25,17 @@ export const LoginPage = observer(function LoginPage() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setSuccessMessage("");
 
     try {
-      const session = await authStore.login({
+      await authStore.login({
         email: form.email.trim(),
         password: form.password,
       });
 
       setForm(initialForm);
-      setSuccessMessage(`Welcome back, ${session.user.name}.`);
+      navigate("/my-games", { replace: true });
     } catch {
-      setSuccessMessage("");
+      // authStore keeps the normalized error for the UI.
     }
   };
 
@@ -82,12 +81,6 @@ export const LoginPage = observer(function LoginPage() {
           {authStore.error ? (
             <p className="auth-form__message auth-form__message--error">
               {authStore.error.message}
-            </p>
-          ) : null}
-
-          {successMessage ? (
-            <p className="auth-form__message auth-form__message--success">
-              {successMessage}
             </p>
           ) : null}
 
