@@ -2,17 +2,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { AppShell } from "../components/layout/AppShell";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
+import { MyGamesPage } from "../pages/games/MyGamesPage";
 import { ProtectedRoute } from "./ProtectedRoute";
-
-function PlaceholderPage({ description, title }) {
-  return (
-    <main className="route-placeholder">
-      <p className="route-placeholder__eyebrow">Chronos frontend</p>
-      <h1>{title}</h1>
-      <p>{description}</p>
-    </main>
-  );
-}
 
 export function AppRouter() {
   return (
@@ -25,10 +16,7 @@ export function AppRouter() {
           path="/my-games"
           element={
             <ProtectedRoute>
-              <PlaceholderPage
-                title="My Games"
-                description="Protected game history page placeholder."
-              />
+              <MyGamesPage />
             </ProtectedRoute>
           }
         />
