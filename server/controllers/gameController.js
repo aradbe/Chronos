@@ -129,12 +129,12 @@ const performGameAction = async (req, res, next) => {
       });
     }
 
+    await game.populate("scenarioId");
     await gameActionService.performAction(game, {
       ...action,
       type: action.type.trim().toUpperCase(),
     });
     await game.save();
-    await game.populate("scenarioId");
 
     return res.status(200).json({ game });
   } catch (error) {

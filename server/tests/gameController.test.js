@@ -333,6 +333,7 @@ describe("performGameAction", () => {
       async save() {
         saved = true;
       },
+      async populate() {},
     };
 
     test.mock.method(GameSession, "findOne", async () => game);
