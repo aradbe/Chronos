@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const mongoose = require("mongoose");
-const { createGame } = require("../controllers/gameController");
+const { createGame, getGame } = require("../controllers/gameController");
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
 
@@ -101,6 +101,101 @@ describe("createGame", () => {
 
     await createGame(
       { body: { scenarioId }, user: { _id: new mongoose.Types.ObjectId() } },
+      response,
+      (error) => {
+        forwardedError = error;
+      },
+    );
+
+    assert.equal(forwardedError, expectedError);
+  });
+});
+
+describe("getGame", () => {
+  it("returns an owned game with its scenario", async (test) => {
+    const userId = new mongoose.Types.ObjectId();
+    const gameId = new mongoose.Types.ObjectId();
+    const game = {
+      _id: gameId,
+      userId,
+      scenarioId: { _id: new mongoose.Types.ObjectId(), title: "Pompeii" },
+    };
+    let filter;
+    let populatedPath;
+
+    test.mock.method(GameSession, "findOne", (query) => {
+      filter = query;
+      return {
+        populate: async (path) => {
+          populatedPath = path;
+          return game;
+        },
+      };
+    });
+
+    const response = createResponse();
+
+    await getGame(
+      { params: { id: gameId.toString() }, user: { _id: userId } },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.game, game);
+    assert.deepEqual(filter, { _id: gameId.toString(), userId });
+    assert.equal(populatedPath, "scenarioId");
+  });
+
+  it("rejects an invalid game ID", async () => {
+    const response = createResponse();
+
+    await getGame(
+      { params: { id: "not-an-id" }, user: {} },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.error.code, "VALIDATION_ERROR");
+  });
+
+  it("returns 404 when the game is missing or belongs to another user", async (test) => {
+    test.mock.method(GameSession, "findOne", () => ({
+      populate: async () => null,
+    }));
+
+    const response = createResponse();
+
+    await getGame(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 404);
+    assert.equal(response.body.error.code, "GAME_NOT_FOUND");
+  });
+
+  it("forwards unexpected errors", async (test) => {
+    const expectedError = new Error("database unavailable");
+    test.mock.method(GameSession, "findOne", () => ({
+      populate: async () => {
+        throw expectedError;
+      },
+    }));
+
+    const response = createResponse();
+    let forwardedError;
+
+    await getGame(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+      },
       response,
       (error) => {
         forwardedError = error;

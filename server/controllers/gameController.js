@@ -49,6 +49,40 @@ const createGame = async (req, res, next) => {
   }
 };
 
+const getGame = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: {
+          message: "A valid game ID is required",
+          code: "VALIDATION_ERROR",
+        },
+      });
+    }
+
+    const game = await GameSession.findOne({
+      _id: id,
+      userId: req.user._id,
+    }).populate("scenarioId");
+
+    if (!game) {
+      return res.status(404).json({
+        error: {
+          message: "Game not found",
+          code: "GAME_NOT_FOUND",
+        },
+      });
+    }
+
+    return res.status(200).json({ game });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   createGame,
+  getGame,
 };
