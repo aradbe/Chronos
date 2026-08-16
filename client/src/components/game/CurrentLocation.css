@@ -1,5 +1,5 @@
 .current-location {
-  border-bottom: 1px solid #304052;
+  border-bottom: 1px solid var(--color-border-warm);
   padding-bottom: var(--space-6);
 }
 
@@ -17,6 +17,7 @@
   margin-bottom: var(--space-3);
   color: #f1d2a5;
   font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-family: Georgia, "Times New Roman", serif;
   letter-spacing: normal;
   text-transform: none;
 }

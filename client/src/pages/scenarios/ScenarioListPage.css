@@ -1,5 +1,5 @@
 .scenario-list-page {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1280px, calc(100% - 32px));
   margin: 0 auto;
   padding: 56px 0;
 }
@@ -14,13 +14,14 @@
   color: var(--color-primary);
   font-size: 0.875rem;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
 }
 
 .scenario-list-page__hero h1 {
   margin: 0 0 var(--space-4);
-  color: var(--color-text);
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(2.25rem, 7vw, 4.5rem);
   line-height: 1;
   letter-spacing: 0;
@@ -34,16 +35,19 @@
 }
 
 .scenario-list-page__empty {
-  border: 1px dashed var(--color-border);
+  position: relative;
+  border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
   padding: clamp(24px, 5vw, 44px);
-  background: rgba(255, 255, 255, 0.72);
+  background: linear-gradient(145deg, rgba(20, 35, 50, 0.95), rgba(12, 24, 35, 0.95));
+  box-shadow: var(--shadow-md);
   text-align: center;
 }
 
 .scenario-list-page__empty h2 {
   margin: 0 0 var(--space-3);
-  color: var(--color-text);
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.5rem, 4vw, 2rem);
   line-height: 1.2;
   letter-spacing: 0;

@@ -13,11 +13,11 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  border: 1px solid #415064;
+  border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-sm);
   padding: var(--space-3) var(--space-4);
   color: #d3dce6;
-  background: #162433;
+  background: rgba(8, 18, 27, 0.56);
   text-align: left;
 }
 
@@ -32,7 +32,9 @@
 
 .location-map__node--current {
   border-color: #79cbb2;
-  box-shadow: inset 3px 0 #79cbb2;
+  color: #dff9f0;
+  background: rgba(119, 200, 174, 0.08);
+  box-shadow: inset 3px 0 #79cbb2, 0 0 18px rgba(119, 200, 174, 0.08);
 }
 
 .location-map__node--current span {
@@ -41,7 +43,7 @@
 
 .location-map__node:not(:disabled):hover {
   border-color: #d5a96f;
-  background: #1a2b3c;
+  background: rgba(211, 168, 117, 0.1);
 }
 
 .location-map__node:disabled {

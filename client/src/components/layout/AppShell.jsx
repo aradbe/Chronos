@@ -15,13 +15,23 @@ export const AppShell = observer(function AppShell() {
   return (
     <div className="app-shell">
       <header className="app-shell__header">
-        <NavLink className="app-shell__brand" to="/register">
-          Chronos
+        <NavLink
+          className="app-shell__brand"
+          to={authStore.isAuthenticated ? "/scenarios" : "/register"}
+        >
+          <span className="app-shell__brand-mark" aria-hidden="true">⌛</span>
+          <span>
+            <strong>Chronos</strong>
+            <small>Time Traveler</small>
+          </span>
         </NavLink>
 
         <nav className="app-shell__nav" aria-label="Primary navigation">
           {authStore.isAuthenticated ? (
             <>
+              <NavLink className="app-shell__link" to="/scenarios">
+                Scenarios
+              </NavLink>
               <NavLink className="app-shell__link" to="/my-games">
                 My Games
               </NavLink>

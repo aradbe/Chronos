@@ -6,6 +6,8 @@
 
 .game-hud__item {
   min-width: 88px;
+  border-left: 1px solid rgba(211, 168, 117, 0.2);
+  padding-left: clamp(12px, 2vw, 24px);
 }
 
 .game-hud__item > span {
@@ -20,7 +22,8 @@
 
 .game-hud__item strong {
   color: #f1d2a5;
-  font-size: 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.08rem;
 }
 
 .game-hud__health-track {
@@ -29,14 +32,14 @@
   margin-top: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: #304052;
+  background: #263746;
 }
 
 .game-hud__health-track span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #d76055;
+  background: linear-gradient(90deg, #b74545, #df776c);
 }
 
 .game-hud__status {

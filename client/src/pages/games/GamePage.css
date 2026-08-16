@@ -2,7 +2,7 @@
   min-height: calc(100vh - 72px);
   padding: clamp(20px, 3vw, 40px);
   color: #e8edf3;
-  background: #0d1722;
+  background: transparent;
 }
 
 .game-page__header {
@@ -12,10 +12,11 @@
   gap: var(--space-6);
   max-width: 1500px;
   margin: 0 auto var(--space-4);
-  border: 1px solid #304052;
+  border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
   padding: var(--space-4) var(--space-6);
-  background: #111e2b;
+  background: linear-gradient(145deg, rgba(20, 35, 50, 0.98), rgba(12, 24, 35, 0.98));
+  box-shadow: var(--shadow-sm);
 }
 
 .game-page__eyebrow {
@@ -37,6 +38,8 @@
 .game-page h1 {
   margin-bottom: 0;
   font-size: clamp(1.4rem, 3vw, 2rem);
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.06em;
 }
 
 .game-page h2 {
@@ -60,11 +63,21 @@
 }
 
 .game-panel {
-  border: 1px solid #304052;
+  position: relative;
+  border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
   padding: var(--space-6);
-  background: #111e2b;
+  background: linear-gradient(150deg, rgba(20, 35, 50, 0.98), rgba(11, 23, 34, 0.98));
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
+}
+
+.game-panel::after {
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(211, 168, 117, 0.08);
+  border-radius: 2px;
+  content: "";
+  pointer-events: none;
 }
 
 .game-page__map,
