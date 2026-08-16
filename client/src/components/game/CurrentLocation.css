@@ -1,0 +1,33 @@
+.current-location {
+  border-bottom: 1px solid #304052;
+  padding-bottom: var(--space-6);
+}
+
+.current-location__eyebrow {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: #79cbb2;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.current-location h2 {
+  margin-bottom: var(--space-3);
+  color: #f1d2a5;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.current-location p {
+  max-width: 65ch;
+  margin-bottom: 0;
+  color: #d3dce6;
+  font-size: 1.05rem;
+}
+
+.current-location--missing h2 {
+  color: #dc776d;
+}

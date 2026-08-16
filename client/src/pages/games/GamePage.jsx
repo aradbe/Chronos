@@ -1,9 +1,14 @@
+import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { GameHud } from "../../components/game/GameHud";
 import { mockGameSession } from "../../mocks/gameSession";
 import { mockScenario } from "../../mocks/scenario";
 import "./GamePage.css";
 
 export function GamePage() {
+  const currentLocation = mockScenario.locations.find(
+    (location) => location.id === mockGameSession.currentLocationId,
+  );
+
   return (
     <main className="game-page">
       <header className="game-page__header">
@@ -25,8 +30,7 @@ export function GamePage() {
         </aside>
 
         <section className="game-panel game-page__scene" aria-label="Game scene">
-          <h2>Scene</h2>
-          <p>Your current location and available actions will appear here.</p>
+          <CurrentLocation location={currentLocation} />
         </section>
 
         <aside className="game-page__sidebar">
