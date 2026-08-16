@@ -1,0 +1,38 @@
+.location-map h2 {
+  margin-bottom: var(--space-6);
+}
+
+.location-map__list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.location-map__node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border: 1px solid #415064;
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+  color: #d3dce6;
+  background: #162433;
+}
+
+.location-map__node strong {
+  font-size: 0.95rem;
+}
+
+.location-map__node span {
+  color: #8291a2;
+  font-size: 0.75rem;
+}
+
+.location-map__node--current {
+  border-color: #79cbb2;
+  box-shadow: inset 3px 0 #79cbb2;
+}
+
+.location-map__node--current span {
+  color: #79cbb2;
+}

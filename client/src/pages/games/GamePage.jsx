@@ -1,5 +1,6 @@
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { GameHud } from "../../components/game/GameHud";
+import { LocationMap } from "../../components/game/LocationMap";
 import { mockGameSession } from "../../mocks/gameSession";
 import { mockScenario } from "../../mocks/scenario";
 import "./GamePage.css";
@@ -25,8 +26,10 @@ export function GamePage() {
 
       <div className="game-page__layout">
         <aside className="game-panel game-page__map" aria-label="Location map">
-          <h2>Location map</h2>
-          <p>Map controls will appear here.</p>
+          <LocationMap
+            locations={mockScenario.locations}
+            currentLocationId={mockGameSession.currentLocationId}
+          />
         </aside>
 
         <section className="game-panel game-page__scene" aria-label="Game scene">
