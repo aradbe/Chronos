@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
+const gameActionService = require("../services/gameActionService");
 
 const createGame = async (req, res, next) => {
   try {
@@ -82,7 +83,76 @@ const getGame = async (req, res, next) => {
   }
 };
 
+const performGameAction = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const action = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: {
+          message: "A valid game ID is required",
+          code: "VALIDATION_ERROR",
+        },
+      });
+    }
+
+    if (typeof action?.type !== "string" || !action.type.trim()) {
+      return res.status(400).json({
+        error: {
+          message: "Action type is required",
+          code: "VALIDATION_ERROR",
+        },
+      });
+    }
+
+    const game = await GameSession.findOne({
+      _id: id,
+      userId: req.user._id,
+    });
+
+    if (!game) {
+      return res.status(404).json({
+        error: {
+          message: "Game not found",
+          code: "GAME_NOT_FOUND",
+        },
+      });
+    }
+
+    if (game.status !== "active") {
+      return res.status(409).json({
+        error: {
+          message: "This game has already finished",
+          code: "GAME_FINISHED",
+        },
+      });
+    }
+
+    await gameActionService.performAction(game, {
+      ...action,
+      type: action.type.trim().toUpperCase(),
+    });
+    await game.save();
+    await game.populate("scenarioId");
+
+    return res.status(200).json({ game });
+  } catch (error) {
+    if (error instanceof gameActionService.GameActionError) {
+      return res.status(error.status).json({
+        error: {
+          message: error.message,
+          code: error.code,
+        },
+      });
+    }
+
+    return next(error);
+  }
+};
+
 module.exports = {
   createGame,
   getGame,
+  performGameAction,
 };

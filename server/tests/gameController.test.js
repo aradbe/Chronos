@@ -1,9 +1,14 @@
 const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const mongoose = require("mongoose");
-const { createGame, getGame } = require("../controllers/gameController");
+const {
+  createGame,
+  getGame,
+  performGameAction,
+} = require("../controllers/gameController");
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
+const gameActionService = require("../services/gameActionService");
 
 const createResponse = () => {
   const response = {
@@ -203,5 +208,149 @@ describe("getGame", () => {
     );
 
     assert.equal(forwardedError, expectedError);
+  });
+});
+
+describe("performGameAction", () => {
+  it("applies an action and saves the updated game", async (test) => {
+    const gameId = new mongoose.Types.ObjectId();
+    const userId = new mongoose.Types.ObjectId();
+    let saved = false;
+    let populatedPath;
+    let receivedAction;
+    const game = {
+      status: "active",
+      async save() {
+        saved = true;
+      },
+      async populate(path) {
+        populatedPath = path;
+      },
+    };
+
+    test.mock.method(GameSession, "findOne", async () => game);
+    test.mock.method(gameActionService, "performAction", async (_, action) => {
+      receivedAction = action;
+      game.currentTime = 5;
+    });
+
+    const response = createResponse();
+
+    await performGameAction(
+      {
+        params: { id: gameId.toString() },
+        user: { _id: userId },
+        body: { type: " wait ", payload: { minutes: 5 } },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.game.currentTime, 5);
+    assert.deepEqual(receivedAction, {
+      type: "WAIT",
+      payload: { minutes: 5 },
+    });
+    assert.equal(saved, true);
+    assert.equal(populatedPath, "scenarioId");
+  });
+
+  it("rejects a request without an action type", async () => {
+    const response = createResponse();
+
+    await performGameAction(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: {},
+        body: {},
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.error.code, "VALIDATION_ERROR");
+  });
+
+  it("rejects an invalid game ID", async () => {
+    const response = createResponse();
+
+    await performGameAction(
+      { params: { id: "bad-id" }, user: {}, body: { type: "MOVE" } },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.error.code, "VALIDATION_ERROR");
+  });
+
+  it("returns 404 when the game is not owned by the player", async (test) => {
+    test.mock.method(GameSession, "findOne", async () => null);
+
+    const response = createResponse();
+
+    await performGameAction(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+        body: { type: "MOVE" },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 404);
+    assert.equal(response.body.error.code, "GAME_NOT_FOUND");
+  });
+
+  it("does not allow actions on a finished game", async (test) => {
+    test.mock.method(GameSession, "findOne", async () => ({
+      status: "completed",
+    }));
+
+    const response = createResponse();
+
+    await performGameAction(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+        body: { type: "MOVE" },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 409);
+    assert.equal(response.body.error.code, "GAME_FINISHED");
+  });
+
+  it("returns gameplay errors without saving", async (test) => {
+    let saved = false;
+    const game = {
+      status: "active",
+      async save() {
+        saved = true;
+      },
+    };
+
+    test.mock.method(GameSession, "findOne", async () => game);
+
+    const response = createResponse();
+
+    await performGameAction(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+        body: { type: "UNKNOWN" },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.error.code, "UNSUPPORTED_ACTION");
+    assert.equal(saved, false);
   });
 });
