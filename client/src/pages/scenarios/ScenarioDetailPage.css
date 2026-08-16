@@ -1,0 +1,200 @@
+.scenario-detail-page {
+  width: min(1000px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 72px;
+}
+
+.scenario-detail-page__message {
+  color: var(--color-muted);
+  text-align: center;
+  padding: 96px 0;
+}
+
+.scenario-detail-page__message--error {
+  color: var(--color-danger);
+}
+
+.scenario-detail-page__back {
+  display: inline-block;
+  margin-bottom: var(--space-6);
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.scenario-detail-page__back:hover {
+  color: var(--color-primary);
+}
+
+.scenario-detail-page__hero {
+  margin-bottom: var(--space-8);
+}
+
+.scenario-detail-page__eyebrow {
+  margin: 0 0 var(--space-3);
+  color: var(--color-primary);
+  font-size: 0.875rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.scenario-detail-page__hero h1 {
+  margin: 0 0 var(--space-4);
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 7vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+
+.scenario-detail-page__lead {
+  max-width: 68ch;
+  margin: 0 0 var(--space-6);
+  color: var(--color-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.scenario-detail-page__start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.scenario-detail-page__cta {
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 13px 30px;
+  background: var(--color-primary);
+  color: var(--color-bg-deep);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.scenario-detail-page__cta:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.scenario-detail-page__cta:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.scenario-detail-page__hint {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.scenario-detail-page__error {
+  margin: var(--space-4) 0 0;
+  color: var(--color-danger);
+}
+
+.scenario-detail-page__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.scenario-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  text-align: center;
+}
+
+.scenario-stat__value {
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.scenario-stat__label {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.scenario-panel {
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-md);
+  padding: clamp(20px, 4vw, 30px);
+  margin-bottom: var(--space-4);
+  background: linear-gradient(145deg, rgba(20, 35, 50, 0.95), rgba(12, 24, 35, 0.95));
+  box-shadow: var(--shadow-sm);
+}
+
+.scenario-panel h2 {
+  margin: 0 0 var(--space-4);
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.scenario-panel > p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+.scenario-objectives,
+.scenario-people,
+.scenario-locations {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scenario-objectives {
+  counter-reset: objective;
+}
+
+.scenario-objectives li,
+.scenario-people li,
+.scenario-locations li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  border-left: 2px solid var(--color-border-warm);
+  padding-left: var(--space-4);
+}
+
+.scenario-objectives li strong,
+.scenario-people li strong,
+.scenario-locations li strong {
+  color: var(--color-text);
+  font-size: 1rem;
+}
+
+.scenario-objectives li span,
+.scenario-people li span,
+.scenario-locations li span {
+  color: var(--color-muted);
+  line-height: 1.65;
+}
+
+.scenario-people {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.scenario-locations {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}

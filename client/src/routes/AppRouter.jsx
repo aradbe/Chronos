@@ -4,17 +4,20 @@ import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { MyGamesPage } from "../pages/games/MyGamesPage";
 import { GamePage } from "../pages/games/GamePage";
+import { LandingPage } from "../pages/LandingPage";
 import { ScenarioListPage } from "../pages/scenarios/ScenarioListPage";
+import { ScenarioDetailPage } from "../pages/scenarios/ScenarioDetailPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export function AppRouter() {
   return (
     <Routes>
       <Route element={<AppShell />}>
-        <Route path="/" element={<Navigate to="/register" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/scenarios" element={<ScenarioListPage />} />
+        <Route path="/scenarios/:scenarioId" element={<ScenarioDetailPage />} />
         <Route
           path="/my-games"
           element={
@@ -31,7 +34,7 @@ export function AppRouter() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/register" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
   );

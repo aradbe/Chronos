@@ -1,5 +1,13 @@
 import { httpClient } from "./httpClient";
 
+export const createGame = (scenarioId, token) => {
+  return httpClient("/games", {
+    method: "POST",
+    body: { scenarioId },
+    token,
+  });
+};
+
 export const getGame = (gameId, token) => {
   return httpClient(`/games/${gameId}`, { token });
 };
