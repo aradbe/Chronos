@@ -3,6 +3,7 @@ import { AppShell } from "../components/layout/AppShell";
 import { LoginPage } from "../pages/auth/LoginPage";
 import { RegisterPage } from "../pages/auth/RegisterPage";
 import { MyGamesPage } from "../pages/games/MyGamesPage";
+import { GamePage } from "../pages/games/GamePage";
 import { ScenarioListPage } from "../pages/scenarios/ScenarioListPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
@@ -19,6 +20,14 @@ export function AppRouter() {
           element={
             <ProtectedRoute>
               <MyGamesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/games/:gameId"
+          element={
+            <ProtectedRoute>
+              <GamePage />
             </ProtectedRoute>
           }
         />
