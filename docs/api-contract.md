@@ -149,12 +149,27 @@ Response:
 }
 ],
 
-"items": [],
+"items": [
+{
+"id": "city_map",
+"name": "City Map",
+"description": "A map of Pompeii.",
+"type": "tool",
+"locationId": "forum"
+}
+],
 
 "objectives": [],
 
 "events": []
 }
+
+Item fields:
+type is one of quest, consumable, currency, tool.
+locationId is the location where the item can be picked up. An empty string means
+the item is not lying in the world and must be obtained another way (for example
+given by an NPC). PICK_UP_ITEM compares locationId against the player's current
+location.
 
 Important:
 Hidden NPC information such as hiddenKnowledge should NOT be sent to normal players.

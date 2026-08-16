@@ -42,12 +42,14 @@ export const mockScenario = {
       name: "Bread",
       description: "Restores a small amount of health.",
       type: "consumable",
+      locationId: "market",
     },
     {
       id: "city_map",
       name: "City Map",
       description: "A map of Pompeii.",
       type: "tool",
+      locationId: "forum",
     },
   ],
 

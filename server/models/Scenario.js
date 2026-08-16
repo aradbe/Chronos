@@ -84,6 +84,14 @@ const itemSchema = new mongoose.Schema(
       enum: ["quest", "consumable", "currency", "tool"],
       required: true,
     },
+
+    // Where this item can be found in the world. Empty means the item is not
+    // lying anywhere and can only be obtained another way (a gift from an NPC,
+    // for example). PICK_UP_ITEM checks this against the player's location.
+    locationId: {
+      type: String,
+      default: "",
+    },
   },
   { _id: false },
 );
