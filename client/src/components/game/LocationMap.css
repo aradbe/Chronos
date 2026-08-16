@@ -8,6 +8,7 @@
 }
 
 .location-map__node {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -17,6 +18,7 @@
   padding: var(--space-3) var(--space-4);
   color: #d3dce6;
   background: #162433;
+  text-align: left;
 }
 
 .location-map__node strong {
@@ -35,4 +37,14 @@
 
 .location-map__node--current span {
   color: #79cbb2;
+}
+
+.location-map__node:not(:disabled):hover {
+  border-color: #d5a96f;
+  background: #1a2b3c;
+}
+
+.location-map__node:disabled {
+  cursor: default;
+  opacity: 0.65;
 }

@@ -1,6 +1,11 @@
 import "./LocationMap.css";
 
-export function LocationMap({ locations, currentLocationId }) {
+export function LocationMap({
+  locations,
+  currentLocationId,
+  disabled = false,
+  onMove,
+}) {
   const currentLocation = locations.find(
     (location) => location.id === currentLocationId,
   );
@@ -20,13 +25,16 @@ export function LocationMap({ locations, currentLocationId }) {
               : "Not reachable";
 
           return (
-            <div
+            <button
+              type="button"
               className={`location-map__node${isCurrent ? " location-map__node--current" : ""}`}
+              disabled={disabled || !isReachable}
               key={location.id}
+              onClick={() => onMove(location.id)}
             >
               <strong>{location.name}</strong>
               <span>{state}</span>
-            </div>
+            </button>
           );
         })}
       </div>

@@ -78,6 +78,24 @@
   gap: var(--space-4);
 }
 
+.game-page__message {
+  display: grid;
+  min-height: calc(100vh - 72px);
+  place-items: center;
+  color: #d3dce6;
+  font-size: 1.05rem;
+}
+
+.game-page__message--error,
+.game-page__action-error {
+  color: #f08a80;
+}
+
+.game-page__action-error {
+  margin-top: var(--space-4);
+  margin-bottom: 0;
+}
+
 @media (max-width: 1050px) {
   .game-page__layout {
     grid-template-columns: 1fr 1.7fr;
