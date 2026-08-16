@@ -34,6 +34,26 @@ const move = (game, payload = {}) => {
     );
   }
 
+  const currentLocation = game.scenarioId.locations.find(
+    (location) => location.id === game.currentLocationId,
+  );
+
+  if (!currentLocation) {
+    throw new GameActionError(
+      "Current location is not part of this scenario",
+      "INVALID_GAME_STATE",
+      409,
+    );
+  }
+
+  if (!currentLocation.connectedLocationIds.includes(destinationId)) {
+    throw new GameActionError(
+      "That location is not reachable from here",
+      "INVALID_MOVE",
+      409,
+    );
+  }
+
   game.currentLocationId = destinationId;
 
   if (!game.discoveredLocationIds.includes(destinationId)) {
