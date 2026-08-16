@@ -22,6 +22,7 @@ app.get("/", (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/games", require("./routes/gameRoutes"));
+app.use("/api/scenarios", require("./routes/scenarioRoutes"));
 
 
 async function startServer() {
