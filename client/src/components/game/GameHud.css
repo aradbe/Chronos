@@ -1,0 +1,50 @@
+.game-hud {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 36px);
+}
+
+.game-hud__item {
+  min-width: 88px;
+}
+
+.game-hud__item > span {
+  display: block;
+  margin-bottom: 3px;
+  color: #98a7b8;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.game-hud__item strong {
+  color: #f1d2a5;
+  font-size: 1rem;
+}
+
+.game-hud__health-track {
+  width: 100px;
+  height: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #304052;
+}
+
+.game-hud__health-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #d76055;
+}
+
+.game-hud__status {
+  text-transform: capitalize;
+}
+
+@media (max-width: 720px) {
+  .game-hud {
+    flex-wrap: wrap;
+  }
+}

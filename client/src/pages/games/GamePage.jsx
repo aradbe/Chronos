@@ -1,3 +1,5 @@
+import { GameHud } from "../../components/game/GameHud";
+import { mockGameSession } from "../../mocks/gameSession";
 import { mockScenario } from "../../mocks/scenario";
 import "./GamePage.css";
 
@@ -9,7 +11,11 @@ export function GamePage() {
           <span className="game-page__eyebrow">Current scenario</span>
           <h1>{mockScenario.title}</h1>
         </div>
-        <div className="game-page__hud" aria-label="Game status" />
+        <GameHud
+          health={mockGameSession.health}
+          currentTime={mockGameSession.currentTime}
+          status={mockGameSession.status}
+        />
       </header>
 
       <div className="game-page__layout">
