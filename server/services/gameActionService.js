@@ -1,10 +1,5 @@
-class GameActionError extends Error {
-  constructor(message, code, status = 400) {
-    super(message);
-    this.code = code;
-    this.status = status;
-  }
-}
+const { GameActionError } = require("./gameActionError");
+const { pickUpItem, useItem } = require("./itemActionService");
 
 const move = (game, payload = {}) => {
   const locationId = payload.locationId;
@@ -65,6 +60,12 @@ const performAction = async (game, action) => {
   switch (action.type) {
     case "MOVE":
       move(game, action.payload);
+      return;
+    case "PICK_UP_ITEM":
+      pickUpItem(game, action.payload);
+      return;
+    case "USE_ITEM":
+      useItem(game, action.payload);
       return;
     default:
       throw new GameActionError(

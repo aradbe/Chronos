@@ -155,7 +155,8 @@ Response:
 "name": "City Map",
 "description": "A map of Pompeii.",
 "type": "tool",
-"locationId": "forum"
+"locationId": "forum",
+"effect": { "type": "none", "amount": 0 }
 }
 ],
 
@@ -263,14 +264,21 @@ Protected.
 
 Performs a game action.
 
+Every action has a "type" and a "payload". The payload holds whatever that
+action needs. (An earlier draft of this document used a flat "targetId" field;
+the implemented shape is "payload", and this section now matches the code.)
+
 ### Move
 
 Request:
 
 {
 "type": "MOVE",
-"targetId": "market"
+"payload": { "locationId": "market" }
 }
+
+Fails with INVALID_MOVE (409) if the destination is not listed in the current
+location's connectedLocationIds.
 
 ### Pick up item
 
@@ -278,8 +286,13 @@ Request:
 
 {
 "type": "PICK_UP_ITEM",
-"targetId": "city_map"
+"payload": { "itemId": "city_map" }
 }
+
+The item must have a locationId equal to the player's current location. An item
+can only be picked up once.
+
+Errors: ITEM_NOT_FOUND (404), ITEM_NOT_HERE (409), ALREADY_HAVE_ITEM (409).
 
 ### Use item
 
@@ -287,8 +300,14 @@ Request:
 
 {
 "type": "USE_ITEM",
-"targetId": "bread"
+"payload": { "itemId": "bread" }
 }
+
+The item must be in the inventory and must have an effect other than "none".
+An effect of "restore_health" raises health by "amount", never above 100. Using
+an item reduces its quantity by one and removes it at zero.
+
+Errors: ITEM_NOT_FOUND (404), ITEM_NOT_IN_INVENTORY (409), ITEM_NOT_USABLE (409).
 
 Response:
 
