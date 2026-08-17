@@ -62,6 +62,26 @@ const characterSchema = new mongoose.Schema(
   { _id: false },
 );
 
+// What happens when a player uses an item. Declared as its own schema so that
+// the inner field can safely be called `type` — inside a plain nested object
+// Mongoose would read `type` as a type declaration instead of a field name.
+const itemEffectSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["none", "restore_health"],
+      default: "none",
+    },
+
+    amount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+  },
+  { _id: false },
+);
+
 const itemSchema = new mongoose.Schema(
   {
     id: {
@@ -91,6 +111,12 @@ const itemSchema = new mongoose.Schema(
     locationId: {
       type: String,
       default: "",
+    },
+
+    // USE_ITEM refuses any item whose effect type is "none".
+    effect: {
+      type: itemEffectSchema,
+      default: () => ({}),
     },
   },
   { _id: false },

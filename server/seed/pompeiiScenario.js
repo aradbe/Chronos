@@ -147,6 +147,7 @@ const pompeiiScenario = {
       description: "Still warm from the oven. Restores a little strength.",
       type: "consumable",
       locationId: "bakery",
+      effect: { type: "restore_health", amount: 15 },
     },
     {
       id: "water_flask",
@@ -155,6 +156,7 @@ const pompeiiScenario = {
         "A clay flask of clean water. The air is getting harder to breathe.",
       type: "consumable",
       locationId: "baths",
+      effect: { type: "restore_health", amount: 20 },
     },
     {
       id: "city_map",

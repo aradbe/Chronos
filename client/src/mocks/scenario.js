@@ -43,6 +43,7 @@ export const mockScenario = {
       description: "Restores a small amount of health.",
       type: "consumable",
       locationId: "market",
+      effect: { type: "restore_health", amount: 15 },
     },
     {
       id: "city_map",
@@ -50,6 +51,7 @@ export const mockScenario = {
       description: "A map of Pompeii.",
       type: "tool",
       locationId: "forum",
+      effect: { type: "none", amount: 0 },
     },
   ],
 
