@@ -7,8 +7,10 @@ const { performAction } = require("../services/gameActionService");
 const createGame = (overrides = {}) => ({
   currentLocationId: "bakery",
   health: 100,
+  currentTime: 0,
   inventory: [],
   objectives: [],
+  triggeredEvents: [],
   scenarioId: {
     items: [
       {
@@ -36,6 +38,7 @@ const createGame = (overrides = {}) => ({
         effect: { type: "none", amount: 0 },
       },
     ],
+    events: [],
   },
   ...overrides,
 });

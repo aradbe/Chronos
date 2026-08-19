@@ -7,14 +7,17 @@ const {
 
 const createGame = (overrides = {}) => ({
   currentLocationId: "forum",
+  currentTime: 0,
   discoveredLocationIds: ["forum"],
   objectives: [],
+  triggeredEvents: [],
   scenarioId: {
     locations: [
       { id: "forum", connectedLocationIds: ["market"] },
       { id: "market", connectedLocationIds: ["forum", "harbor"] },
       { id: "harbor", connectedLocationIds: ["market"] },
     ],
+    events: [],
   },
   ...overrides,
 });
@@ -50,6 +53,22 @@ describe("MOVE action", () => {
     });
 
     assert.equal(game.objectives[0].status, "completed");
+  });
+
+  it("triggers eruption events that are due", async () => {
+    const game = createGame({ currentTime: 60 });
+    game.scenarioId.events = [
+      { id: "first-tremor", triggerTime: 30 },
+      { id: "ashfall", triggerTime: 60 },
+      { id: "collapse", triggerTime: 120 },
+    ];
+
+    await performAction(game, {
+      type: "MOVE",
+      payload: { locationId: "market" },
+    });
+
+    assert.deepEqual(game.triggeredEvents, ["first-tremor", "ashfall"]);
   });
 
   it("does not duplicate an already discovered location", async () => {

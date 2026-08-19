@@ -1,4 +1,5 @@
 const { GameActionError } = require("./gameActionError");
+const { triggerPendingEvents } = require("./eventService");
 const { pickUpItem, useItem } = require("./itemActionService");
 const { applyActionToObjectives } = require("./objectiveService");
 
@@ -76,6 +77,7 @@ const performAction = async (game, action) => {
   }
 
   applyActionToObjectives(game, action);
+  triggerPendingEvents(game);
 };
 
 module.exports = {
