@@ -8,6 +8,7 @@ const {
 const createGame = (overrides = {}) => ({
   currentLocationId: "forum",
   discoveredLocationIds: ["forum"],
+  objectives: [],
   scenarioId: {
     locations: [
       { id: "forum", connectedLocationIds: ["market"] },
@@ -29,6 +30,26 @@ describe("MOVE action", () => {
 
     assert.equal(game.currentLocationId, "market");
     assert.deepEqual(game.discoveredLocationIds, ["forum", "market"]);
+  });
+
+  it("completes a location objective after a successful move", async () => {
+    const game = createGame({
+      objectives: [{ objectiveId: "reach-market", status: "active" }],
+    });
+    game.scenarioId.objectives = [
+      {
+        id: "reach-market",
+        type: "reach_location",
+        targetId: "market",
+      },
+    ];
+
+    await performAction(game, {
+      type: "MOVE",
+      payload: { locationId: "market" },
+    });
+
+    assert.equal(game.objectives[0].status, "completed");
   });
 
   it("does not duplicate an already discovered location", async () => {

@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const {
   OBJECTIVE_STATUSES,
+  applyActionToObjectives,
   buildObjectiveProgress,
   getObjectiveProgress,
   getObjectives,
@@ -121,5 +122,63 @@ describe("objective service", () => {
         ),
       /Objective not found/,
     );
+  });
+
+  it("completes a matching active objective and unlocks the next one", () => {
+    const game = {
+      scenarioId: {
+        objectives: [
+          {
+            id: "get-map",
+            type: "collect_item",
+            targetId: "city-map",
+          },
+          {
+            id: "reach-harbor",
+            type: "reach_location",
+            targetId: "harbor",
+          },
+        ],
+      },
+      objectives: [
+        { objectiveId: "get-map", status: "active" },
+        { objectiveId: "reach-harbor", status: "locked" },
+      ],
+    };
+
+    const completed = applyActionToObjectives(game, {
+      type: "PICK_UP_ITEM",
+      payload: { itemId: "city-map" },
+    });
+
+    assert.equal(completed.objectiveId, "get-map");
+    assert.deepEqual(game.objectives, [
+      { objectiveId: "get-map", status: "completed" },
+      { objectiveId: "reach-harbor", status: "active" },
+    ]);
+  });
+
+  it("ignores actions that do not match an active objective", () => {
+    const game = {
+      scenarioId: {
+        objectives: [
+          {
+            id: "reach-harbor",
+            type: "reach_location",
+            targetId: "harbor",
+          },
+        ],
+      },
+      objectives: [{ objectiveId: "reach-harbor", status: "locked" }],
+    };
+
+    assert.equal(
+      applyActionToObjectives(game, {
+        type: "MOVE",
+        payload: { locationId: "harbor" },
+      }),
+      null,
+    );
+    assert.equal(game.objectives[0].status, "locked");
   });
 });

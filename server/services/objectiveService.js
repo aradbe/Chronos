@@ -16,6 +16,12 @@ const ALLOWED_TRANSITIONS = {
   [OBJECTIVE_STATUSES.FAILED]: [],
 };
 
+const ACTION_OBJECTIVES = {
+  MOVE: { type: "reach_location", payloadKey: "locationId" },
+  PICK_UP_ITEM: { type: "collect_item", payloadKey: "itemId" },
+  USE_ITEM: { type: "use_item", payloadKey: "itemId" },
+};
+
 const buildObjectiveProgress = (objectives = []) => {
   return objectives.map(({ id }, index) => ({
     objectiveId: id,
@@ -71,8 +77,55 @@ const updateObjectiveStatus = (game, objectiveId, nextStatus) => {
   return objective;
 };
 
+const applyActionToObjectives = (game, action) => {
+  const match = ACTION_OBJECTIVES[action.type];
+
+  if (!match || !Array.isArray(game.objectives)) {
+    return null;
+  }
+
+  const targetId = action.payload?.[match.payloadKey];
+  const definitions = game.scenarioId?.objectives || [];
+  const definition = definitions.find(
+    (objective) =>
+      objective.type === match.type && objective.targetId === targetId,
+  );
+
+  if (!definition) {
+    return null;
+  }
+
+  const progress = getObjectiveProgress(game, definition.id);
+
+  if (!progress || progress.status !== OBJECTIVE_STATUSES.ACTIVE) {
+    return null;
+  }
+
+  updateObjectiveStatus(
+    game,
+    definition.id,
+    OBJECTIVE_STATUSES.COMPLETED,
+  );
+
+  const completedIndex = game.objectives.indexOf(progress);
+  const nextObjective = game.objectives
+    .slice(completedIndex + 1)
+    .find(({ status }) => status === OBJECTIVE_STATUSES.LOCKED);
+
+  if (nextObjective) {
+    updateObjectiveStatus(
+      game,
+      nextObjective.objectiveId,
+      OBJECTIVE_STATUSES.ACTIVE,
+    );
+  }
+
+  return progress;
+};
+
 module.exports = {
   OBJECTIVE_STATUSES,
+  applyActionToObjectives,
   buildObjectiveProgress,
   getObjectiveProgress,
   getObjectives,

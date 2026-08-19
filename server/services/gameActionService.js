@@ -1,5 +1,6 @@
 const { GameActionError } = require("./gameActionError");
 const { pickUpItem, useItem } = require("./itemActionService");
+const { applyActionToObjectives } = require("./objectiveService");
 
 const move = (game, payload = {}) => {
   const locationId = payload.locationId;
@@ -60,19 +61,21 @@ const performAction = async (game, action) => {
   switch (action.type) {
     case "MOVE":
       move(game, action.payload);
-      return;
+      break;
     case "PICK_UP_ITEM":
       pickUpItem(game, action.payload);
-      return;
+      break;
     case "USE_ITEM":
       useItem(game, action.payload);
-      return;
+      break;
     default:
       throw new GameActionError(
         `Unsupported action: ${action.type}`,
         "UNSUPPORTED_ACTION",
       );
   }
+
+  applyActionToObjectives(game, action);
 };
 
 module.exports = {

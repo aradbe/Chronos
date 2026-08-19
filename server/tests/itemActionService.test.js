@@ -8,6 +8,7 @@ const createGame = (overrides = {}) => ({
   currentLocationId: "bakery",
   health: 100,
   inventory: [],
+  objectives: [],
   scenarioId: {
     items: [
       {
