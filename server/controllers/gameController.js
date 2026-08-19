@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
 const gameActionService = require("../services/gameActionService");
+const objectiveService = require("../services/objectiveService");
 
 const createGame = async (req, res, next) => {
   try {
@@ -35,10 +36,7 @@ const createGame = async (req, res, next) => {
       scenarioId: scenario._id,
       currentLocationId: scenario.startLocationId,
       discoveredLocationIds: [scenario.startLocationId],
-      objectives: scenario.objectives.map(({ id }) => ({
-        objectiveId: id,
-        status: "active",
-      })),
+      objectives: objectiveService.buildObjectiveProgress(scenario.objectives),
       relationships: Object.fromEntries(
         scenario.characters.map(({ id }) => [id, 50]),
       ),
