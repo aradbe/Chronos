@@ -1,5 +1,42 @@
 .location-map h2 {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-3);
+}
+
+.location-map__here {
+  display: grid;
+  gap: 2px;
+  margin: 0 0 var(--space-4);
+  border: 1px solid rgba(211, 168, 117, 0.28);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  background: rgba(211, 168, 117, 0.06);
+}
+
+.location-map__here-label {
+  color: #d5a96f;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.location-map__here strong {
+  color: #f0e2cd;
+  font-size: 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.04em;
+}
+
+.location-map__explored {
+  color: #8291a2;
+  font-size: 0.72rem;
+}
+
+.location-map__error {
+  margin: 0 0 var(--space-3);
+  color: #f08a80;
+  font-size: 0.8rem;
+  line-height: 1.4;
 }
 
 .location-map__list {
@@ -26,6 +63,7 @@
 }
 
 .location-map__node span {
+  flex-shrink: 0;
   color: #8291a2;
   font-size: 0.75rem;
 }
@@ -41,6 +79,21 @@
   color: #79cbb2;
 }
 
+.location-map__node--blocked {
+  border-color: #a4544c;
+  background: rgba(160, 78, 70, 0.1);
+  box-shadow: inset 3px 0 #a4544c;
+}
+
+.location-map__node--blocked span {
+  color: #f08a80;
+}
+
+.location-map__node--unexplored {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
 .location-map__node:not(:disabled):hover {
   border-color: #d5a96f;
   background: rgba(211, 168, 117, 0.1);
@@ -48,5 +101,13 @@
 
 .location-map__node:disabled {
   cursor: default;
+}
+
+.location-map__node--out-of-reach:disabled,
+.location-map__node--blocked:disabled {
   opacity: 0.65;
+}
+
+.location-map__node--unexplored:disabled {
+  opacity: 0.42;
 }
