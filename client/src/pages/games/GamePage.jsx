@@ -71,6 +71,8 @@ export const GamePage = observer(function GamePage() {
   const failedActionType = gameStore.failedAction?.type;
   const pickUpError = failedActionType === "PICK_UP_ITEM" ? itemError : null;
   const useError = failedActionType === "USE_ITEM" ? itemError : null;
+  // A refused move belongs by the map, next to the road that was refused.
+  const moveError = failedActionType === "MOVE" ? gameStore.error : null;
 
   return (
     <main className="game-page">
@@ -95,9 +97,13 @@ export const GamePage = observer(function GamePage() {
           <aside className="game-panel game-page__map" aria-label="Location map">
             <LocationMap
               locations={scenario.locations}
+              events={scenario.events}
               currentLocationId={game.currentLocationId}
+              triggeredEventIds={game.triggeredEvents || []}
+              discoveredLocationIds={game.discoveredLocationIds || []}
               disabled={gameStore.actionPending}
               onMove={handleMove}
+              error={moveError?.message || ""}
             />
           </aside>
 
@@ -107,7 +113,7 @@ export const GamePage = observer(function GamePage() {
               events={scenario.events}
               triggeredEventIds={game.triggeredEvents || []}
             />
-            {gameStore.error && !itemError ? (
+            {gameStore.error && !itemError && !moveError ? (
               <p className="game-page__action-error" role="alert">
                 {gameStore.error.message}
               </p>

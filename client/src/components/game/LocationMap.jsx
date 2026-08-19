@@ -1,42 +1,64 @@
+import { describeLocations, LOCATION_STATES } from "../../utils/mapState";
 import "./LocationMap.css";
 
 export function LocationMap({
   locations,
+  events = [],
   currentLocationId,
+  triggeredEventIds = [],
+  discoveredLocationIds = [],
   disabled = false,
   onMove,
+  error = "",
 }) {
-  const currentLocation = locations.find(
-    (location) => location.id === currentLocationId,
-  );
-  const reachableIds = currentLocation?.connectedLocationIds ?? [];
+  const rows = describeLocations({
+    locations,
+    events,
+    currentLocationId,
+    triggeredEventIds,
+    discoveredLocationIds,
+  });
+
+  const here = rows.find((row) => row.state === LOCATION_STATES.CURRENT);
+  const exploredCount = rows.filter((row) => row.isDiscovered).length;
 
   return (
     <section className="location-map" aria-labelledby="map-title">
       <h2 id="map-title">Location map</h2>
-      <div className="location-map__list">
-        {locations.map((location) => {
-          const isCurrent = location.id === currentLocationId;
-          const isReachable = reachableIds.includes(location.id);
-          const state = isCurrent
-            ? "Current location"
-            : isReachable
-              ? "Reachable"
-              : "Not reachable";
 
-          return (
-            <button
-              type="button"
-              className={`location-map__node${isCurrent ? " location-map__node--current" : ""}`}
-              disabled={disabled || !isReachable}
-              key={location.id}
-              onClick={() => onMove(location.id)}
-            >
-              <strong>{location.name}</strong>
-              <span>{state}</span>
-            </button>
-          );
-        })}
+      <p className="location-map__here">
+        <span className="location-map__here-label">You are at</span>
+        <strong>{here ? here.location.name : "Unknown"}</strong>
+        <span className="location-map__explored">
+          {exploredCount} of {rows.length} explored
+        </span>
+      </p>
+
+      {error ? (
+        <p className="location-map__error" role="alert">
+          {error}
+        </p>
+      ) : null}
+
+      <div className="location-map__list">
+        {rows.map(({ location, state, label, isDiscovered, canMove }) => (
+          <button
+            type="button"
+            className={[
+              "location-map__node",
+              `location-map__node--${state}`,
+              isDiscovered ? "" : "location-map__node--unexplored",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            disabled={disabled || !canMove}
+            key={location.id}
+            onClick={() => onMove(location.id)}
+          >
+            <strong>{location.name}</strong>
+            <span>{isDiscovered ? label : `Unexplored · ${label}`}</span>
+          </button>
+        ))}
       </div>
     </section>
   );
