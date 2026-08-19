@@ -1,0 +1,48 @@
+.event-notifications {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid rgba(211, 168, 117, 0.22);
+}
+
+.event-notifications__list {
+  display: grid;
+  gap: var(--space-3);
+  max-height: 240px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.event-notifications__event {
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid #d5a96f;
+  background: rgba(213, 169, 111, 0.06);
+}
+
+.event-notifications__event time {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: #d5a96f;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.event-notifications__event p,
+.event-notifications__empty {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.event-notifications__event--damage,
+.event-notifications__event--deadline {
+  border-left-color: #f08a80;
+  background: rgba(240, 138, 128, 0.08);
+}
+
+.event-notifications__event--damage time,
+.event-notifications__event--deadline time {
+  color: #f08a80;
+}

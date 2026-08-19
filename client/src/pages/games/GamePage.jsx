@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "react-router-dom";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
+import { EventNotifications } from "../../components/game/EventNotifications";
 import { GameHud } from "../../components/game/GameHud";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
@@ -66,6 +67,10 @@ export const GamePage = observer(function GamePage() {
 
         <section className="game-panel game-page__scene" aria-label="Game scene">
           <CurrentLocation location={currentLocation} />
+          <EventNotifications
+            events={scenario.events}
+            triggeredEventIds={game.triggeredEvents || []}
+          />
           {gameStore.error ? (
             <p className="game-page__action-error" role="alert">
               {gameStore.error.message}
