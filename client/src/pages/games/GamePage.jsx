@@ -5,10 +5,16 @@ import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { EventNotifications } from "../../components/game/EventNotifications";
 import { GameHud } from "../../components/game/GameHud";
 import { GameOverScreen } from "../../components/game/GameOverScreen";
+import { InventoryPanel } from "../../components/game/InventoryPanel";
+import { LocationItems } from "../../components/game/LocationItems";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
 import { VictoryScreen } from "../../components/game/VictoryScreen";
 import { useStores } from "../../stores/useStores";
+import {
+  getFailedItemId,
+  isItemActionError,
+} from "../../utils/itemErrors";
 import "./GamePage.css";
 
 export const GamePage = observer(function GamePage() {
@@ -42,6 +48,29 @@ export const GamePage = observer(function GamePage() {
       .runAction(gameId, { type: "MOVE", payload: { locationId } })
       .catch(() => {});
   };
+
+  const handlePickUpItem = (itemId) => {
+    gameStore
+      .runAction(gameId, { type: "PICK_UP_ITEM", payload: { itemId } })
+      .catch(() => {});
+  };
+
+  const handleUseItem = (itemId) => {
+    gameStore
+      .runAction(gameId, { type: "USE_ITEM", payload: { itemId } })
+      .catch(() => {});
+  };
+
+  // An item error is drawn next to the item it is about, and only in the panel
+  // that fired the action — otherwise a failed USE_ITEM would also print under
+  // "Items here". Everything else keeps showing in the scene panel.
+  const itemError = isItemActionError(gameStore.failedAction)
+    ? gameStore.error
+    : null;
+  const failedItemId = getFailedItemId(gameStore.failedAction);
+  const failedActionType = gameStore.failedAction?.type;
+  const pickUpError = failedActionType === "PICK_UP_ITEM" ? itemError : null;
+  const useError = failedActionType === "USE_ITEM" ? itemError : null;
 
   return (
     <main className="game-page">
@@ -78,11 +107,20 @@ export const GamePage = observer(function GamePage() {
               events={scenario.events}
               triggeredEventIds={game.triggeredEvents || []}
             />
-            {gameStore.error ? (
+            {gameStore.error && !itemError ? (
               <p className="game-page__action-error" role="alert">
                 {gameStore.error.message}
               </p>
             ) : null}
+            <LocationItems
+              items={scenario.items}
+              locationId={game.currentLocationId}
+              inventory={game.inventory}
+              disabled={gameStore.actionPending}
+              onPickUpItem={handlePickUpItem}
+              error={pickUpError}
+              failedItemId={failedItemId}
+            />
           </section>
 
           <aside className="game-page__sidebar">
@@ -92,10 +130,16 @@ export const GamePage = observer(function GamePage() {
                 progress={game.objectives}
               />
             </div>
-            <section className="game-panel" aria-label="Inventory">
-              <h2>Inventory</h2>
-              <p>Collected items will appear here.</p>
-            </section>
+            <div className="game-panel">
+              <InventoryPanel
+                inventory={game.inventory}
+                items={scenario.items}
+                disabled={gameStore.actionPending}
+                onUseItem={handleUseItem}
+                error={useError}
+                failedItemId={failedItemId}
+              />
+            </div>
           </aside>
         </div>
       )}

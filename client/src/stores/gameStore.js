@@ -7,6 +7,11 @@ export class GameStore {
   loading = false;
   actionPending = false;
   error = null;
+  // The action that produced `error`. The screen needs it to decide where the
+  // message belongs: a failed USE_ITEM shows on the item card, a failed MOVE
+  // shows by the map. The error code alone is not enough, because
+  // VALIDATION_ERROR is thrown by both.
+  failedAction = null;
 
   constructor(rootStore) {
     this.rootStore = rootStore;
@@ -16,6 +21,7 @@ export class GameStore {
   async loadGame(gameId) {
     this.loading = true;
     this.error = null;
+    this.failedAction = null;
 
     try {
       const { game } = await getGame(gameId, this.rootStore.authStore.token);
@@ -40,6 +46,7 @@ export class GameStore {
   async runAction(gameId, action) {
     this.actionPending = true;
     this.error = null;
+    this.failedAction = null;
 
     try {
       const { game } = await performGameAction(
@@ -57,6 +64,7 @@ export class GameStore {
     } catch (error) {
       runInAction(() => {
         this.error = error;
+        this.failedAction = action;
         this.actionPending = false;
       });
 
