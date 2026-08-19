@@ -7,6 +7,23 @@ const {
 const { pickUpItem, useItem } = require("./itemActionService");
 const { applyActionToObjectives } = require("./objectiveService");
 
+const isRouteBlocked = (game, fromLocationId, toLocationId) => {
+  const triggered = new Set(game.triggeredEvents || []);
+  const events = game.scenarioId.events || [];
+
+  return events
+    .filter((event) => triggered.has(event.id))
+    .some((event) =>
+      (event.blockedRoutes || []).some(
+        (route) =>
+          (route.fromLocationId === fromLocationId &&
+            route.toLocationId === toLocationId) ||
+          (route.fromLocationId === toLocationId &&
+            route.toLocationId === fromLocationId),
+      ),
+    );
+};
+
 const move = (game, payload = {}) => {
   const locationId = payload.locationId;
 
@@ -55,6 +72,14 @@ const move = (game, payload = {}) => {
     );
   }
 
+  if (isRouteBlocked(game, game.currentLocationId, destinationId)) {
+    throw new GameActionError(
+      "The eruption has blocked that route",
+      "ROUTE_BLOCKED",
+      409,
+    );
+  }
+
   game.currentLocationId = destinationId;
 
   if (!game.discoveredLocationIds.includes(destinationId)) {
@@ -74,7 +99,10 @@ const performAction = async (game, action) => {
       useItem(game, action.payload);
       break;
     case "WAIT":
-      if (!Number.isInteger(action.payload?.minutes) || action.payload.minutes < 1) {
+      if (
+        !Number.isInteger(action.payload?.minutes) ||
+        action.payload.minutes < 1
+      ) {
         throw new GameActionError(
           "Waiting time must be a positive whole number",
           "VALIDATION_ERROR",
@@ -100,6 +128,7 @@ const performAction = async (game, action) => {
 
 module.exports = {
   GameActionError,
+  isRouteBlocked,
   move,
   performAction,
 };

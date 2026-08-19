@@ -261,6 +261,10 @@ const pompeiiScenario = {
       triggerTime: 140,
       type: "damage",
       healthChange: -25,
+      blockedRoutes: [
+        { fromLocationId: "forum", toLocationId: "baths" },
+        { fromLocationId: "temple", toLocationId: "villa" },
+      ],
       message:
         "Roofs across the city give way under the weight of the ash. The air is almost unbreathable.",
     },

@@ -174,6 +174,31 @@ describe("MOVE action", () => {
     assert.deepEqual(game.discoveredLocationIds, ["forum"]);
   });
 
+  it("rejects movement across a route blocked by an event", async () => {
+    const game = createGame({ triggeredEvents: ["collapse"] });
+    game.scenarioId.events = [
+      {
+        id: "collapse",
+        triggerTime: 100,
+        blockedRoutes: [
+          { fromLocationId: "forum", toLocationId: "market" },
+        ],
+      },
+    ];
+
+    await assert.rejects(
+      performAction(game, {
+        type: "MOVE",
+        payload: { locationId: "market" },
+      }),
+      (error) =>
+        error instanceof GameActionError && error.code === "ROUTE_BLOCKED",
+    );
+
+    assert.equal(game.currentLocationId, "forum");
+    assert.equal(game.currentTime, 0);
+  });
+
   it("rejects movement when the saved current location is invalid", async () => {
     const game = createGame({ currentLocationId: "missing" });
 

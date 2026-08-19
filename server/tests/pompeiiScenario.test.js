@@ -168,4 +168,21 @@ describe("Pompeii scenario data", () => {
     assert.ok(damagingEvents.length > 0);
     assert.ok(damagingEvents.every(({ healthChange }) => healthChange < 0));
   });
+
+  it("only blocks routes that exist in the location map", () => {
+    const locations = new Map(
+      pompeii.locations.map((location) => [location.id, location]),
+    );
+
+    for (const event of pompeii.events) {
+      for (const route of event.blockedRoutes || []) {
+        const from = locations.get(route.fromLocationId);
+        assert.ok(from, `Unknown route origin: ${route.fromLocationId}`);
+        assert.ok(
+          from.connectedLocationIds.includes(route.toLocationId),
+          `Cannot block missing route: ${route.fromLocationId} -> ${route.toLocationId}`,
+        );
+      }
+    }
+  });
 });

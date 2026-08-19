@@ -159,6 +159,21 @@ const objectiveSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const blockedRouteSchema = new mongoose.Schema(
+  {
+    fromLocationId: {
+      type: String,
+      required: true,
+    },
+
+    toLocationId: {
+      type: String,
+      required: true,
+    },
+  },
+  { _id: false },
+);
+
 const eventSchema = new mongoose.Schema(
   {
     id: {
@@ -185,6 +200,11 @@ const eventSchema = new mongoose.Schema(
     healthChange: {
       type: Number,
       default: 0,
+    },
+
+    blockedRoutes: {
+      type: [blockedRouteSchema],
+      default: [],
     },
   },
   { _id: false },
