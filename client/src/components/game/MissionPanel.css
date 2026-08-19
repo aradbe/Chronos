@@ -1,0 +1,86 @@
+.mission-panel__list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mission-panel__objective {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid rgba(211, 168, 117, 0.16);
+}
+
+.mission-panel__objective:first-child {
+  border-top: 0;
+}
+
+.mission-panel__marker {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border: 1px solid #778594;
+  border-radius: 2px;
+}
+
+.mission-panel__objective strong {
+  display: block;
+  color: #e8edf3;
+  font-size: 0.92rem;
+}
+
+.mission-panel__objective p {
+  margin: var(--space-1) 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.mission-panel__status {
+  color: #8fa0b1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mission-panel__objective--active .mission-panel__marker {
+  border-color: #6ec7ae;
+  box-shadow: inset 0 0 0 3px #102535;
+  background: #6ec7ae;
+}
+
+.mission-panel__objective--active .mission-panel__status,
+.mission-panel__objective--completed .mission-panel__status {
+  color: #6ec7ae;
+}
+
+.mission-panel__objective--completed .mission-panel__marker {
+  border-color: #6ec7ae;
+  background: #6ec7ae;
+}
+
+.mission-panel__objective--completed .mission-panel__marker::after {
+  display: block;
+  color: #102535;
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 14px;
+  text-align: center;
+  content: "✓";
+}
+
+.mission-panel__objective--locked {
+  opacity: 0.55;
+}
+
+.mission-panel__objective--failed .mission-panel__marker {
+  border-color: #f08a80;
+  background: rgba(240, 138, 128, 0.18);
+}
+
+.mission-panel__objective--failed .mission-panel__status {
+  color: #f08a80;
+}

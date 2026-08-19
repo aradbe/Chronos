@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { GameHud } from "../../components/game/GameHud";
 import { LocationMap } from "../../components/game/LocationMap";
+import { MissionPanel } from "../../components/game/MissionPanel";
 import { useStores } from "../../stores/useStores";
 import "./GamePage.css";
 
@@ -73,10 +74,12 @@ export const GamePage = observer(function GamePage() {
         </section>
 
         <aside className="game-page__sidebar">
-          <section className="game-panel" aria-label="Mission">
-            <h2>Mission</h2>
-            <p>Objectives will appear here.</p>
-          </section>
+          <div className="game-panel">
+            <MissionPanel
+              objectives={scenario.objectives}
+              progress={game.objectives}
+            />
+          </div>
           <section className="game-panel" aria-label="Inventory">
             <h2>Inventory</h2>
             <p>Collected items will appear here.</p>
