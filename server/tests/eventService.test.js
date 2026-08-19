@@ -7,6 +7,7 @@ const {
 
 const createGame = (overrides = {}) => ({
   currentTime: 60,
+  health: 100,
   triggeredEvents: [],
   scenarioId: {
     events: [
@@ -48,5 +49,17 @@ describe("event service", () => {
 
     assert.deepEqual(secondRun, []);
     assert.deepEqual(game.triggeredEvents, ["first-tremor", "ashfall"]);
+  });
+
+  it("applies health changes without leaving the valid range", () => {
+    const game = createGame({ currentTime: 120, health: 20 });
+    game.scenarioId.events = [
+      { id: "pumice", triggerTime: 100, healthChange: -15 },
+      { id: "collapse", triggerTime: 120, healthChange: -25 },
+    ];
+
+    triggerPendingEvents(game);
+
+    assert.equal(game.health, 0);
   });
 });

@@ -181,6 +181,11 @@ const eventSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    healthChange: {
+      type: Number,
+      default: 0,
+    },
   },
   { _id: false },
 );

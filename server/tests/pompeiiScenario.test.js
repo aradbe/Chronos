@@ -159,4 +159,13 @@ describe("Pompeii scenario data", () => {
     assert.deepEqual(findDuplicates(triggerTimes), []);
     assert.deepEqual(triggerTimes, [...triggerTimes].sort((a, b) => a - b));
   });
+
+  it("makes the dangerous eruption stages affect health", () => {
+    const damagingEvents = pompeii.events.filter(
+      ({ type }) => type === "damage" || type === "deadline",
+    );
+
+    assert.ok(damagingEvents.length > 0);
+    assert.ok(damagingEvents.every(({ healthChange }) => healthChange < 0));
+  });
 });

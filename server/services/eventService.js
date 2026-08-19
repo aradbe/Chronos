@@ -19,6 +19,10 @@ const triggerPendingEvents = (game) => {
 
   for (const event of events) {
     game.triggeredEvents.push(event.id);
+
+    if (event.healthChange) {
+      game.health = Math.max(0, Math.min(100, game.health + event.healthChange));
+    }
   }
 
   return events;

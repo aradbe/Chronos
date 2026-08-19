@@ -252,6 +252,7 @@ const pompeiiScenario = {
       id: "pumice_storm",
       triggerTime: 100,
       type: "damage",
+      healthChange: -15,
       message:
         "Stones of hot pumice rain down. Every moment in the open costs you.",
     },
@@ -259,6 +260,7 @@ const pompeiiScenario = {
       id: "roof_collapse",
       triggerTime: 140,
       type: "damage",
+      healthChange: -25,
       message:
         "Roofs across the city give way under the weight of the ash. The air is almost unbreathable.",
     },
@@ -266,6 +268,7 @@ const pompeiiScenario = {
       id: "final_surge",
       triggerTime: 180,
       type: "deadline",
+      healthChange: -100,
       message:
         "A wall of scalding cloud comes down the mountainside. Pompeii's time is over.",
     },
