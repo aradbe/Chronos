@@ -59,7 +59,7 @@ describe("createGame", () => {
     assert.deepEqual(gameInput.discoveredLocationIds, ["forum"]);
     assert.deepEqual(gameInput.objectives, [
       { objectiveId: "find-marcus", status: "active" },
-      { objectiveId: "reach-harbor", status: "active" },
+      { objectiveId: "reach-harbor", status: "locked" },
     ]);
     assert.deepEqual(gameInput.relationships, { marcus: 50 });
     assert.equal(response.body.game.scenarioId, scenarioId);

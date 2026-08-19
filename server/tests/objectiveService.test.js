@@ -1,9 +1,11 @@
 const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const {
+  OBJECTIVE_STATUSES,
   buildObjectiveProgress,
   getObjectiveProgress,
   getObjectives,
+  updateObjectiveStatus,
 } = require("../services/objectiveService");
 
 describe("objective service", () => {
@@ -15,7 +17,7 @@ describe("objective service", () => {
 
     assert.deepEqual(result, [
       { objectiveId: "find-marcus", status: "active" },
-      { objectiveId: "reach-harbor", status: "active" },
+      { objectiveId: "reach-harbor", status: "locked" },
     ]);
   });
 
@@ -59,5 +61,65 @@ describe("objective service", () => {
         progress: null,
       },
     ]);
+  });
+
+  it("moves objectives through valid statuses", () => {
+    const game = {
+      objectives: [
+        { objectiveId: "find-marcus", status: OBJECTIVE_STATUSES.ACTIVE },
+        { objectiveId: "reach-harbor", status: OBJECTIVE_STATUSES.LOCKED },
+      ],
+    };
+
+    updateObjectiveStatus(
+      game,
+      "find-marcus",
+      OBJECTIVE_STATUSES.COMPLETED,
+    );
+    updateObjectiveStatus(game, "reach-harbor", OBJECTIVE_STATUSES.ACTIVE);
+
+    assert.deepEqual(game.objectives, [
+      { objectiveId: "find-marcus", status: "completed" },
+      { objectiveId: "reach-harbor", status: "active" },
+    ]);
+  });
+
+  it("keeps completed and failed objectives final", () => {
+    const game = {
+      objectives: [
+        { objectiveId: "finished", status: OBJECTIVE_STATUSES.COMPLETED },
+        { objectiveId: "missed", status: OBJECTIVE_STATUSES.FAILED },
+      ],
+    };
+
+    assert.throws(
+      () =>
+        updateObjectiveStatus(game, "finished", OBJECTIVE_STATUSES.ACTIVE),
+      /Cannot change objective/,
+    );
+    assert.throws(
+      () => updateObjectiveStatus(game, "missed", OBJECTIVE_STATUSES.ACTIVE),
+      /Cannot change objective/,
+    );
+  });
+
+  it("rejects unknown objectives and statuses", () => {
+    const game = {
+      objectives: [{ objectiveId: "known", status: OBJECTIVE_STATUSES.ACTIVE }],
+    };
+
+    assert.throws(
+      () => updateObjectiveStatus(game, "known", "waiting"),
+      /Unknown objective status/,
+    );
+    assert.throws(
+      () =>
+        updateObjectiveStatus(
+          game,
+          "unknown",
+          OBJECTIVE_STATUSES.COMPLETED,
+        ),
+      /Objective not found/,
+    );
   });
 });

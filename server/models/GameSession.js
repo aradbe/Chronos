@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+const {
+  OBJECTIVE_STATUS_VALUES,
+} = require("../constants/objectiveStatuses");
 
 const GAME_STATUSES = ["active", "completed", "failed"];
-const OBJECTIVE_STATUSES = ["locked", "active", "completed", "failed"];
 
 const isWholeNumber = (value) => Number.isInteger(value);
 const hasUniqueValues = (values) => new Set(values).size === values.length;
@@ -37,7 +39,7 @@ const objectiveProgressSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: OBJECTIVE_STATUSES,
+      enum: OBJECTIVE_STATUS_VALUES,
       default: "locked",
     },
   },
