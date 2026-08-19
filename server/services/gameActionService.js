@@ -4,6 +4,7 @@ const {
   advanceGameTime,
   getActionTimeCost,
 } = require("./gameTimeService");
+const { applyWinCondition } = require("./gameOutcomeService");
 const { pickUpItem, useItem } = require("./itemActionService");
 const { applyActionToObjectives } = require("./objectiveService");
 
@@ -124,6 +125,7 @@ const performAction = async (game, action) => {
   }
 
   triggerPendingEvents(game);
+  applyWinCondition(game);
 };
 
 module.exports = {

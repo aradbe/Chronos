@@ -6,6 +6,8 @@ const {
 } = require("../services/gameActionService");
 
 const createGame = (overrides = {}) => ({
+  status: "active",
+  finishedAt: null,
   currentLocationId: "forum",
   currentTime: 0,
   discoveredLocationIds: ["forum"],
@@ -53,6 +55,8 @@ describe("MOVE action", () => {
     });
 
     assert.equal(game.objectives[0].status, "completed");
+    assert.equal(game.status, "completed");
+    assert.ok(game.finishedAt instanceof Date);
   });
 
   it("triggers eruption events that are due", async () => {
