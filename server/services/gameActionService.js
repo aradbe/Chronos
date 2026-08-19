@@ -1,5 +1,9 @@
 const { GameActionError } = require("./gameActionError");
 const { triggerPendingEvents } = require("./eventService");
+const {
+  advanceGameTime,
+  getActionTimeCost,
+} = require("./gameTimeService");
 const { pickUpItem, useItem } = require("./itemActionService");
 const { applyActionToObjectives } = require("./objectiveService");
 
@@ -69,6 +73,14 @@ const performAction = async (game, action) => {
     case "USE_ITEM":
       useItem(game, action.payload);
       break;
+    case "WAIT":
+      if (!Number.isInteger(action.payload?.minutes) || action.payload.minutes < 1) {
+        throw new GameActionError(
+          "Waiting time must be a positive whole number",
+          "VALIDATION_ERROR",
+        );
+      }
+      break;
     default:
       throw new GameActionError(
         `Unsupported action: ${action.type}`,
@@ -77,6 +89,12 @@ const performAction = async (game, action) => {
   }
 
   applyActionToObjectives(game, action);
+
+  const timeCost = getActionTimeCost(action);
+  if (timeCost) {
+    advanceGameTime(game, timeCost);
+  }
+
   triggerPendingEvents(game);
 };
 

@@ -56,7 +56,7 @@ describe("MOVE action", () => {
   });
 
   it("triggers eruption events that are due", async () => {
-    const game = createGame({ currentTime: 60 });
+    const game = createGame({ currentTime: 50 });
     game.scenarioId.events = [
       { id: "first-tremor", triggerTime: 30 },
       { id: "ashfall", triggerTime: 60 },
@@ -69,6 +69,30 @@ describe("MOVE action", () => {
     });
 
     assert.deepEqual(game.triggeredEvents, ["first-tremor", "ashfall"]);
+  });
+
+  it("advances time for actions before checking the timeline", async () => {
+    const game = createGame({ currentTime: 25 });
+    game.scenarioId.events = [{ id: "first-tremor", triggerTime: 30 }];
+
+    await performAction(game, {
+      type: "MOVE",
+      payload: { locationId: "market" },
+    });
+
+    assert.equal(game.currentTime, 35);
+    assert.deepEqual(game.triggeredEvents, ["first-tremor"]);
+  });
+
+  it("allows the player to wait", async () => {
+    const game = createGame();
+
+    await performAction(game, {
+      type: "WAIT",
+      payload: { minutes: 15 },
+    });
+
+    assert.equal(game.currentTime, 15);
   });
 
   it("does not duplicate an already discovered location", async () => {
