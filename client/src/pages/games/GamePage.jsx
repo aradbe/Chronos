@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { EventNotifications } from "../../components/game/EventNotifications";
 import { GameHud } from "../../components/game/GameHud";
+import { GameOverScreen } from "../../components/game/GameOverScreen";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
 import { VictoryScreen } from "../../components/game/VictoryScreen";
@@ -58,6 +59,8 @@ export const GamePage = observer(function GamePage() {
 
       {game.status === "completed" ? (
         <VictoryScreen game={game} scenarioTitle={scenario.title} />
+      ) : game.status === "failed" ? (
+        <GameOverScreen game={game} scenario={scenario} />
       ) : (
         <div className="game-page__layout">
           <aside className="game-panel game-page__map" aria-label="Location map">
