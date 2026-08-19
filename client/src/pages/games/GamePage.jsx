@@ -6,6 +6,7 @@ import { EventNotifications } from "../../components/game/EventNotifications";
 import { GameHud } from "../../components/game/GameHud";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
+import { VictoryScreen } from "../../components/game/VictoryScreen";
 import { useStores } from "../../stores/useStores";
 import "./GamePage.css";
 
@@ -55,42 +56,46 @@ export const GamePage = observer(function GamePage() {
         />
       </header>
 
-      <div className="game-page__layout">
-        <aside className="game-panel game-page__map" aria-label="Location map">
-          <LocationMap
-            locations={scenario.locations}
-            currentLocationId={game.currentLocationId}
-            disabled={gameStore.actionPending}
-            onMove={handleMove}
-          />
-        </aside>
-
-        <section className="game-panel game-page__scene" aria-label="Game scene">
-          <CurrentLocation location={currentLocation} />
-          <EventNotifications
-            events={scenario.events}
-            triggeredEventIds={game.triggeredEvents || []}
-          />
-          {gameStore.error ? (
-            <p className="game-page__action-error" role="alert">
-              {gameStore.error.message}
-            </p>
-          ) : null}
-        </section>
-
-        <aside className="game-page__sidebar">
-          <div className="game-panel">
-            <MissionPanel
-              objectives={scenario.objectives}
-              progress={game.objectives}
+      {game.status === "completed" ? (
+        <VictoryScreen game={game} scenarioTitle={scenario.title} />
+      ) : (
+        <div className="game-page__layout">
+          <aside className="game-panel game-page__map" aria-label="Location map">
+            <LocationMap
+              locations={scenario.locations}
+              currentLocationId={game.currentLocationId}
+              disabled={gameStore.actionPending}
+              onMove={handleMove}
             />
-          </div>
-          <section className="game-panel" aria-label="Inventory">
-            <h2>Inventory</h2>
-            <p>Collected items will appear here.</p>
+          </aside>
+
+          <section className="game-panel game-page__scene" aria-label="Game scene">
+            <CurrentLocation location={currentLocation} />
+            <EventNotifications
+              events={scenario.events}
+              triggeredEventIds={game.triggeredEvents || []}
+            />
+            {gameStore.error ? (
+              <p className="game-page__action-error" role="alert">
+                {gameStore.error.message}
+              </p>
+            ) : null}
           </section>
-        </aside>
-      </div>
+
+          <aside className="game-page__sidebar">
+            <div className="game-panel">
+              <MissionPanel
+                objectives={scenario.objectives}
+                progress={game.objectives}
+              />
+            </div>
+            <section className="game-panel" aria-label="Inventory">
+              <h2>Inventory</h2>
+              <p>Collected items will appear here.</p>
+            </section>
+          </aside>
+        </div>
+      )}
     </main>
   );
 });
