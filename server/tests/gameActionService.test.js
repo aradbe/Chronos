@@ -8,6 +8,8 @@ const {
 const createGame = (overrides = {}) => ({
   status: "active",
   finishedAt: null,
+  health: 100,
+  score: 0,
   currentLocationId: "forum",
   currentTime: 0,
   discoveredLocationIds: ["forum"],

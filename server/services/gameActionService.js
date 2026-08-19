@@ -10,6 +10,7 @@ const {
 } = require("./gameOutcomeService");
 const { pickUpItem, useItem } = require("./itemActionService");
 const { applyActionToObjectives } = require("./objectiveService");
+const { updateScore } = require("./scoreService");
 
 const isRouteBlocked = (game, fromLocationId, toLocationId) => {
   const triggered = new Set(game.triggeredEvents || []);
@@ -132,6 +133,8 @@ const performAction = async (game, action) => {
   if (!applyLoseCondition(game)) {
     applyWinCondition(game);
   }
+
+  updateScore(game);
 };
 
 module.exports = {
