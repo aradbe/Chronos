@@ -198,3 +198,7 @@
 .scenario-locations {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
+
+.scenario-detail-page__cover {
+  margin-bottom: var(--space-4);
+}

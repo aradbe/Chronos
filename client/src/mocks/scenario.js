@@ -4,6 +4,7 @@ export const mockScenario = {
   year: 79,
   description: "Escape Pompeii before Mount Vesuvius destroys the city.",
   difficulty: "medium",
+  coverImageUrl: "",
   startLocationId: "forum",
 
   locations: [
@@ -12,18 +13,21 @@ export const mockScenario = {
       name: "Forum",
       description: "The busy center of Pompeii.",
       connectedLocationIds: ["market"],
+      imageUrl: "",
     },
     {
       id: "market",
       name: "Market",
       description: "A crowded market filled with frightened citizens.",
       connectedLocationIds: ["forum", "harbor"],
+      imageUrl: "",
     },
     {
       id: "harbor",
       name: "Harbor",
       description: "Ships may still be leaving the city.",
       connectedLocationIds: ["market"],
+      imageUrl: "",
     },
   ],
 
@@ -33,6 +37,7 @@ export const mockScenario = {
       name: "Marcus",
       role: "Merchant",
       startingLocationId: "forum",
+      imageUrl: "",
     },
   ],
 
@@ -44,6 +49,7 @@ export const mockScenario = {
       type: "consumable",
       locationId: "market",
       effect: { type: "restore_health", amount: 15 },
+      imageUrl: "",
     },
     {
       id: "city_map",
@@ -52,6 +58,7 @@ export const mockScenario = {
       type: "tool",
       locationId: "forum",
       effect: { type: "none", amount: 0 },
+      imageUrl: "",
     },
   ],
 

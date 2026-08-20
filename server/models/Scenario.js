@@ -22,6 +22,14 @@ const locationSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+
+    // A Cloudinary URL, or empty. Empty means the screen falls back to the
+    // written description, which is how every scenario looked before pictures.
+    imageUrl: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   { _id: false },
 );
@@ -57,6 +65,12 @@ const characterSchema = new mongoose.Schema(
     hiddenKnowledge: {
       type: [String],
       default: [],
+    },
+
+    imageUrl: {
+      type: String,
+      default: "",
+      trim: true,
     },
   },
   { _id: false },
@@ -117,6 +131,12 @@ const itemSchema = new mongoose.Schema(
     effect: {
       type: itemEffectSchema,
       default: () => ({}),
+    },
+
+    imageUrl: {
+      type: String,
+      default: "",
+      trim: true,
     },
   },
   { _id: false },
@@ -232,6 +252,13 @@ const scenarioSchema = new mongoose.Schema(
       type: String,
       enum: ["easy", "medium", "hard"],
       default: "medium",
+    },
+
+    // The picture shown on the scenario card and at the top of its detail page.
+    coverImageUrl: {
+      type: String,
+      default: "",
+      trim: true,
     },
 
     startLocationId: {

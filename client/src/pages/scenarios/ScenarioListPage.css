@@ -149,3 +149,7 @@
   background: var(--color-primary);
   color: var(--color-bg-deep);
 }
+
+.scenario-card__cover {
+  margin-bottom: var(--space-3);
+}

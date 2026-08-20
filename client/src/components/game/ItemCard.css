@@ -80,3 +80,7 @@
   border-color: #a4544c;
   background: rgba(160, 78, 70, 0.1);
 }
+
+.item-card__image {
+  margin-bottom: var(--space-1);
+}
