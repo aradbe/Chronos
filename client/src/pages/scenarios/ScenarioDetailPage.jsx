@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { ImageFrame } from "../../components/media/ImageFrame";
 import { useStores } from "../../stores/useStores";
 import "./ScenarioDetailPage.css";
 
@@ -60,6 +61,13 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
       <Link className="scenario-detail-page__back" to="/scenarios">
         &larr; All scenarios
       </Link>
+
+      <ImageFrame
+        src={scenario.coverImageUrl}
+        alt={`${scenario.title} cover image`}
+        ratio="21 / 9"
+        className="scenario-detail-page__cover"
+      />
 
       <header className="scenario-detail-page__hero">
         <p className="scenario-detail-page__eyebrow">

@@ -1,3 +1,4 @@
+import { ImageFrame } from "../media/ImageFrame";
 import "./ItemCard.css";
 
 const TYPE_LABELS = {
@@ -19,6 +20,13 @@ export function ItemCard({
 
   return (
     <li className={`item-card${hasError ? " item-card--invalid" : ""}`}>
+      <ImageFrame
+        src={item.imageUrl}
+        alt={item.name}
+        ratio="1 / 1"
+        className="image-frame--thumb item-card__image"
+      />
+
       <div className="item-card__head">
         <strong className="item-card__name">{item.name}</strong>
         {quantity === undefined ? null : (

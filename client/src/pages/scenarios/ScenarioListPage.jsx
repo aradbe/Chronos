@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
+import { ImageFrame } from "../../components/media/ImageFrame";
 import { useStores } from "../../stores/useStores";
 import "./ScenarioListPage.css";
 
@@ -52,6 +53,12 @@ export const ScenarioListPage = observer(function ScenarioListPage() {
         <section className="scenario-grid" aria-label="Available scenarios">
           {scenarios.map((scenario) => (
             <article className="scenario-card" key={scenario._id}>
+              <ImageFrame
+                src={scenario.coverImageUrl}
+                alt={`${scenario.title} cover image`}
+                className="scenario-card__cover"
+              />
+
               <header className="scenario-card__header">
                 <span className="scenario-card__year">{scenario.year} AD</span>
                 <span
