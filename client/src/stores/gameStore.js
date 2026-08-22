@@ -57,6 +57,8 @@ export class GameStore {
     this.loading = true;
     this.error = null;
     this.failedAction = null;
+    this.interactionError = null;
+    this.interactionResult = null;
 
     try {
       const { game } = await getGame(gameId, this.rootStore.authStore.token);
@@ -93,6 +95,8 @@ export class GameStore {
       runInAction(() => {
         this.currentGame = game;
         this.actionPending = false;
+        this.interactionError = null;
+        this.interactionResult = null;
       });
 
       return game;

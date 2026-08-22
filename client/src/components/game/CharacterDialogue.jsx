@@ -45,6 +45,7 @@ export function CharacterDialogue({
   ) || availableCharacters[0];
   const characterId = selectedCharacter?.id || "";
   const intentLabel = getIntentLabel(interaction?.intent);
+  const shouldShowInteraction = Boolean(interaction && selectedCharacter);
   const isSubmitDisabled =
     disabled || pending || !selectedCharacter || !message.trim();
 
@@ -67,7 +68,7 @@ export function CharacterDialogue({
           <span className="character-dialogue__eyebrow">Dialogue</span>
           <h2 id="dialogue-title">Talk to someone here</h2>
         </div>
-        {interaction ? (
+        {shouldShowInteraction ? (
           <span className="character-dialogue__trust">
             Trust {interaction.trust}
             {interaction.trustChange ? ` (${interaction.trustChange > 0 ? "+" : ""}${interaction.trustChange})` : ""}
@@ -119,7 +120,7 @@ export function CharacterDialogue({
         </p>
       ) : null}
 
-      {interaction ? (
+      {shouldShowInteraction ? (
         <div className="character-dialogue__result" aria-live="polite">
           <p>{interaction.reply}</p>
           {interaction.newClues?.length ? (
