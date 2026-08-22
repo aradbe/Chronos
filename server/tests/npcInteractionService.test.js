@@ -2,7 +2,7 @@ const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const { applyNpcInteraction } = require("../services/npcInteractionService");
 
-const createGame = () => ({
+const createGame = ({ trust = 57 } = {}) => ({
   currentLocationId: "forum",
   discoveredClues: [],
   inventory: [{ itemId: "bread", quantity: 1 }],
@@ -10,7 +10,7 @@ const createGame = () => ({
     { objectiveId: "find_marcus", status: "active" },
     { objectiveId: "find_ship_token_clue", status: "locked" },
   ],
-  relationships: new Map([["marcus", 57]]),
+  relationships: new Map([["marcus", trust]]),
   scenarioId: {
     characters: [
       {
@@ -75,5 +75,38 @@ describe("NPC interaction service", () => {
       type: "MOVE",
     });
     assert.equal(game.currentLocationId, "forum");
+  });
+
+  it("keeps clue hidden below trust threshold while giving a varied reply", () => {
+    const game = createGame({ trust: 50 });
+    const result = applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "Please tell me, does Lucius the captain need a ship token?",
+    });
+
+    assert.equal(result.trustChange, 1);
+    assert.equal(result.trust, 51);
+    assert.deepEqual(result.newClues, []);
+    assert.deepEqual(game.discoveredClues, []);
+    assert.notEqual(result.reply, "Marcus nods, a little more willing to help.");
+    assert.match(
+      result.reply,
+      /Marcus.*(Not yet|whose side|dangerous to say|trust is worth)/,
+    );
+  });
+
+  it("answers danger questions with topical dialogue", () => {
+    const game = createGame();
+    const result = applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "What do you know about the mountain tremors?",
+    });
+
+    assert.equal(result.trustChange, 0);
+    assert.deepEqual(result.newClues, []);
+    assert.notEqual(result.reply, "Marcus listens, but has nothing new to add yet.");
+    assert.match(result.reply, /Marcus.*(wrong|calm|ground)/);
   });
 });

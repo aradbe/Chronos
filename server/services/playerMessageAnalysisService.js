@@ -65,6 +65,74 @@ const FEAR_PATTERNS = [
   "worried",
 ];
 
+const QUESTION_PATTERNS = [
+  "can",
+  "could",
+  "does",
+  "do",
+  "how",
+  "is",
+  "should",
+  "tell me",
+  "what",
+  "when",
+  "where",
+  "who",
+  "why",
+];
+
+const HELP_PATTERNS = [
+  "can you help",
+  "help",
+  "i need your help",
+  "what should i do",
+];
+
+const DANGER_PATTERNS = [
+  "danger",
+  "earthquake",
+  "eruption",
+  "fire",
+  "mountain",
+  "safe",
+  "smoke",
+  "tremor",
+  "vesuvius",
+];
+
+const ESCAPE_PATTERNS = [
+  "captain",
+  "escape",
+  "flee",
+  "get out",
+  "harbor",
+  "leave",
+  "lucius",
+  "passage",
+  "ship",
+  "ship token",
+  "token",
+];
+
+const MAP_PATTERNS = [
+  "direction",
+  "map",
+  "path",
+  "road",
+  "route",
+  "way",
+];
+
+const ITEM_PATTERNS = [
+  "bread",
+  "food",
+  "item",
+  "medicine",
+  "supplies",
+  "tool",
+  "water",
+];
+
 const normalizeText = (text = "") => {
   return text
     .toLowerCase()
@@ -100,6 +168,54 @@ const findMentionedEntity = (normalizedText, entities = []) => {
   return entities.find((entity) =>
     getEntityAliases(entity).some((alias) => normalizedText.includes(alias)),
   );
+};
+
+const detectDialogueSignals = ({ scenario, text }) => {
+  const hasQuestionMark = text.includes("?");
+  const normalizedText = normalizeText(text);
+  const mentionedLocation = findMentionedEntity(
+    normalizedText,
+    scenario.locations || [],
+  );
+  const mentionedItem = findMentionedEntity(normalizedText, scenario.items || []);
+  const mentionedCharacter = findMentionedEntity(
+    normalizedText,
+    scenario.characters || [],
+  );
+
+  const signals = {
+    asksForHelp: containsPattern(normalizedText, HELP_PATTERNS),
+    asksQuestion:
+      hasQuestionMark || containsPattern(normalizedText, QUESTION_PATTERNS),
+    isFearful: containsPattern(normalizedText, FEAR_PATTERNS),
+    isHostile: containsPattern(normalizedText, HOSTILE_PATTERNS),
+    isPolite: containsPattern(normalizedText, POLITE_PATTERNS),
+    mentionedCharacter: mentionedCharacter?.id || null,
+    mentionedItem: mentionedItem?.id || null,
+    mentionedLocation: mentionedLocation?.id || null,
+    mentionsDanger: containsPattern(normalizedText, DANGER_PATTERNS),
+    mentionsEscape: containsPattern(normalizedText, ESCAPE_PATTERNS),
+    mentionsItem: Boolean(mentionedItem) || containsPattern(normalizedText, ITEM_PATTERNS),
+    mentionsMap: containsPattern(normalizedText, MAP_PATTERNS),
+  };
+
+  if (signals.mentionsEscape) {
+    signals.primaryTopic = "escape";
+  } else if (signals.mentionsDanger) {
+    signals.primaryTopic = "danger";
+  } else if (signals.asksForHelp) {
+    signals.primaryTopic = "help";
+  } else if (signals.mentionsMap) {
+    signals.primaryTopic = "map";
+  } else if (signals.mentionsItem) {
+    signals.primaryTopic = "item";
+  } else if (signals.isFearful) {
+    signals.primaryTopic = "fear";
+  } else {
+    signals.primaryTopic = "smallTalk";
+  }
+
+  return signals;
 };
 
 const hasIntentWord = (normalizedText, intent) => {
@@ -188,11 +304,7 @@ const getStableClueId = (characterId, index) => {
   return `${characterId}_knowledge_${index + 1}`;
 };
 
-const findClueCandidates = ({ text, character, discoveredClues, trust }) => {
-  if (trust < CLUE_TRUST_THRESHOLD) {
-    return [];
-  }
-
+const findMatchingKnowledgeCandidates = ({ text, character, discoveredClues }) => {
   const normalizedText = normalizeText(text);
   const discovered = new Set(discoveredClues || []);
 
@@ -208,6 +320,18 @@ const findClueCandidates = ({ text, character, discoveredClues, trust }) => {
       return hits.length >= 2;
     })
     .map(({ clueId, knowledge }) => ({ clueId, knowledge }));
+};
+
+const findClueCandidates = ({ text, character, discoveredClues, trust }) => {
+  if (trust < CLUE_TRUST_THRESHOLD) {
+    return [];
+  }
+
+  return findMatchingKnowledgeCandidates({
+    character,
+    discoveredClues,
+    text,
+  });
 };
 
 const analyzePlayerMessage = ({ game, characterId, text } = {}) => {
@@ -229,9 +353,22 @@ const analyzePlayerMessage = ({ game, characterId, text } = {}) => {
     text,
     trust: effectiveTrust,
   });
+  const blockedClueCandidates =
+    clueCandidates.length === 0 && effectiveTrust < CLUE_TRUST_THRESHOLD
+      ? findMatchingKnowledgeCandidates({
+          character: context.character,
+          discoveredClues: context.discoveredClues,
+          text,
+        })
+      : [];
 
   return {
+    blockedClueCandidates,
     clueCandidates,
+    dialogueSignals: detectDialogueSignals({
+      scenario: context.scenario,
+      text,
+    }),
     intent,
     trustChange,
   };
@@ -242,6 +379,7 @@ module.exports = {
   INTENTS,
   analyzePlayerMessage,
   analyzeTrustChange,
+  detectDialogueSignals,
   detectActionIntent,
   findClueCandidates,
   normalizeText,

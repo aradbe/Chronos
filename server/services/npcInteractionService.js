@@ -1,7 +1,5 @@
-const {
-  INTENTS,
-  analyzePlayerMessage,
-} = require("./playerMessageAnalysisService");
+const { buildDialogueReply } = require("./dialogueScriptEngine");
+const { analyzePlayerMessage } = require("./playerMessageAnalysisService");
 const {
   OBJECTIVE_STATUSES,
   getObjectiveProgress,
@@ -72,26 +70,6 @@ const completeActiveObjective = (game, type, targetId) => {
   return progress;
 };
 
-const buildReply = ({ character, clueCandidates, intent, trustChange }) => {
-  if (intent.type !== INTENTS.TALK && intent.action) {
-    return `${character.name} understands what you want to do, but you need to take that action yourself.`;
-  }
-
-  if (clueCandidates.length > 0) {
-    return clueCandidates[0].knowledge;
-  }
-
-  if (trustChange < 0) {
-    return `${character.name} pulls back. Choose your words more carefully.`;
-  }
-
-  if (trustChange > 0) {
-    return `${character.name} nods, a little more willing to help.`;
-  }
-
-  return `${character.name} listens, but has nothing new to add yet.`;
-};
-
 const applyNpcInteraction = ({ game, characterId, text }) => {
   const analysis = analyzePlayerMessage({ game, characterId, text });
   const character = game.scenarioId.characters.find(({ id }) => id === characterId);
@@ -124,11 +102,10 @@ const applyNpcInteraction = ({ game, characterId, text }) => {
     }
   }
 
-  const reply = buildReply({
+  const reply = buildDialogueReply({
+    analysis,
     character,
-    clueCandidates: analysis.clueCandidates,
-    intent: analysis.intent,
-    trustChange: analysis.trustChange,
+    text,
   });
 
   return {

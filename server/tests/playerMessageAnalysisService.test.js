@@ -4,6 +4,7 @@ const {
   INTENTS,
   analyzePlayerMessage,
   analyzeTrustChange,
+  detectDialogueSignals,
   detectActionIntent,
   findClueCandidates,
 } = require("../services/playerMessageAnalysisService");
@@ -79,6 +80,19 @@ describe("player message analysis service", () => {
     assert.equal(analyzeTrustChange("shut up, you useless liar"), -2);
   });
 
+  it("detects reusable dialogue signals", () => {
+    const signals = detectDialogueSignals({
+      scenario,
+      text: "Can you help me find a map before the mountain erupts?",
+    });
+
+    assert.equal(signals.asksForHelp, true);
+    assert.equal(signals.asksQuestion, true);
+    assert.equal(signals.mentionsDanger, true);
+    assert.equal(signals.mentionsMap, true);
+    assert.equal(signals.primaryTopic, "danger");
+  });
+
   it("does not release clue candidates below the trust threshold", () => {
     const [character] = scenario.characters;
 
@@ -128,5 +142,17 @@ describe("player message analysis service", () => {
     assert.equal(analysis.intent.type, INTENTS.TALK);
     assert.equal(analysis.trustChange, 1);
     assert.equal(analysis.clueCandidates[0].clueId, "marcus_knowledge_1");
+  });
+
+  it("tracks blocked clue candidates below the trust threshold", () => {
+    const analysis = analyzePlayerMessage({
+      characterId: "marcus",
+      game: createGame({ trust: 50 }),
+      text: "Please tell me, does Lucius the captain need a ship token?",
+    });
+
+    assert.deepEqual(analysis.clueCandidates, []);
+    assert.equal(analysis.blockedClueCandidates[0].clueId, "marcus_knowledge_1");
+    assert.equal(analysis.dialogueSignals.mentionsEscape, true);
   });
 });
