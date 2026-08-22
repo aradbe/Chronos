@@ -15,10 +15,10 @@ const getCharacterRole = (character) => {
   return character.role || character.profession || character.title || "local";
 };
 
-const buildTemplateContext = ({ character, text }) => ({
+const buildTemplateContext = ({ character, conversationTurn, text }) => ({
   name: character.name,
   role: getCharacterRole(character),
-  seed: hashText(`${character.id || character.name}:${text}`),
+  seed: hashText(`${character.id || character.name}:${text}`) + conversationTurn,
 });
 
 const formatReply = (template, context) => {
@@ -90,8 +90,13 @@ const REPLIES = {
   ],
 };
 
-const buildDialogueReply = ({ analysis, character, text }) => {
-  const context = buildTemplateContext({ character, text });
+const buildDialogueReply = ({
+  analysis,
+  character,
+  conversationTurn = 0,
+  text,
+}) => {
+  const context = buildTemplateContext({ character, conversationTurn, text });
   const signals = analysis.dialogueSignals || {};
 
   if (analysis.intent.type !== INTENTS.TALK && analysis.intent.action) {

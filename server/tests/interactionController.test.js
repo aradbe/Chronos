@@ -82,6 +82,14 @@ describe("interactWithCharacter", () => {
       createdMessages = messages;
       return messages;
     });
+    test.mock.method(Message, "countDocuments", async (query) => {
+      assert.deepEqual(query, {
+        characterId: "marcus",
+        gameSessionId: game._id,
+        role: "player",
+      });
+      return 0;
+    });
 
     const response = createResponse();
 

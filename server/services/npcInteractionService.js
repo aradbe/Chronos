@@ -70,7 +70,7 @@ const completeActiveObjective = (game, type, targetId) => {
   return progress;
 };
 
-const applyNpcInteraction = ({ game, characterId, text }) => {
+const applyNpcInteraction = ({ conversationTurn = 0, game, characterId, text }) => {
   const analysis = analyzePlayerMessage({ game, characterId, text });
   const character = game.scenarioId.characters.find(({ id }) => id === characterId);
   const currentTrust = getRelationshipValue(game.relationships, characterId);
@@ -105,6 +105,7 @@ const applyNpcInteraction = ({ game, characterId, text }) => {
   const reply = buildDialogueReply({
     analysis,
     character,
+    conversationTurn,
     text,
   });
 

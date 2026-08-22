@@ -96,6 +96,24 @@ describe("NPC interaction service", () => {
     );
   });
 
+  it("varies repeat replies by conversation turn", () => {
+    const text = "Please tell me, does Lucius the captain need a ship token?";
+    const firstResult = applyNpcInteraction({
+      characterId: "marcus",
+      conversationTurn: 0,
+      game: createGame({ trust: 50 }),
+      text,
+    });
+    const secondResult = applyNpcInteraction({
+      characterId: "marcus",
+      conversationTurn: 1,
+      game: createGame({ trust: 50 }),
+      text,
+    });
+
+    assert.notEqual(firstResult.reply, secondResult.reply);
+  });
+
   it("answers danger questions with topical dialogue", () => {
     const game = createGame();
     const result = applyNpcInteraction({

@@ -73,8 +73,15 @@ const interactWithCharacter = async (req, res, next) => {
       });
     }
 
+    const conversationTurn = await Message.countDocuments({
+      characterId,
+      gameSessionId: game._id,
+      role: "player",
+    });
+
     const interaction = applyNpcInteraction({
       characterId,
+      conversationTurn,
       game,
       text: message,
     });
