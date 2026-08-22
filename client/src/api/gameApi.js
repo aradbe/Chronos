@@ -1,5 +1,9 @@
 import { httpClient } from "./httpClient";
 
+export const listMyGames = (token) => {
+  return httpClient("/users/me/games", { token });
+};
+
 export const createGame = (scenarioId, token) => {
   return httpClient("/games", {
     method: "POST",

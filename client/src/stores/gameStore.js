@@ -1,12 +1,15 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { getGame, performGameAction } from "../api/gameApi";
+import { getGame, listMyGames, performGameAction } from "../api/gameApi";
 
 export class GameStore {
   rootStore;
+  savedGames = [];
   currentGame = null;
   loading = false;
+  savedGamesLoading = false;
   actionPending = false;
   error = null;
+  savedGamesError = null;
   // The action that produced `error`. The screen needs it to decide where the
   // message belongs: a failed USE_ITEM shows on the item card, a failed MOVE
   // shows by the map. The error code alone is not enough, because
@@ -16,6 +19,30 @@ export class GameStore {
   constructor(rootStore) {
     this.rootStore = rootStore;
     makeAutoObservable(this, { rootStore: false }, { autoBind: true });
+  }
+
+  async loadSavedGames() {
+    this.savedGamesLoading = true;
+    this.savedGamesError = null;
+
+    try {
+      const games = await listMyGames(this.rootStore.authStore.token);
+
+      runInAction(() => {
+        this.savedGames = games;
+        this.savedGamesLoading = false;
+      });
+
+      return games;
+    } catch (error) {
+      runInAction(() => {
+        this.savedGames = [];
+        this.savedGamesError = error;
+        this.savedGamesLoading = false;
+      });
+
+      throw error;
+    }
   }
 
   async loadGame(gameId) {
