@@ -27,6 +27,9 @@ export function CharacterDialogue({
   disabled = false,
   error,
   interaction,
+  messages = [],
+  messagesError = null,
+  messagesLoading = false,
   onSend,
   pending = false,
 }) {
@@ -46,6 +49,15 @@ export function CharacterDialogue({
   const characterId = selectedCharacter?.id || "";
   const intentLabel = getIntentLabel(interaction?.intent);
   const shouldShowInteraction = Boolean(interaction && selectedCharacter);
+  const characterMessages = useMemo(
+    () =>
+      characterId
+        ? messages.filter((message) => message.characterId === characterId)
+        : [],
+    [characterId, messages],
+  );
+  const hasCharacterMessages = characterMessages.length > 0;
+  const shouldShowReplyInResult = shouldShowInteraction && !hasCharacterMessages;
   const isSubmitDisabled =
     disabled || pending || !selectedCharacter || !message.trim();
 
@@ -81,37 +93,72 @@ export function CharacterDialogue({
           There is no one nearby to speak with.
         </p>
       ) : (
-        <form className="character-dialogue__form" onSubmit={handleSubmit}>
-          <label>
-            <span>Character</span>
-            <select
-              value={characterId}
-              onChange={(event) => setPreferredCharacterId(event.target.value)}
-              disabled={disabled || pending}
-            >
-              {availableCharacters.map((character) => (
-                <option key={character.id} value={character.id}>
-                  {character.name} - {character.role}
-                </option>
-              ))}
-            </select>
-          </label>
+        <>
+          <form className="character-dialogue__form" onSubmit={handleSubmit}>
+            <label>
+              <span>Character</span>
+              <select
+                value={characterId}
+                onChange={(event) => setPreferredCharacterId(event.target.value)}
+                disabled={disabled || pending}
+              >
+                {availableCharacters.map((character) => (
+                  <option key={character.id} value={character.id}>
+                    {character.name} - {character.role}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label>
-            <span>Message</span>
-            <textarea
-              rows="3"
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              disabled={disabled || pending}
-              placeholder={`Ask ${selectedCharacter?.name || "them"} what they know`}
-            />
-          </label>
+            <label>
+              <span>Message</span>
+              <textarea
+                rows="3"
+                value={message}
+                onChange={(event) => setMessage(event.target.value)}
+                disabled={disabled || pending}
+                placeholder={`Ask ${selectedCharacter?.name || "them"} what they know`}
+              />
+            </label>
 
-          <button type="submit" disabled={isSubmitDisabled}>
-            {pending ? "Listening..." : "Send"}
-          </button>
-        </form>
+            <button type="submit" disabled={isSubmitDisabled}>
+              {pending ? "Listening..." : "Send"}
+            </button>
+          </form>
+
+          <div className="character-dialogue__history" aria-live="polite">
+            <div className="character-dialogue__history-header">
+              <span>Conversation history</span>
+              {messagesLoading ? <small>Loading...</small> : null}
+            </div>
+
+            {messagesError ? (
+              <p className="character-dialogue__error" role="alert">
+                {messagesError.message}
+              </p>
+            ) : null}
+
+            {hasCharacterMessages ? (
+              <ol className="character-dialogue__messages">
+                {characterMessages.map((entry, index) => (
+                  <li
+                    className={`character-dialogue__message character-dialogue__message--${entry.role}`}
+                    key={entry._id || `${entry.characterId}-${entry.role}-${index}`}
+                  >
+                    <span>
+                      {entry.role === "player" ? "You" : selectedCharacter.name}
+                    </span>
+                    <p>{entry.content}</p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p className="character-dialogue__empty">
+                No messages with {selectedCharacter.name} yet.
+              </p>
+            )}
+          </div>
+        </>
       )}
 
       {error ? (
@@ -122,7 +169,7 @@ export function CharacterDialogue({
 
       {shouldShowInteraction ? (
         <div className="character-dialogue__result" aria-live="polite">
-          <p>{interaction.reply}</p>
+          {shouldShowReplyInResult ? <p>{interaction.reply}</p> : null}
           {interaction.newClues?.length ? (
             <span>{interaction.newClues.length} clue discovered</span>
           ) : null}

@@ -3,6 +3,7 @@ const { describe, it } = require("node:test");
 const mongoose = require("mongoose");
 const {
   interactWithCharacter,
+  listGameMessages,
 } = require("../controllers/interactionController");
 const GameSession = require("../models/GameSession");
 const Message = require("../models/Message");
@@ -223,5 +224,91 @@ describe("interactWithCharacter", () => {
 
     assert.equal(response.statusCode, 409);
     assert.equal(response.body.error.code, "CHARACTER_NOT_HERE");
+  });
+});
+
+describe("listGameMessages", () => {
+  it("returns messages for an owned game in readable order", async (test) => {
+    const game = createGame();
+    const gameId = game._id.toString();
+    const userId = new mongoose.Types.ObjectId();
+    const messages = [
+      {
+        _id: new mongoose.Types.ObjectId(),
+        characterId: "marcus",
+        content: "Hello",
+        role: "player",
+      },
+      {
+        _id: new mongoose.Types.ObjectId(),
+        characterId: "marcus",
+        content: "Marcus listens.",
+        role: "character",
+      },
+    ];
+    let gameFilter;
+    let messageFilter;
+    let sortInput;
+
+    test.mock.method(GameSession, "findOne", async (query) => {
+      gameFilter = query;
+      return game;
+    });
+    test.mock.method(Message, "find", (query) => {
+      messageFilter = query;
+      return {
+        sort(input) {
+          sortInput = input;
+          return {
+            lean: async () => messages,
+          };
+        },
+      };
+    });
+
+    const response = createResponse();
+
+    await listGameMessages(
+      { params: { id: gameId }, user: { _id: userId } },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 200);
+    assert.deepEqual(response.body.messages, messages);
+    assert.deepEqual(gameFilter, { _id: gameId, userId });
+    assert.deepEqual(messageFilter, { gameSessionId: game._id });
+    assert.deepEqual(sortInput, { createdAt: 1, _id: 1 });
+  });
+
+  it("rejects an invalid game id when listing messages", async () => {
+    const response = createResponse();
+
+    await listGameMessages(
+      { params: { id: "bad-id" }, user: {} },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 400);
+    assert.equal(response.body.error.code, "VALIDATION_ERROR");
+  });
+
+  it("returns 404 when listing messages for another user's game", async (test) => {
+    test.mock.method(GameSession, "findOne", async () => null);
+
+    const response = createResponse();
+
+    await listGameMessages(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 404);
+    assert.equal(response.body.error.code, "GAME_NOT_FOUND");
   });
 });

@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import {
   getGame,
   interactWithCharacter,
+  listGameMessages,
   listMyGames,
   performGameAction,
 } from "../api/gameApi";
@@ -14,6 +15,9 @@ export class GameStore {
   savedGamesLoading = false;
   actionPending = false;
   interactionPending = false;
+  conversationMessages = [];
+  conversationLoading = false;
+  conversationError = null;
   error = null;
   savedGamesError = null;
   interactionError = null;
@@ -59,6 +63,7 @@ export class GameStore {
     this.failedAction = null;
     this.interactionError = null;
     this.interactionResult = null;
+    this.conversationError = null;
 
     try {
       const { game } = await getGame(gameId, this.rootStore.authStore.token);
@@ -67,11 +72,13 @@ export class GameStore {
         this.currentGame = game;
         this.loading = false;
       });
+      this.loadConversationMessages(gameId).catch(() => {});
 
       return game;
     } catch (error) {
       runInAction(() => {
         this.currentGame = null;
+        this.conversationMessages = [];
         this.error = error;
         this.loading = false;
       });
@@ -128,12 +135,40 @@ export class GameStore {
         this.interactionResult = result;
         this.interactionPending = false;
       });
+      this.loadConversationMessages(gameId).catch(() => {});
 
       return result;
     } catch (error) {
       runInAction(() => {
         this.interactionError = error;
         this.interactionPending = false;
+      });
+
+      throw error;
+    }
+  }
+
+  async loadConversationMessages(gameId) {
+    this.conversationLoading = true;
+    this.conversationError = null;
+
+    try {
+      const { messages } = await listGameMessages(
+        gameId,
+        this.rootStore.authStore.token,
+      );
+
+      runInAction(() => {
+        this.conversationMessages = messages;
+        this.conversationLoading = false;
+      });
+
+      return messages;
+    } catch (error) {
+      runInAction(() => {
+        this.conversationMessages = [];
+        this.conversationError = error;
+        this.conversationLoading = false;
       });
 
       throw error;

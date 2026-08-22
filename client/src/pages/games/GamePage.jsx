@@ -120,6 +120,9 @@ export const GamePage = observer(function GamePage() {
               disabled={gameStore.actionPending}
               error={gameStore.interactionError}
               interaction={gameStore.interactionResult}
+              messages={gameStore.conversationMessages}
+              messagesError={gameStore.conversationError}
+              messagesLoading={gameStore.conversationLoading}
               onSend={handleInteract}
               pending={gameStore.interactionPending}
             />
