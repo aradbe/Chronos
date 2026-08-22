@@ -23,3 +23,11 @@ export const performGameAction = (gameId, action, token) => {
     token,
   });
 };
+
+export const interactWithCharacter = (gameId, characterId, message, token) => {
+  return httpClient(`/games/${gameId}/interact/${characterId}`, {
+    method: "POST",
+    body: { message },
+    token,
+  });
+};

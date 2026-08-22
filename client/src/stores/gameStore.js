@@ -1,5 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { getGame, listMyGames, performGameAction } from "../api/gameApi";
+import {
+  getGame,
+  interactWithCharacter,
+  listMyGames,
+  performGameAction,
+} from "../api/gameApi";
 
 export class GameStore {
   rootStore;
@@ -8,8 +13,11 @@ export class GameStore {
   loading = false;
   savedGamesLoading = false;
   actionPending = false;
+  interactionPending = false;
   error = null;
   savedGamesError = null;
+  interactionError = null;
+  interactionResult = null;
   // The action that produced `error`. The screen needs it to decide where the
   // message belongs: a failed USE_ITEM shows on the item card, a failed MOVE
   // shows by the map. The error code alone is not enough, because
@@ -93,6 +101,35 @@ export class GameStore {
         this.error = error;
         this.failedAction = action;
         this.actionPending = false;
+      });
+
+      throw error;
+    }
+  }
+
+  async interact(gameId, characterId, message) {
+    this.interactionPending = true;
+    this.interactionError = null;
+
+    try {
+      const result = await interactWithCharacter(
+        gameId,
+        characterId,
+        message,
+        this.rootStore.authStore.token,
+      );
+
+      runInAction(() => {
+        this.currentGame = result.game;
+        this.interactionResult = result;
+        this.interactionPending = false;
+      });
+
+      return result;
+    } catch (error) {
+      runInAction(() => {
+        this.interactionError = error;
+        this.interactionPending = false;
       });
 
       throw error;
