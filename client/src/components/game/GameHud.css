@@ -50,6 +50,26 @@
   background: linear-gradient(90deg, #b74545, #df776c);
 }
 
+.game-hud__time-track {
+  width: 112px;
+  height: 4px;
+  margin-top: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #263746;
+}
+
+.game-hud__time-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #79cbb2;
+  transition: width 180ms ease, background 180ms ease;
+}
+
+.game-hud__time-track--warning span { background: #d5a96f; }
+.game-hud__time-track--danger span { background: #df776c; }
+
 .game-hud__status {
   text-transform: capitalize;
 }

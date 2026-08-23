@@ -1,7 +1,12 @@
 import { Link } from "react-router-dom";
+import { useNpcSpeech } from "../../hooks/useNpcSpeech";
+import { getSpokenDialogue } from "../../utils/dialogueText";
 import "./VictoryScreen.css";
 
-export function VictoryScreen({ game, scenarioTitle }) {
+export function VictoryScreen({ game, finalMessage = "", scenarioTitle }) {
+  const speech = useNpcSpeech();
+  const captainLine = getSpokenDialogue(finalMessage);
+
   return (
     <section className="victory-screen" aria-labelledby="victory-title">
       <span className="victory-screen__eyebrow">Journey complete</span>
@@ -10,6 +15,27 @@ export function VictoryScreen({ game, scenarioTitle }) {
         The harbor falls behind you as the city disappears beneath the ash. You
         made it out with history—and yourself—intact.
       </p>
+
+      {captainLine ? (
+        <blockquote className="victory-screen__farewell">
+          <span>Captain Lucius</span>
+          <p>“{captainLine}”</p>
+          {speech.supported ? (
+            <button
+              type="button"
+              onClick={() =>
+                speech.speak({
+                  characterId: "lucius",
+                  id: "victory-lucius",
+                  text: finalMessage,
+                })
+              }
+            >
+              {speech.speakingId === "victory-lucius" ? "■ Stop" : "▶ Listen"}
+            </button>
+          ) : null}
+        </blockquote>
+      ) : null}
 
       <dl className="victory-screen__stats">
         <div>

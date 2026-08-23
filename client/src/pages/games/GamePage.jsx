@@ -116,7 +116,11 @@ export const GamePage = observer(function GamePage() {
       </header>
 
       {game.status === "completed" ? (
-        <VictoryScreen game={game} scenarioTitle={scenario.title} />
+        <VictoryScreen
+          game={game}
+          finalMessage={scenario.finalCondition?.successFeedback}
+          scenarioTitle={scenario.title}
+        />
       ) : game.status === "failed" ? (
         <GameOverScreen game={game} scenario={scenario} />
       ) : (

@@ -321,7 +321,7 @@ const pompeiiScenario = {
         'Lucius looks toward the black water. "Your token earns a place, but my ship needs a lamp. Bring one before the ash reaches us."',
     },
     successFeedback:
-      "Lucius takes the token and lamp. Ropes fall away, oars bite the dark water, and Pompeii begins to disappear behind you.",
+      'Lucius takes the token and lamp, then cuts the final rope. "Good. We have what we need. Set the sail—we leave Pompeii now." Oars bite the dark water as the city begins to disappear behind you.',
   },
 
   events: [

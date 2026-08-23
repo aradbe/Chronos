@@ -33,6 +33,43 @@
   margin: 0 auto;
 }
 
+.victory-screen__farewell {
+  max-width: 600px;
+  margin: var(--space-6) auto 0;
+  border-left: 3px solid #6ec7ae;
+  padding: var(--space-4) var(--space-5);
+  background: rgba(110, 199, 174, 0.06);
+  text-align: left;
+}
+
+.victory-screen__farewell span {
+  color: #6ec7ae;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.victory-screen__farewell p {
+  margin: var(--space-2) 0 0;
+  color: #e8edf3;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.08rem;
+  line-height: 1.6;
+}
+
+.victory-screen__farewell button {
+  margin-top: var(--space-3);
+  border: 1px solid rgba(110, 199, 174, 0.45);
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: #6ec7ae;
+  background: transparent;
+  font-size: 0.66rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .victory-screen__stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
