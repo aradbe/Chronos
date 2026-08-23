@@ -1,25 +1,156 @@
 .pixel-avatar {
   display: block;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
   border: 1px solid rgba(121, 203, 178, 0.32);
   border-radius: var(--radius-sm);
-  image-rendering: pixelated;
-  shape-rendering: crispEdges;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(36, 87, 99, 0.34), transparent 34%),
+    linear-gradient(#091521 78%, #102536 78%);
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
-  background: #091521;
+  image-rendering: pixelated;
 }
 
-.pixel-avatar__sprite {
-  transform-origin: center bottom;
+.pixel-avatar__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
   animation: pixel-avatar-idle 1.8s steps(2, end) infinite;
+}
+
+.pixel-avatar__stage::after {
+  position: absolute;
+  right: 8%;
+  bottom: 5%;
+  left: 8%;
+  height: 5%;
+  content: "";
+  background: #1c3a4e;
+  opacity: 0.8;
+}
+
+.pixel-avatar__layer {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  max-width: none;
+  transform: translateX(-50%);
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.pixel-avatar__body {
+  top: 1%;
+  left: 50%;
+  height: 94%;
+}
+
+.pixel-avatar--masculine .pixel-avatar__body,
+.pixel-avatar--masculine .pixel-avatar__outfit { transform: translateX(-50%) scaleX(1.035); }
+
+.pixel-avatar--feminine .pixel-avatar__body,
+.pixel-avatar--feminine .pixel-avatar__outfit { transform: translateX(-50%) scaleX(0.98); }
+
+.pixel-avatar__body--porcelain { filter: brightness(1.08) saturate(0.82); }
+.pixel-avatar__body--warm { filter: none; }
+.pixel-avatar__body--golden { filter: sepia(0.2) saturate(1.12) brightness(0.92); }
+.pixel-avatar__body--brown { filter: sepia(0.22) saturate(1.25) brightness(0.72); }
+.pixel-avatar__body--deep { filter: sepia(0.3) saturate(1.2) brightness(0.5); }
+
+.pixel-avatar__outfit {
+  z-index: 2;
+  top: 18%;
+  left: 50%;
+  height: 93%;
+}
+
+.pixel-avatar__hair {
+  z-index: 5;
+  left: 50%;
+  transform-origin: center top;
+}
+
+.pixel-avatar__hair--short { top: 1%; height: 31%; }
+.pixel-avatar__hair--waves { top: 1%; height: 36%; }
+.pixel-avatar__hair--curls { top: 0; height: 35%; }
+.pixel-avatar__hair--braids { top: 0; height: 49%; }
+.pixel-avatar__hair--mohawk { top: -2%; height: 32%; }
+.pixel-avatar__hair--long { top: 0; height: 47%; }
+
+.pixel-avatar__hair-color--black { filter: grayscale(0.9) brightness(0.42) contrast(1.25); }
+.pixel-avatar__hair-color--brown { filter: none; }
+.pixel-avatar__hair-color--auburn { filter: hue-rotate(338deg) saturate(1.35) brightness(0.92); }
+.pixel-avatar__hair-color--blonde { filter: sepia(0.65) saturate(1.45) brightness(1.3); }
+.pixel-avatar__hair-color--silver { filter: grayscale(1) brightness(1.45) contrast(0.85); }
+.pixel-avatar__hair-color--blue { filter: hue-rotate(145deg) saturate(1.2) brightness(0.82); }
+
+.pixel-avatar__face {
+  position: absolute;
+  z-index: 6;
+  top: 17%;
+  left: 50%;
+  width: 20%;
+  height: 12%;
+  transform: translateX(-50%);
+}
+
+.pixel-avatar__eye,
+.pixel-avatar__mouth {
+  position: absolute;
+  display: block;
+  background: #102432;
+  box-shadow: inset 0.18em 0.18em #85d4ca;
+}
+
+.pixel-avatar__eye { top: 10%; width: 22%; height: 34%; }
+.pixel-avatar__eye--left { left: 3%; }
+.pixel-avatar__eye--right { right: 3%; }
+.pixel-avatar__mouth { bottom: 2%; left: 37%; width: 30%; height: 16%; box-shadow: none; background: #713b36; }
+.pixel-avatar__face--bright .pixel-avatar__mouth { left: 28%; width: 44%; height: 22%; background: linear-gradient(#f4dfd0 45%, #713b36 45%); }
+.pixel-avatar__face--bold .pixel-avatar__eye { height: 40%; }
+.pixel-avatar__face--serious .pixel-avatar__eye { height: 22%; }
+
+.pixel-avatar__accessory {
+  position: absolute;
+  z-index: 7;
+  pointer-events: none;
+}
+
+.pixel-avatar__accessory--glasses {
+  top: 19%;
+  left: 39%;
+  width: 22%;
+  height: 7%;
+  border-top: 2px solid #d9b65d;
+  border-bottom: 2px solid #d9b65d;
+  box-shadow: inset 2px 0 #d9b65d, inset -2px 0 #d9b65d;
+}
+
+.pixel-avatar__accessory--earring {
+  top: 27%;
+  right: 29%;
+  width: 4%;
+  aspect-ratio: 1;
+  background: #f0c557;
+  box-shadow: 0 0 0 1px #6d431a;
+}
+
+.pixel-avatar__accessory--scarf {
+  top: 35%;
+  left: 42%;
+  width: 18%;
+  height: 9%;
+  background: #d5a96f;
+  clip-path: polygon(0 0, 100% 0, 72% 42%, 72% 100%, 47% 100%, 47% 42%);
 }
 
 @keyframes pixel-avatar-idle {
   0%, 70%, 100% { transform: translateY(0); }
-  85% { transform: translateY(-1px); }
+  85% { transform: translateY(-1%); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pixel-avatar__sprite { animation: none; }
+  .pixel-avatar__stage { animation: none; }
 }
 
 .pixel-avatar--large { width: min(270px, 100%); }
