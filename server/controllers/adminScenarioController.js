@@ -92,6 +92,16 @@ const reviseScenario = async (req, res, next) => {
   } catch (error) { return handleAdminError(error, res, next); }
 };
 
+const createPlaytest = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.scenarioId)) {
+      return res.status(400).json({ error: { message: "A valid scenario ID is required", code: "VALIDATION_ERROR" } });
+    }
+    const game = await adminScenarioService.createPlaytest(req.params.scenarioId, req.user._id);
+    return res.status(201).json({ game });
+  } catch (error) { return handleAdminError(error, res, next); }
+};
+
 // Publishing and unpublishing differ by one boolean, so one builder makes both
 // handlers rather than two near-identical copies of the same error handling.
 const setPublished = (publish) => async (req, res, next) => {
@@ -166,6 +176,7 @@ const deleteScenario = async (req, res, next) => {
 
 module.exports = {
   createScenario,
+  createPlaytest,
   generateScenario,
   getScenario,
   listScenarios,

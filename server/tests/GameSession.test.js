@@ -25,6 +25,7 @@ describe("GameSession model", () => {
     assert.equal(session.health, 100);
     assert.equal(session.currentTime, 0);
     assert.equal(session.score, 0);
+    assert.equal(session.isPlaytest, false);
     assert.equal(session.finishedAt, null);
     assert.ok(session.startedAt instanceof Date);
   });

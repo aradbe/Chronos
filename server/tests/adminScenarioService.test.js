@@ -6,6 +6,7 @@ const Scenario = require("../models/Scenario");
 const { AdminScenarioError } = require("../services/adminScenarioError");
 const {
   createScenario,
+  createPlaytest,
   deleteScenario,
   publishScenario,
   unpublishScenario,
@@ -212,6 +213,37 @@ describe("createScenario", () => {
       !("difficulty" in saved),
       "difficulty must be absent so Mongoose applies its default",
     );
+  });
+});
+
+describe("createPlaytest", () => {
+  it("starts an admin-only test run from an unpublished scenario", async (test) => {
+    const scenarioId = "64b64c3f2f7e4b29d8397a11";
+    const userId = "64b64c3f2f7e4b29d8397a12";
+    const scenario = {
+      _id: scenarioId,
+      startLocationId: "bedroom",
+      locations: [{ id: "bedroom" }],
+      objectives: [{ id: "leave_room" }],
+      characters: [{ id: "guide" }],
+      isActive: false,
+    };
+    test.mock.method(Scenario, "findById", async () => scenario);
+    test.mock.method(GameSession, "find", () => ({ select: async () => [] }));
+    let created;
+    test.mock.method(GameSession, "create", async (draft) => {
+      created = draft;
+      return { _id: "test-run", ...draft };
+    });
+
+    const game = await createPlaytest(scenarioId, userId);
+
+    assert.equal(game._id, "test-run");
+    assert.equal(created.isPlaytest, true);
+    assert.equal(created.currentLocationId, "bedroom");
+    assert.deepEqual(created.discoveredLocationIds, ["bedroom"]);
+    assert.equal(created.objectives[0].status, "active");
+    assert.equal(created.relationships.guide, 50);
   });
 });
 

@@ -60,6 +60,11 @@ const gameSessionSchema = new mongoose.Schema(
       required: true,
     },
 
+    isPlaytest: {
+      type: Boolean,
+      default: false,
+    },
+
     status: {
       type: String,
       enum: GAME_STATUSES,

@@ -1,6 +1,8 @@
 const GameSession = require("../models/GameSession");
+const Message = require("../models/Message");
 const Scenario = require("../models/Scenario");
 const { AdminScenarioError } = require("./adminScenarioError");
+const objectiveService = require("./objectiveService");
 const scenarioAiService = require("./scenarioAiService");
 const {
   validateScenarioDraft,
@@ -119,6 +121,44 @@ const generateScenario = async (inputs) => {
   return createScenario(generated);
 };
 
+const createPlaytest = async (scenarioId, userId) => {
+  const scenario = await getScenario(scenarioId);
+  const { valid, errors } = validateScenarioForPublish(scenario);
+  if (!valid) {
+    throw new AdminScenarioError(
+      "Complete the scenario before testing it",
+      "SCENARIO_INCOMPLETE",
+      400,
+      errors,
+    );
+  }
+
+  const oldRuns = await GameSession.find({
+    scenarioId,
+    userId,
+    isPlaytest: true,
+  }).select("_id");
+  const oldRunIds = oldRuns.map(({ _id }) => _id);
+  if (oldRunIds.length) {
+    await Promise.all([
+      Message.deleteMany({ gameSessionId: { $in: oldRunIds } }),
+      GameSession.deleteMany({ _id: { $in: oldRunIds } }),
+    ]);
+  }
+
+  return GameSession.create({
+    userId,
+    scenarioId: scenario._id,
+    isPlaytest: true,
+    currentLocationId: scenario.startLocationId,
+    discoveredLocationIds: [scenario.startLocationId],
+    objectives: objectiveService.buildObjectiveProgress(scenario.objectives),
+    relationships: Object.fromEntries(
+      scenario.characters.map(({ id }) => [id, 50]),
+    ),
+  });
+};
+
 const reviseScenario = async (scenarioId, instruction) => {
   if (typeof instruction !== "string" || instruction.trim().length < 5) {
     throw new AdminScenarioError("Describe what you want the AI to change", "VALIDATION_ERROR", 400);
@@ -128,12 +168,23 @@ const reviseScenario = async (scenarioId, instruction) => {
   if (scenario.isActive) {
     throw new AdminScenarioError("Unpublish the scenario before editing it", "SCENARIO_PUBLISHED", 400);
   }
-  const savedGames = await GameSession.countDocuments({ scenarioId });
+  const savedGames = await GameSession.countDocuments({
+    scenarioId,
+    isPlaytest: { $ne: true },
+  });
   if (savedGames > 0) {
     throw new AdminScenarioError("This scenario already has saved games and cannot be rewritten", "SCENARIO_IN_USE", 400);
   }
 
   const revised = await scenarioAiService.reviseScenario(scenario, instruction.trim());
+  const oldPlaytests = await GameSession.find({ scenarioId, isPlaytest: true }).select("_id");
+  const playtestIds = oldPlaytests.map(({ _id }) => _id);
+  if (playtestIds.length) {
+    await Promise.all([
+      Message.deleteMany({ gameSessionId: { $in: playtestIds } }),
+      GameSession.deleteMany({ _id: { $in: playtestIds } }),
+    ]);
+  }
   const clean = pickCreatableFields(revised);
   for (const field of CREATABLE_FIELDS) {
     if (clean[field] !== undefined) scenario[field] = clean[field];
@@ -231,6 +282,7 @@ module.exports = {
   listScenarios,
   getScenario,
   generateScenario,
+  createPlaytest,
   reviseScenario,
   publishScenario,
   unpublishScenario,

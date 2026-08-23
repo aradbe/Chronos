@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
+import { useNavigate } from "react-router-dom";
 import {
+  createScenarioPlaytest,
   deleteScenario,
   listAdminScenarios,
   publishScenario,
@@ -13,6 +15,7 @@ import "./AdminScenariosPage.css";
 
 export const AdminScenariosPage = observer(function AdminScenariosPage() {
   const { authStore } = useStores();
+  const navigate = useNavigate();
 
   // This list lives in the page, not in scenarioStore, on purpose. The MobX
   // store holds state that several pages share; this list is used nowhere else,
@@ -109,6 +112,22 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
       // shown rather than a generic failure.
       setError(toggleError);
     } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handlePlaytest = async (scenario) => {
+    setConfirmingId(null);
+    setBusyId(scenario._id);
+    setError(null);
+    try {
+      const { game } = await createScenarioPlaytest(
+        scenario._id,
+        authStore.token,
+      );
+      navigate(`/games/${game._id}`);
+    } catch (playtestError) {
+      setError(playtestError);
       setBusyId(null);
     }
   };
@@ -219,6 +238,15 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
                     {scenario.description}
                   </td>
                   <td className="admin-scenarios-table__actions">
+                    <button
+                      type="button"
+                      className="admin-button admin-button--playtest"
+                      onClick={() => handlePlaytest(scenario)}
+                      disabled={busyId === scenario._id}
+                    >
+                      {busyId === scenario._id ? "Opening..." : "Test level"}
+                    </button>
+
                     <button
                       type="button"
                       className="admin-button"
