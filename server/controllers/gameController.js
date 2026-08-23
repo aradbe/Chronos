@@ -169,13 +169,13 @@ const performGameAction = async (req, res, next) => {
     }
 
     await game.populate("scenarioId");
-    await gameActionService.performAction(game, {
+    const actionResult = await gameActionService.performAction(game, {
       ...action,
       type: action.type.trim().toUpperCase(),
     });
     await game.save();
 
-    return res.status(200).json({ game });
+    return res.status(200).json({ actionResult, game });
   } catch (error) {
     if (error instanceof gameActionService.GameActionError) {
       if (error.gameChanged) {

@@ -4,14 +4,17 @@ import { useParams } from "react-router-dom";
 import { CharacterDialogue } from "../../components/game/CharacterDialogue";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { EventNotifications } from "../../components/game/EventNotifications";
+import { DisasterAtmosphere } from "../../components/game/DisasterAtmosphere";
 import { GameHud } from "../../components/game/GameHud";
 import { GameOverScreen } from "../../components/game/GameOverScreen";
 import { InventoryPanel } from "../../components/game/InventoryPanel";
 import { LocationItems } from "../../components/game/LocationItems";
+import { LocationEncounters } from "../../components/game/LocationEncounters";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
 import { VictoryScreen } from "../../components/game/VictoryScreen";
 import { useStores } from "../../stores/useStores";
+import { getDisasterStage } from "../../utils/disasterStage";
 import {
   getFailedItemId,
   isItemActionError,
@@ -83,6 +86,15 @@ export const GamePage = observer(function GamePage() {
     gameStore.interact(gameId, characterId, message).catch(() => {});
   };
 
+  const handleEncounterChoice = (encounterId, choiceId) => {
+    gameStore
+      .runAction(gameId, {
+        type: "RESOLVE_ENCOUNTER",
+        payload: { choiceId, encounterId },
+      })
+      .catch(() => {});
+  };
+
   // An item error is drawn next to the item it is about, and only in the panel
   // that fired the action — otherwise a failed USE_ITEM would also print under
   // "Items here". Everything else keeps showing in the scene panel.
@@ -95,9 +107,14 @@ export const GamePage = observer(function GamePage() {
   const useError = failedActionType === "USE_ITEM" ? itemError : null;
   // A refused move belongs by the map, next to the road that was refused.
   const moveError = failedActionType === "MOVE" ? gameStore.error : null;
+  const disasterStage = getDisasterStage(
+    game.currentTime,
+    scenario.timeLimitMinutes,
+  );
 
   return (
-    <main className="game-page">
+    <main className={`game-page game-page--${disasterStage.id}`}>
+      <DisasterAtmosphere stage={disasterStage} />
       <header className="game-page__header">
         <div>
           <span className="game-page__eyebrow">Current scenario</span>
@@ -144,6 +161,14 @@ export const GamePage = observer(function GamePage() {
 
           <section className="game-panel game-page__scene" aria-label="Game scene">
             <CurrentLocation location={currentLocation} />
+            <LocationEncounters
+              actionResult={gameStore.actionResult}
+              disabled={gameStore.actionPending}
+              encounters={currentLocation?.encounters || []}
+              objectives={game.objectives}
+              onChoose={handleEncounterChoice}
+              resolvedEncounterIds={game.resolvedEncounterIds || []}
+            />
             <CharacterDialogue
               characters={scenario.characters}
               currentLocationId={game.currentLocationId}

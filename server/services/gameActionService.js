@@ -10,7 +10,11 @@ const {
   applyWinCondition,
 } = require("./gameOutcomeService");
 const { pickUpItem, useItem } = require("./itemActionService");
-const { applyActionToObjectives } = require("./objectiveService");
+const { resolveEncounter } = require("./encounterService");
+const {
+  advanceSatisfiedObjectives,
+  applyActionToObjectives,
+} = require("./objectiveService");
 const { updateScore } = require("./scoreService");
 
 const isRouteBlocked = (game, fromLocationId, toLocationId) => {
@@ -94,6 +98,7 @@ const move = (game, payload = {}) => {
 };
 
 const performAction = async (game, action) => {
+  let actionResult = null;
   if (action.type === "MOVE") {
     const gateResult = checkLocationGate(game, action.payload?.locationId);
 
@@ -145,6 +150,9 @@ const performAction = async (game, action) => {
         );
       }
       break;
+    case "RESOLVE_ENCOUNTER":
+      actionResult = resolveEncounter(game, action.payload);
+      break;
     default:
       throw new GameActionError(
         `Unsupported action: ${action.type}`,
@@ -153,8 +161,14 @@ const performAction = async (game, action) => {
   }
 
   applyActionToObjectives(game, action);
+  if (action.type === "RESOLVE_ENCOUNTER") {
+    advanceSatisfiedObjectives(game);
+  }
 
-  const timeCost = getActionTimeCost(action);
+  const timeCost =
+    action.type === "RESOLVE_ENCOUNTER"
+      ? actionResult.timeCostMinutes
+      : getActionTimeCost(action);
   if (timeCost) {
     advanceGameTime(game, timeCost);
   }
@@ -166,6 +180,8 @@ const performAction = async (game, action) => {
   }
 
   updateScore(game);
+
+  return actionResult;
 };
 
 module.exports = {

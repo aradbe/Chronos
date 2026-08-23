@@ -3,6 +3,7 @@ const { OBJECTIVE_STATUSES } = require("../constants/objectiveStatuses");
 const OBJECTIVE_POINTS = 100;
 const LOCATION_POINTS = 10;
 const HEALTH_POINTS = 2;
+const ENCOUNTER_POINTS = 15;
 
 const calculateScore = (game) => {
   const completedObjectives = game.objectives.filter(
@@ -12,10 +13,12 @@ const calculateScore = (game) => {
     0,
     (game.discoveredLocationIds?.length || 0) - 1,
   );
+  const resolvedEncounters = game.resolvedEncounterIds?.length || 0;
 
   let score =
     completedObjectives * OBJECTIVE_POINTS +
-    exploredLocations * LOCATION_POINTS;
+    exploredLocations * LOCATION_POINTS +
+    resolvedEncounters * ENCOUNTER_POINTS;
 
   if (game.status === "completed") {
     score += game.health * HEALTH_POINTS;
@@ -39,6 +42,7 @@ const updateScore = (game) => {
 
 module.exports = {
   HEALTH_POINTS,
+  ENCOUNTER_POINTS,
   LOCATION_POINTS,
   OBJECTIVE_POINTS,
   calculateScore,

@@ -133,6 +133,15 @@ const gameSessionSchema = new mongoose.Schema(
       default: [],
     },
 
+    resolvedEncounterIds: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: hasUniqueValues,
+        message: "Resolved encounters cannot contain duplicates",
+      },
+    },
+
     score: {
       type: Number,
       default: 0,

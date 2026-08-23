@@ -1,4 +1,6 @@
 .game-page {
+  position: relative;
+  z-index: 1;
   min-height: calc(100vh - 72px);
   padding: clamp(20px, 3vw, 40px);
   color: #e8edf3;
@@ -41,6 +43,12 @@
   font-family: Georgia, "Times New Roman", serif;
   letter-spacing: 0.06em;
 }
+
+.game-page > *:not(.disaster-atmosphere) { position: relative; z-index: 1; }
+.game-page .game-panel, .game-page__header { transition: border-color 700ms ease, box-shadow 700ms ease, background 700ms ease; }
+.game-page--ashfall .game-panel, .game-page--ashfall .game-page__header { border-color: rgba(190, 151, 103, 0.46); }
+.game-page--storm .game-panel, .game-page--storm .game-page__header { border-color: rgba(203, 111, 67, 0.5); box-shadow: 0 16px 42px rgba(92, 35, 20, 0.22); }
+.game-page--critical .game-panel, .game-page--critical .game-page__header { border-color: rgba(207, 77, 66, 0.58); box-shadow: 0 16px 48px rgba(90, 12, 18, 0.3); }
 
 .game-page__goal {
   margin: var(--space-1) 0 0 !important;

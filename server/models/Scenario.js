@@ -8,6 +8,33 @@ const mapPositionSchema = new mongoose.Schema(
   { _id: false },
 );
 
+const encounterChoiceSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true },
+    label: { type: String, required: true },
+    resultText: { type: String, required: true },
+    timeCostMinutes: { type: Number, default: 0, min: 0 },
+    healthChange: { type: Number, default: 0 },
+    itemId: { type: String, default: "" },
+    clueId: { type: String, default: "" },
+    trustCharacterId: { type: String, default: "" },
+    trustChange: { type: Number, default: 0 },
+  },
+  { _id: false },
+);
+
+const locationEncounterSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true },
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    symbol: { type: String, default: "?" },
+    requiresObjectives: { type: [String], default: [] },
+    choices: { type: [encounterChoiceSchema], default: [] },
+  },
+  { _id: false },
+);
+
 const locationSchema = new mongoose.Schema(
   {
     id: {
@@ -35,6 +62,10 @@ const locationSchema = new mongoose.Schema(
       type: mapPositionSchema,
       default: null,
     },
+
+    symbol: { type: String, default: "◈" },
+    visualCue: { type: String, default: "" },
+    encounters: { type: [locationEncounterSchema], default: [] },
 
     // A Cloudinary URL, or empty. Empty means the screen falls back to the
     // written description, which is how every scenario looked before pictures.

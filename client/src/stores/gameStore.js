@@ -24,6 +24,7 @@ export class GameStore {
   deletingGameId = null;
   interactionError = null;
   interactionResult = null;
+  actionResult = null;
   // The action that produced `error`. The screen needs it to decide where the
   // message belongs: a failed USE_ITEM shows on the item card, a failed MOVE
   // shows by the map. The error code alone is not enough, because
@@ -85,6 +86,7 @@ export class GameStore {
     this.failedAction = null;
     this.interactionError = null;
     this.interactionResult = null;
+    this.actionResult = null;
     this.conversationError = null;
 
     try {
@@ -115,7 +117,7 @@ export class GameStore {
     this.failedAction = null;
 
     try {
-      const { game } = await performGameAction(
+      const { actionResult, game } = await performGameAction(
         gameId,
         action,
         this.rootStore.authStore.token,
@@ -126,6 +128,7 @@ export class GameStore {
         this.actionPending = false;
         this.interactionError = null;
         this.interactionResult = null;
+        this.actionResult = actionResult;
       });
 
       return game;

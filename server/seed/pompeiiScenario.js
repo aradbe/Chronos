@@ -36,6 +36,33 @@ const pompeiiScenario = {
         "a thin grey haze settles over the paving stones.",
       connectedLocationIds: ["market", "baths", "temple"],
       mapPosition: { x: 50, y: 9 },
+      symbol: "⌂",
+      visualCue: "Ash drifts between marble columns while abandoned awnings snap overhead.",
+      encounters: [
+        {
+          id: "forum_fallen_archive",
+          title: "Records beneath the rubble",
+          description: "A clerk is trying to pull wax tablets from beneath a fallen shelf as the crowd surges past.",
+          symbol: "▤",
+          choices: [
+            {
+              id: "help_clerk",
+              label: "Help recover the tablets",
+              resultText: "Together you save the temple records. One tablet describes the same bitter wells and tremors decades earlier.",
+              timeCostMinutes: 6,
+              clueId: "forum_old_eruption_record",
+              trustCharacterId: "livia",
+              trustChange: 3,
+            },
+            {
+              id: "keep_moving",
+              label: "Push through the crowd",
+              resultText: "You leave the records to the ash and keep your place in the fleeing crowd.",
+              timeCostMinutes: 1,
+            },
+          ],
+        },
+      ],
     },
     {
       id: "market",
@@ -45,6 +72,36 @@ const pompeiiScenario = {
         "faster than anyone can sell their goods.",
       connectedLocationIds: ["forum", "bakery", "harbor_road"],
       mapPosition: { x: 24, y: 34 },
+      symbol: "⚖",
+      visualCue: "Spilled fruit rolls through grey footprints as merchants abandon their scales.",
+      encounters: [
+        {
+          id: "market_trapped_mule",
+          title: "A mule trapped in its harness",
+          description: "An overturned spice cart pins a terrified mule while its owner struggles with the leather straps.",
+          symbol: "!",
+          choices: [
+            {
+              id: "cut_harness",
+              label: "Cut the harness free",
+              resultText: "The mule bolts clear. Its grateful owner presses a vinegar-soaked breathing cloth into your hands.",
+              timeCostMinutes: 6,
+              healthChange: -4,
+              itemId: "breathing_cloth",
+              trustCharacterId: "marcus",
+              trustChange: 4,
+            },
+            {
+              id: "search_spices",
+              label: "Search the fallen cart",
+              resultText: "You find nothing useful. The owner sees exactly what you chose to do.",
+              timeCostMinutes: 3,
+              trustCharacterId: "marcus",
+              trustChange: -5,
+            },
+          ],
+        },
+      ],
     },
     {
       id: "bakery",
@@ -54,6 +111,8 @@ const pompeiiScenario = {
         "working, as if the routine itself will keep the mountain quiet.",
       connectedLocationIds: ["market"],
       mapPosition: { x: 12, y: 62 },
+      symbol: "♨",
+      visualCue: "The ovens glow against the darkening room and flour hangs in the air like pale smoke.",
     },
     {
       id: "baths",
@@ -63,6 +122,32 @@ const pompeiiScenario = {
         "believe the day is anything but ordinary.",
       connectedLocationIds: ["forum"],
       mapPosition: { x: 82, y: 34 },
+      symbol: "≈",
+      visualCue: "Ripples cross the pools with every tremor; tiles click loose beneath the steam.",
+      encounters: [
+        {
+          id: "baths_cracking_cistern",
+          title: "The cistern is splitting",
+          description: "Clean water pours through a fresh crack. Soon the ash will turn it to mud.",
+          symbol: "◒",
+          choices: [
+            {
+              id: "fill_flask",
+              label: "Fill a spare flask",
+              resultText: "You catch clean water before the cistern clouds over.",
+              timeCostMinutes: 3,
+              itemId: "water_flask",
+            },
+            {
+              id: "wash_ash",
+              label: "Wash the ash from your lungs",
+              resultText: "The steam and clean water steady your breathing, but precious minutes slip away.",
+              timeCostMinutes: 6,
+              healthChange: 10,
+            },
+          ],
+        },
+      ],
     },
     {
       id: "temple",
@@ -72,6 +157,8 @@ const pompeiiScenario = {
         "the doorway more often than she watches her own altar.",
       connectedLocationIds: ["forum", "villa"],
       mapPosition: { x: 54, y: 39 },
+      symbol: "✦",
+      visualCue: "Oil flames bend in the tremors while black ash gathers across the white altar cloth.",
     },
     {
       id: "villa",
@@ -81,6 +168,8 @@ const pompeiiScenario = {
         "figures on the walls stare past the abandoned furniture.",
       connectedLocationIds: ["temple"],
       mapPosition: { x: 70, y: 66 },
+      symbol: "◇",
+      visualCue: "Painted figures watch from cracked walls; drawers stand open where servants fled.",
     },
     {
       id: "harbor_road",
@@ -90,6 +179,31 @@ const pompeiiScenario = {
         "in the wheel ruts.",
       connectedLocationIds: ["market", "harbor"],
       mapPosition: { x: 31, y: 69 },
+      symbol: "↟",
+      visualCue: "Carts jam the road shoulder to shoulder beneath a sky turning copper and black.",
+      encounters: [
+        {
+          id: "road_overturned_cart",
+          title: "The road is choking shut",
+          description: "A collapsed cart blocks the narrowest part of the road. The crowd is beginning to panic.",
+          symbol: "↯",
+          choices: [
+            {
+              id: "climb_wreckage",
+              label: "Climb across the wreckage",
+              resultText: "You cross quickly, but broken timber tears your arm.",
+              timeCostMinutes: 2,
+              healthChange: -12,
+            },
+            {
+              id: "clear_passage",
+              label: "Help clear a passage",
+              resultText: "Several families make it through behind you. The work costs time, but not blood.",
+              timeCostMinutes: 7,
+            },
+          ],
+        },
+      ],
     },
     {
       id: "harbor",
@@ -99,6 +213,32 @@ const pompeiiScenario = {
         "way out of Pompeii.",
       connectedLocationIds: ["harbor_road"],
       mapPosition: { x: 38, y: 94 },
+      symbol: "⚓",
+      visualCue: "Ropes strain, hulls knock together, and the sea reflects a mountain-sized shadow.",
+      encounters: [
+        {
+          id: "harbor_loose_mooring",
+          title: "A mooring line is failing",
+          description: "One of Lucius's stern lines is fraying against the stone quay.",
+          symbol: "⌁",
+          choices: [
+            {
+              id: "secure_line",
+              label: "Secure the ship",
+              resultText: "You replace the failing line before it snaps. Lucius notices the work without being asked.",
+              timeCostMinutes: 5,
+              trustCharacterId: "lucius",
+              trustChange: 6,
+            },
+            {
+              id: "leave_line",
+              label: "Leave it to the crew",
+              resultText: "A sailor reaches the rope moments later. You keep your hands and your time to yourself.",
+              timeCostMinutes: 1,
+            },
+          ],
+        },
+      ],
     },
   ],
 
@@ -194,6 +334,14 @@ const pompeiiScenario = {
       type: "tool",
       locationId: "baths",
       requiresObjectives: ["learn_lucius_requirements"],
+    },
+    {
+      id: "breathing_cloth",
+      name: "Vinegar Breathing Cloth",
+      description: "A sharp-smelling cloth wrapped across the mouth to filter the worst ash.",
+      type: "consumable",
+      locationId: "",
+      effect: { type: "restore_health", amount: 12 },
     },
     {
       id: "silver_denarius",
