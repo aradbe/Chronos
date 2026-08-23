@@ -1,0 +1,171 @@
+.admin-scenarios-page {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+}
+
+.admin-scenarios-page__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-scenarios-page__eyebrow {
+  margin: 0 0 var(--space-1);
+  color: var(--color-bronze);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.admin-scenarios-page h1 {
+  margin: 0;
+}
+
+.admin-scenarios-page__lead {
+  margin: var(--space-2) 0 0;
+  color: var(--color-muted);
+}
+
+.admin-scenarios-page__notice {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-scenarios-page__notice h2 {
+  margin: 0 0 var(--space-2);
+  font-size: 1.05rem;
+}
+
+.admin-scenarios-page__notice p {
+  margin: 0;
+  color: var(--color-muted);
+}
+
+/* The table is the one thing here that can outgrow a narrow screen, so it
+   scrolls inside its own box instead of stretching the page sideways. */
+.admin-scenarios-table__wrap {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.admin-scenarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-scenarios-table__caption {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.admin-scenarios-table th,
+.admin-scenarios-table td {
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.admin-scenarios-table thead th {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.admin-scenarios-table tbody th {
+  color: var(--color-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-scenarios-table__description {
+  min-width: 260px;
+  color: var(--color-muted);
+}
+
+.admin-scenarios-table__actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-tag {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-sm);
+  font-size: 0.78rem;
+  text-transform: capitalize;
+}
+
+.admin-tag--easy {
+  color: var(--color-success);
+  border-color: var(--color-primary-dark);
+}
+
+.admin-tag--medium {
+  color: var(--color-bronze);
+}
+
+.admin-tag--hard {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.admin-button {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.admin-button:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.admin-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-scenarios-page__footnote {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: 0.82rem;
+}
+
+/* Present for screen readers, invisible on screen. Used for the actions column
+   header, which needs a name but no visible label. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
