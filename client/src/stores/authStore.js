@@ -1,5 +1,10 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { getCurrentUser, loginUser, registerUser } from "../api/authApi";
+import {
+  getCurrentUser,
+  loginUser,
+  registerUser,
+  updateAvatar,
+} from "../api/authApi";
 
 const TOKEN_STORAGE_KEY = "chronos_token";
 const USER_STORAGE_KEY = "chronos_user";
@@ -132,6 +137,26 @@ export class AuthStore {
         this.loading = false;
       });
 
+      throw error;
+    }
+  }
+
+  async saveAvatar(avatar) {
+    this.loading = true;
+    this.error = null;
+    try {
+      const user = await updateAvatar(avatar, this.token);
+      runInAction(() => {
+        this.user = user;
+        this.loading = false;
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+      });
+      return user;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error;
+        this.loading = false;
+      });
       throw error;
     }
   }

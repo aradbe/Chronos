@@ -17,3 +17,10 @@ export const loginUser = ({ email, password }) => {
 export const getCurrentUser = (token) => {
   return httpClient("/users/me", { token });
 };
+
+export const updateAvatar = (avatar, token) =>
+  httpClient("/users/me/avatar", {
+    method: "PATCH",
+    body: avatar,
+    token,
+  });

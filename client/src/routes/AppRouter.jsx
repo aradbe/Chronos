@@ -9,6 +9,7 @@ import { LandingPage } from "../pages/LandingPage";
 import { ScenarioListPage } from "../pages/scenarios/ScenarioListPage";
 import { ScenarioDetailPage } from "../pages/scenarios/ScenarioDetailPage";
 import { JourneyBriefingPage } from "../pages/scenarios/JourneyBriefingPage";
+import { CharacterCreatorPage } from "../pages/character/CharacterCreatorPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export function AppRouter() {
@@ -23,6 +24,14 @@ export function AppRouter() {
         <Route
           path="/scenarios/:scenarioId/briefing"
           element={<JourneyBriefingPage />}
+        />
+        <Route
+          path="/character"
+          element={
+            <ProtectedRoute>
+              <CharacterCreatorPage />
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/my-games"

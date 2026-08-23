@@ -105,6 +105,15 @@
   white-space: nowrap;
 }
 
+.app-shell__traveler {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.app-shell__traveler:hover .app-shell__user { color: var(--color-primary); }
+
 @media (max-width: 620px) {
   .app-shell__header {
     align-items: flex-start;
@@ -122,10 +131,12 @@
 
   .app-shell__link,
   .app-shell__logout,
-  .app-shell__user {
+  .app-shell__traveler {
     width: 100%;
     max-width: none;
     justify-content: center;
     text-align: center;
   }
+
+  .app-shell__traveler { grid-column: 1 / -1; }
 }

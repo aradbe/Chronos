@@ -1,0 +1,12 @@
+.pixel-avatar {
+  display: block;
+  border: 1px solid rgba(121, 203, 178, 0.32);
+  border-radius: var(--radius-sm);
+  image-rendering: pixelated;
+  shape-rendering: crispEdges;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
+}
+
+.pixel-avatar--large { width: min(270px, 100%); }
+.pixel-avatar--medium { width: 96px; }
+.pixel-avatar--small { width: 38px; border-radius: 4px; box-shadow: none; }

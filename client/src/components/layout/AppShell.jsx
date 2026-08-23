@@ -1,6 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
+import { PixelAvatar } from "../avatar/PixelAvatar";
 import "./AppShell.css";
 
 export const AppShell = observer(function AppShell() {
@@ -43,7 +44,12 @@ export const AppShell = observer(function AppShell() {
                   Admin
                 </NavLink>
               ) : null}
-              <span className="app-shell__user">{authStore.user?.name}</span>
+              <NavLink className="app-shell__traveler" to="/character">
+                <PixelAvatar avatar={authStore.user?.avatar} size="small" label="Edit character" />
+                <span className="app-shell__user">
+                  {authStore.user?.name}
+                </span>
+              </NavLink>
               <button
                 className="app-shell__logout"
                 onClick={handleLogout}

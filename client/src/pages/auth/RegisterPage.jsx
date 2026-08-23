@@ -35,7 +35,7 @@ export const RegisterPage = observer(function RegisterPage() {
       });
 
       setForm(initialForm);
-      navigate("/my-games", { replace: true });
+      navigate("/character", { replace: true });
     } catch {
       // authStore keeps the normalized error for the UI.
     }

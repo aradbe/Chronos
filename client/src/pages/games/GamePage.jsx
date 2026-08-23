@@ -12,6 +12,7 @@ import { LocationItems } from "../../components/game/LocationItems";
 import { LocationEncounters } from "../../components/game/LocationEncounters";
 import { LocationMap } from "../../components/game/LocationMap";
 import { MissionPanel } from "../../components/game/MissionPanel";
+import { PixelAvatar } from "../../components/avatar/PixelAvatar";
 import { VictoryScreen } from "../../components/game/VictoryScreen";
 import { useStores } from "../../stores/useStores";
 import { getDisasterStage } from "../../utils/disasterStage";
@@ -23,7 +24,7 @@ import "./GamePage.css";
 
 export const GamePage = observer(function GamePage() {
   const { gameId } = useParams();
-  const { gameStore } = useStores();
+  const { authStore, gameStore } = useStores();
 
   useEffect(() => {
     gameStore.loadGame(gameId).catch(() => {});
@@ -116,12 +117,21 @@ export const GamePage = observer(function GamePage() {
     <main className={`game-page game-page--${disasterStage.id}`}>
       <DisasterAtmosphere stage={disasterStage} />
       <header className="game-page__header">
-        <div>
-          <span className="game-page__eyebrow">Current scenario</span>
-          <h1>{scenario.title}</h1>
-          {scenario.mainGoal ? (
-            <p className="game-page__goal">{scenario.mainGoal}</p>
-          ) : null}
+        <div className="game-page__identity">
+          <PixelAvatar
+            avatar={authStore.user?.avatar}
+            size="medium"
+            label={authStore.user?.avatar?.name || authStore.user?.name || "Traveler"}
+          />
+          <div>
+            <span className="game-page__eyebrow">
+              {authStore.user?.avatar?.name || authStore.user?.name || "Traveler"} · Current scenario
+            </span>
+            <h1>{scenario.title}</h1>
+            {scenario.mainGoal ? (
+              <p className="game-page__goal">{scenario.mainGoal}</p>
+            ) : null}
+          </div>
         </div>
         <GameHud
           health={game.health}
