@@ -8,6 +8,7 @@ import { GamePage } from "../pages/games/GamePage";
 import { LandingPage } from "../pages/LandingPage";
 import { ScenarioListPage } from "../pages/scenarios/ScenarioListPage";
 import { ScenarioDetailPage } from "../pages/scenarios/ScenarioDetailPage";
+import { JourneyBriefingPage } from "../pages/scenarios/JourneyBriefingPage";
 import { ProtectedRoute } from "./ProtectedRoute";
 
 export function AppRouter() {
@@ -19,6 +20,10 @@ export function AppRouter() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/scenarios" element={<ScenarioListPage />} />
         <Route path="/scenarios/:scenarioId" element={<ScenarioDetailPage />} />
+        <Route
+          path="/scenarios/:scenarioId/briefing"
+          element={<JourneyBriefingPage />}
+        />
         <Route
           path="/my-games"
           element={

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ImageFrame } from "../../components/media/ImageFrame";
@@ -7,9 +7,8 @@ import "./ScenarioDetailPage.css";
 
 export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
   const { scenarioId } = useParams();
-  const { authStore, scenarioStore } = useStores();
+  const { scenarioStore } = useStores();
   const navigate = useNavigate();
-  const [startError, setStartError] = useState(null);
 
   useEffect(() => {
     scenarioStore.loadScenario(scenarioId).catch(() => {});
@@ -17,21 +16,7 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
 
   const scenario = scenarioStore.currentScenario;
 
-  const handleStart = async () => {
-    if (!authStore.isAuthenticated) {
-      navigate("/login");
-      return;
-    }
-
-    setStartError(null);
-
-    try {
-      const game = await scenarioStore.startGame(scenarioId);
-      navigate(`/games/${game._id}`);
-    } catch (error) {
-      setStartError(error.message || "The game could not be started.");
-    }
-  };
+  const handleStart = () => navigate(`/scenarios/${scenarioId}/briefing`);
 
   if (scenarioStore.loading && !scenario) {
     return (
@@ -81,23 +66,10 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
             className="scenario-detail-page__cta"
             type="button"
             onClick={handleStart}
-            disabled={scenarioStore.starting}
           >
-            {scenarioStore.starting ? "Starting..." : "Start game"}
+            Begin journey
           </button>
-
-          {!authStore.isAuthenticated ? (
-            <span className="scenario-detail-page__hint">
-              You will be asked to log in first.
-            </span>
-          ) : null}
         </div>
-
-        {startError ? (
-          <p className="scenario-detail-page__error" role="alert">
-            {startError}
-          </p>
-        ) : null}
       </header>
 
       <section className="scenario-detail-page__stats" aria-label="Scenario summary">

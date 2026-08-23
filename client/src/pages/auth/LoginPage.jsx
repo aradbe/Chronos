@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
 import "./AuthPage.css";
 
@@ -12,6 +12,7 @@ const initialForm = {
 export const LoginPage = observer(function LoginPage() {
   const { authStore } = useStores();
   const navigate = useNavigate();
+  const location = useLocation();
   const [form, setForm] = useState(initialForm);
 
   const updateField = (event) => {
@@ -33,7 +34,7 @@ export const LoginPage = observer(function LoginPage() {
       });
 
       setForm(initialForm);
-      navigate("/my-games", { replace: true });
+      navigate(location.state?.from || "/my-games", { replace: true });
     } catch {
       // authStore keeps the normalized error for the UI.
     }
