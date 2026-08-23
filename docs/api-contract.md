@@ -355,11 +355,49 @@ The server validates and applies trust changes, clues and objectives.
 
 # Admin
 
-All admin endpoints require role = admin.
+All admin endpoints require role = admin. Without a token they answer 401
+NOT_AUTHENTICATED; with a player's token, 403 NOT_AUTHORIZED.
+
+A scenario is either published (isActive true) or a draft (isActive false).
+Players only ever see published scenarios: GET /api/scenarios and POST
+/api/games both filter on isActive true. Everything below is how a draft is
+made, checked and let out.
+
+## GET /api/admin/scenarios
+
+Lists every scenario, published and draft, newest first.
+
+The player-facing GET /api/scenarios cannot be used for this, because it hides
+drafts — which are the ones an admin most needs to find.
+
+Response:
+
+[
+{
+"_id": "6a819c261272a19c22c7510a",
+"title": "Escape Pompeii",
+"year": 79,
+"description": "Mount Vesuvius has begun to stir above Pompeii...",
+"difficulty": "medium",
+"isActive": true
+}
+]
+
+The content arrays are not included, for the same reason the player list leaves
+them out.
+
+---
 
 ## POST /api/admin/scenarios
 
-Creates a scenario.
+Creates a scenario. Always saved as a draft — isActive is forced to false
+whatever the request contains, because publishing is a separate decision.
+
+Required: title, year, description, startLocationId.
+Optional: difficulty (defaults to medium), coverImageUrl, and the five content
+arrays (default to empty).
+
+Any other field in the body is ignored.
 
 Request:
 
@@ -376,11 +414,56 @@ Request:
 "events": []
 }
 
+Response: 201, the saved scenario.
+
+On a bad request, 400 VALIDATION_ERROR with a details list naming each field.
+The list is machine-readable so a caller can correct exactly those fields and
+try again:
+
+{
+"error": {
+"message": "The scenario has problems that must be fixed",
+"code": "VALIDATION_ERROR",
+"details": [
+{ "field": "year", "message": "Year must be a number" },
+{ "field": "title", "message": "Title is required" }
+]
+}
+}
+
+---
+
+## PATCH /api/admin/scenarios/:scenarioId/publish
+
+Makes a scenario visible to players.
+
+Refused unless the scenario is complete enough to play:
+
+- it has at least one location
+- startLocationId names one of those locations
+
+Otherwise 400 NOT_PUBLISHABLE, with the same details list as above. Creating is
+deliberately permissive and publishing is strict, so a draft can be saved half
+finished but never shown to a player in that state.
+
+Response: 200, the updated scenario.
+
+---
+
+## PATCH /api/admin/scenarios/:scenarioId/unpublish
+
+Hides a scenario from players again.
+
+Never refused. Taking something broken out of players' reach must not be
+blocked by the very thing that makes it broken.
+
+Response: 200, the updated scenario.
+
 ---
 
 ## PATCH /api/admin/scenarios/:scenarioId
 
-Updates a scenario.
+Updates a scenario's content. NOT IMPLEMENTED YET — assignment 10.
 
 Example:
 
@@ -393,13 +476,34 @@ Example:
 
 ## DELETE /api/admin/scenarios/:scenarioId
 
-Deletes a scenario.
+Deletes a scenario. Refused in two cases, checked in this order:
+
+- the scenario is published — 400 SCENARIO_PUBLISHED, unpublish it first
+- a saved game still uses it — 400 SCENARIO_IN_USE
+
+The second one protects players: a GameSession stores a scenarioId, and
+deleting the scenario it points at would break that saved game with nothing an
+admin could do to repair it.
 
 Response:
 
 {
 "message": "Scenario deleted successfully"
 }
+
+---
+
+## Admin error codes
+
+| Code | Status | Meaning |
+|---|---|---|
+| NOT_AUTHENTICATED | 401 | No token, or a token that does not verify |
+| NOT_AUTHORIZED | 403 | Signed in, but not an admin |
+| VALIDATION_ERROR | 400 | Bad id, or missing required fields (see details) |
+| NOT_PUBLISHABLE | 400 | Too incomplete to publish (see details) |
+| SCENARIO_NOT_FOUND | 404 | No scenario with that id |
+| SCENARIO_PUBLISHED | 400 | Cannot delete until unpublished |
+| SCENARIO_IN_USE | 400 | Cannot delete while saved games reference it |
 
 ---
 

@@ -149,6 +149,36 @@
   cursor: not-allowed;
 }
 
+/* Delete is the only action here that cannot be undone, so it is the only one
+   that carries a colour. Armed or not, it stays the same width-ish so the row
+   does not jump when the label changes to "Really delete?". */
+.admin-button--danger {
+  border-color: var(--color-bronze);
+  color: var(--color-bronze);
+}
+
+.admin-button--danger:hover:not(:disabled) {
+  border-color: var(--color-bronze);
+  color: var(--color-bronze);
+  text-decoration: underline;
+}
+
+/* Draft and Published read as states rather than as labels, so they are drawn
+   plainly — the difficulty tags next to them are already coloured, and two
+   coloured things in one row compete with each other. */
+.admin-status {
+  font-size: 0.82rem;
+}
+
+.admin-status--published {
+  color: var(--color-text);
+}
+
+.admin-status--draft {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
 .admin-scenarios-page__footnote {
   margin: 0;
   padding: var(--space-3) var(--space-4);
