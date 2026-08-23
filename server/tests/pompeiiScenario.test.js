@@ -202,7 +202,7 @@ describe("Pompeii scenario data", () => {
       pompeii.recommendedPath,
       pompeii.objectives.map(({ id }) => id),
     );
-    assert.equal(pompeii.timeLimitMinutes, 180);
+    assert.equal(pompeii.timeLimitMinutes, 210);
     assert.deepEqual(pompeii.finalCondition.requiredItems, [
       "ship_token",
       "oil_lamp",
@@ -213,6 +213,11 @@ describe("Pompeii scenario data", () => {
     assert.deepEqual(
       pompeii.items.find(({ id }) => id === "oil_lamp").requiresObjectives,
       ["learn_lucius_requirements"],
+    );
+    assert.deepEqual(
+      pompeii.objectives.find(({ id }) => id === "learn_lucius_requirements")
+        .requiredTopics,
+      ["help", "item", "escape"],
     );
     assert.equal(pompeii.objectives.at(-1).targetId, "lucius");
   });

@@ -73,6 +73,14 @@ const REPLIES = {
     '{name} gestures toward your pack. "Keep what helps you move, trade, or survive."',
     '{name} says, "Do not carry things because they comfort you. Carry what solves a problem."',
   ],
+  time: [
+    '{name} looks at the darkening sky. "Not enough. Decide what matters and keep moving."',
+    '{name} answers, "No one has a clock for this, but every tremor is closer than the last."',
+  ],
+  identity: [
+    '"I am {name}," the {role} says. "That is enough biography for a day like this."',
+    '{name} gestures at the chaos nearby. "I am a {role}. Today, that mostly means trying to stay useful."',
+  ],
   map: [
     '{name} traces an invisible route with one finger. "A map helps, but only if you keep watching the streets."',
     '{name} says, "Roads can change faster than ink. Use a map, but trust your eyes too."',
@@ -92,6 +100,9 @@ const REPLIES = {
 
 const CHARACTER_REPLIES = {
   marcus: {
+    time: [
+      'Marcus watches the ash thicken. "My family left before the first heavy fall. If you are still here when the roofs begin to strain, you waited too long."',
+    ],
     danger: [
       'Marcus watches ash settle on his stall. "My family already left south. That should tell you how seriously I take the mountain."',
       'Marcus lowers his voice. "The tremors are closer together. Ask about a route out, not whether the danger is real."',
@@ -106,6 +117,9 @@ const CHARACTER_REPLIES = {
     ],
   },
   livia: {
+    time: [
+      'Livia says, "The intervals between tremors are shrinking. You have hours, but spend them as if you have less."',
+    ],
     danger: [
       'Livia says, "Three tremors came before dawn. The mountain is no longer warning us—it is counting down."',
       'Livia studies the falling ash. "Think in hours, not days. Finish what you must and leave."',
@@ -123,6 +137,9 @@ const CHARACTER_REPLIES = {
     ],
   },
   quintus: {
+    time: [
+      'Quintus glances at a fresh crack above the oven. "Long enough to take bread. Not long enough to argue that everything is normal."',
+    ],
     danger: [
       'Quintus glances at the ovens. "The well turned bitter two days ago. I called it bad plumbing. I was wrong."',
       'Quintus says, "The bread still rises, but the floor will not stop shaking. Take food and do not wait for me."',
@@ -139,6 +156,10 @@ const CHARACTER_REPLIES = {
     ],
   },
   lucius: {
+    time: [
+      'Lucius checks the ash gathering on the harbor wall. "I cast off when it reaches that lower stone. Count on less than an hour, not more."',
+      'Lucius says, "Every trip back into the city gambles with the tide and the ash. Bring what I need and do not wander."',
+    ],
     danger: [
       'Lucius pulls a rope tight. "I can see the cloud from here. Ask what the ship needs, or get off my pier."',
     ],
@@ -233,6 +254,17 @@ const buildDialogueReply = ({
 
   if (signals.isFearful) {
     return replyFrom(REPLIES.fear, context);
+  }
+
+  if (signals.mentionsTime) {
+    return (
+      getCharacterReply({ character, context, topic: "time" }) ||
+      replyFrom(REPLIES.time, context)
+    );
+  }
+
+  if (signals.asksIdentity) {
+    return replyFrom(REPLIES.identity, context);
   }
 
   if (signals.mentionsEscape) {

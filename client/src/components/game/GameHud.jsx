@@ -8,7 +8,12 @@ const formatTime = (minutes) => {
   return `${String(hours).padStart(2, "0")}:${String(remainingMinutes).padStart(2, "0")}`;
 };
 
-export function GameHud({ health, currentTime, status }) {
+export function GameHud({ health, currentTime, events = [], status, timeLimit = 180 }) {
+  const timeLeft = Math.max(0, timeLimit - currentTime);
+  const nextEvent = [...events]
+    .sort((first, second) => first.triggerTime - second.triggerTime)
+    .find((event) => event.triggerTime > currentTime);
+
   return (
     <div className="game-hud">
       <div className="game-hud__item">
@@ -27,8 +32,11 @@ export function GameHud({ health, currentTime, status }) {
       </div>
 
       <div className="game-hud__item">
-        <span>Time</span>
-        <strong>{formatTime(currentTime)}</strong>
+        <span>Time left</span>
+        <strong>{formatTime(timeLeft)}</strong>
+        {nextEvent ? (
+          <small>Next danger in {nextEvent.triggerTime - currentTime} min</small>
+        ) : null}
       </div>
 
       <div className="game-hud__item">

@@ -1,7 +1,7 @@
 const ACTION_TIME_COSTS = Object.freeze({
-  MOVE: 10,
-  PICK_UP_ITEM: 5,
-  USE_ITEM: 5,
+  MOVE: 7,
+  PICK_UP_ITEM: 3,
+  USE_ITEM: 1,
 });
 
 const advanceGameTime = (game, minutes) => {

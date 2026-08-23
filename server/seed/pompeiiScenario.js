@@ -12,7 +12,7 @@ const pompeiiScenario = {
     "understand what is coming, earn the trust of the people who can help you, " +
     "and reach a ship before the city is buried.",
   mainGoal: "Escape Pompeii alive before the final surge.",
-  timeLimitMinutes: 180,
+  timeLimitMinutes: 210,
   recommendedPath: [
     "find_marcus",
     "get_city_map",
@@ -268,6 +268,7 @@ const pompeiiScenario = {
       description: "Ask Lucius what is still needed to get his ship away safely.",
       type: "talk_to_character",
       targetId: "lucius",
+      requiredTopics: ["help", "item", "escape"],
       nextStepText: "Lucius needs a lamp. Search the Baths, then return to him.",
       hintText: "Ask Lucius what the ship needs or why he has not sailed.",
     },
@@ -326,21 +327,21 @@ const pompeiiScenario = {
   events: [
     {
       id: "first_tremor",
-      triggerTime: 30,
+      triggerTime: 35,
       type: "warning",
       message:
         "The ground shudders. Cups rattle off a table somewhere behind you.",
     },
     {
       id: "ashfall_begins",
-      triggerTime: 60,
+      triggerTime: 70,
       type: "warning",
       message:
         "Fine grey ash begins to fall across Pompeii, settling on shoulders and roof tiles.",
     },
     {
       id: "pumice_storm",
-      triggerTime: 100,
+      triggerTime: 120,
       type: "damage",
       healthChange: -15,
       message:
@@ -348,7 +349,7 @@ const pompeiiScenario = {
     },
     {
       id: "roof_collapse",
-      triggerTime: 140,
+      triggerTime: 175,
       type: "damage",
       healthChange: -25,
       blockedRoutes: [
@@ -360,7 +361,7 @@ const pompeiiScenario = {
     },
     {
       id: "final_surge",
-      triggerTime: 180,
+      triggerTime: 210,
       type: "deadline",
       healthChange: -100,
       message:

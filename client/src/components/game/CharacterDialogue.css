@@ -104,6 +104,12 @@
   opacity: 0.55;
 }
 
+.character-dialogue__time-note {
+  color: #8291a2;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
 .character-dialogue__suggestions {
   display: grid;
   gap: var(--space-2);
@@ -218,6 +224,30 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+.character-dialogue__message-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.character-dialogue__speak {
+  border: 1px solid rgba(121, 203, 178, 0.3);
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #79cbb2;
+  background: rgba(121, 203, 178, 0.06);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.character-dialogue__speak:hover {
+  border-color: #79cbb2;
+  background: rgba(121, 203, 178, 0.12);
 }
 
 .character-dialogue__guide {

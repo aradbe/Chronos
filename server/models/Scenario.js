@@ -203,6 +203,11 @@ const objectiveSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    requiredTopics: {
+      type: [String],
+      default: [],
+    },
   },
   { _id: false },
 );

@@ -109,7 +109,9 @@ export const GamePage = observer(function GamePage() {
         <GameHud
           health={game.health}
           currentTime={game.currentTime}
+          events={scenario.events}
           status={game.status}
+          timeLimit={scenario.timeLimitMinutes}
         />
       </header>
 
@@ -127,7 +129,6 @@ export const GamePage = observer(function GamePage() {
               triggeredEventIds={game.triggeredEvents || []}
               discoveredLocationIds={game.discoveredLocationIds || []}
               inventory={game.inventory}
-              objectives={game.objectives}
               locationGates={scenario.locationGates || []}
               objectives={game.objectives}
               objectiveLocationId={objectiveLocationId}
@@ -164,6 +165,7 @@ export const GamePage = observer(function GamePage() {
               items={scenario.items}
               locationId={game.currentLocationId}
               inventory={game.inventory}
+              objectives={game.objectives}
               disabled={gameStore.actionPending}
               onPickUpItem={handlePickUpItem}
               error={pickUpError}

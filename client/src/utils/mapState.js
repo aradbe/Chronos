@@ -10,7 +10,7 @@ export const LOCATION_STATE_LABELS = {
   [LOCATION_STATES.CURRENT]: "You are here",
   [LOCATION_STATES.REACHABLE]: "Reachable",
   [LOCATION_STATES.BLOCKED]: "Road destroyed",
-  [LOCATION_STATES.GATED]: "Locked · costs time to attempt",
+  [LOCATION_STATES.GATED]: "Locked",
   [LOCATION_STATES.OUT_OF_REACH]: "Out of reach",
 };
 
@@ -78,6 +78,11 @@ export const describeLocations = ({
       location,
       state,
       label: LOCATION_STATE_LABELS[state],
+      blockedAttemptPenaltyMinutes:
+        state === LOCATION_STATES.GATED
+          ? locationGates.find(({ locationId }) => locationId === location.id)
+              ?.blockedAttemptPenaltyMinutes || 0
+          : 0,
       isDiscovered: discovered.has(location.id),
       canMove:
         state === LOCATION_STATES.REACHABLE || state === LOCATION_STATES.GATED,

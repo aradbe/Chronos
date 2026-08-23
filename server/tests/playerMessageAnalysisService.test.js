@@ -81,6 +81,21 @@ describe("player message analysis service", () => {
     assert.equal(analyzeTrustChange("shut up, you useless liar"), -3);
   });
 
+  it("does not mistake a timing question for a command", () => {
+    const result = analyzeTrust({
+      scenario,
+      text: "How much time do we have before you must leave?",
+    });
+    const signals = detectDialogueSignals({
+      scenario,
+      text: "How much time do we have before you must leave?",
+    });
+
+    assert.equal(result.change, 0);
+    assert.equal(signals.primaryTopic, "time");
+    assert.equal(signals.mentionsTime, true);
+  });
+
   it("lowers trust for repeated, demanding and meaningless messages", () => {
     assert.equal(
       analyzeTrust({

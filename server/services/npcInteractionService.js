@@ -60,7 +60,11 @@ const unlockNextObjective = (game, completedProgress) => {
 
 const completeActiveObjective = (game, type, targetId) => {
   const definition = game.scenarioId?.objectives?.find(
-    (objective) => objective.type === type && objective.targetId === targetId,
+    (objective) =>
+      objective.type === type &&
+      objective.targetId === targetId &&
+      getObjectiveProgress(game, objective.id)?.status ===
+        OBJECTIVE_STATUSES.ACTIVE,
   );
 
   if (!definition) {
@@ -103,9 +107,22 @@ const applyNpcInteraction = async ({
 
   const completedObjectives = [];
   const finalConversation = evaluateFinalConversation({ characterId, game });
+  const activeTalkDefinition = game.scenarioId?.objectives?.find(
+    (objective) =>
+      objective.type === "talk_to_character" &&
+      objective.targetId === characterId &&
+      getObjectiveProgress(game, objective.id)?.status ===
+        OBJECTIVE_STATUSES.ACTIVE,
+  );
+  const requiredTopics = activeTalkDefinition?.requiredTopics || [];
+  const matchesObjectiveTopic =
+    requiredTopics.length === 0 ||
+    requiredTopics.includes(analysis.dialogueSignals.primaryTopic);
   const qualifiesForTalkObjective =
     finalConversation.isFinalConversation ||
-    (analysis.messageQuality.isRelevant && analysis.trustChange >= 0);
+    (analysis.messageQuality.isRelevant &&
+      analysis.trustChange >= 0 &&
+      matchesObjectiveTopic);
   const talkObjective =
     qualifiesForTalkObjective &&
     (!finalConversation.isFinalConversation || finalConversation.ready)

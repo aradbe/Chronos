@@ -1,6 +1,7 @@
 import { ItemCard } from "./ItemCard";
 import { getItemErrorMessage } from "../../utils/itemErrors";
 import "./LocationItems.css";
+import { GAME_COSTS } from "../../constants/gameCosts";
 
 export function LocationItems({
   items,
@@ -50,7 +51,7 @@ export function LocationItems({
           <ItemCard
             key={item.id}
             item={item}
-            actionLabel="Pick up"
+            actionLabel={`Pick up · ${GAME_COSTS.pickUp} min`}
             onAction={onPickUpItem}
             disabled={disabled}
             errorMessage={

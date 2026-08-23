@@ -62,7 +62,10 @@ const DEMANDING_PATTERNS = [
   "give me",
   "now tell me",
   "tell me now",
-  "you must",
+  "you must answer",
+  "you must give",
+  "you must help",
+  "you must tell",
 ];
 
 const GREETING_PATTERNS = ["good day", "hello", "hey", "hi", "salve"];
@@ -111,6 +114,23 @@ const HELP_PATTERNS = [
   "what do you need",
   "what does the ship need",
   "what should i do",
+];
+
+const TIME_PATTERNS = [
+  "how long",
+  "how much time",
+  "when are you leaving",
+  "when will",
+  "deadline",
+  "too late",
+];
+
+const IDENTITY_PATTERNS = [
+  "who are you",
+  "what do you do",
+  "tell me about yourself",
+  "your name",
+  "your job",
 ];
 
 const DANGER_PATTERNS = [
@@ -251,9 +271,15 @@ const detectDialogueSignals = ({ scenario, text }) => {
     mentionsItem:
       Boolean(mentionedItem) || containsPattern(normalizedText, TOPIC_ALIASES.item),
     mentionsMap: containsPattern(normalizedText, TOPIC_ALIASES.map),
+    mentionsTime: containsPattern(normalizedText, TIME_PATTERNS),
+    asksIdentity: containsPattern(normalizedText, IDENTITY_PATTERNS),
   };
 
-  if (signals.mentionsEscape) {
+  if (signals.mentionsTime) {
+    signals.primaryTopic = "time";
+  } else if (signals.asksIdentity) {
+    signals.primaryTopic = "identity";
+  } else if (signals.mentionsEscape) {
     signals.primaryTopic = "escape";
   } else if (signals.mentionsDanger) {
     signals.primaryTopic = "danger";
@@ -290,11 +316,13 @@ const analyzeMessageQuality = ({ messages = [], signals, text }) => {
     ((letters.length >= 5 && vowelCount === 0) ||
       words.some((word) => /(.)\1{4,}/.test(word)));
   const isRelevant = Boolean(
-    signals.asksForHelp ||
+      signals.asksForHelp ||
+      signals.asksIdentity ||
       signals.mentionsDanger ||
       signals.mentionsEscape ||
       signals.mentionsItem ||
       signals.mentionsMap ||
+      signals.mentionsTime ||
       signals.mentionedCharacter ||
       signals.mentionedLocation,
   );

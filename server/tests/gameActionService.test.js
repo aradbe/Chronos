@@ -62,7 +62,7 @@ describe("MOVE action", () => {
   });
 
   it("triggers eruption events that are due", async () => {
-    const game = createGame({ currentTime: 50 });
+    const game = createGame({ currentTime: 55 });
     game.scenarioId.events = [
       { id: "first-tremor", triggerTime: 30 },
       { id: "ashfall", triggerTime: 60 },
@@ -86,7 +86,7 @@ describe("MOVE action", () => {
       payload: { locationId: "market" },
     });
 
-    assert.equal(game.currentTime, 35);
+    assert.equal(game.currentTime, 32);
     assert.deepEqual(game.triggeredEvents, ["first-tremor"]);
   });
 

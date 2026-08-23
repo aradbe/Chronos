@@ -1,6 +1,7 @@
 import { ItemCard } from "./ItemCard";
 import { getItemErrorMessage } from "../../utils/itemErrors";
 import "./InventoryPanel.css";
+import { GAME_COSTS } from "../../constants/gameCosts";
 
 // An inventory entry only stores an itemId and a quantity. Everything the card
 // shows — name, description, type — lives on the scenario item with that id.
@@ -51,16 +52,24 @@ export function InventoryPanel({
           {inventory.map((entry) => {
             const item = describeEntry(entry, items);
             const isConsumable = item.type === "consumable";
+            const healthRestored =
+              item.effect?.type === "restore_health" ? item.effect.amount : 0;
 
             return (
               <ItemCard
                 key={entry.itemId}
                 item={item}
                 quantity={entry.quantity}
-                actionLabel={isConsumable ? "Use" : ""}
+                actionLabel={
+                  isConsumable ? `Use · ${GAME_COSTS.useItem} min` : ""
+                }
                 onAction={isConsumable ? onUseItem : null}
                 statusText={
-                  item.id === "city_map" ? "Revealing city routes" : ""
+                  item.id === "city_map"
+                    ? "Revealing city routes"
+                    : healthRestored
+                      ? `Restores ${healthRestored} health`
+                      : ""
                 }
                 disabled={disabled}
                 errorMessage={

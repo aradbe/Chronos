@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import "./CharacterDialogue.css";
+import { GAME_COSTS } from "../../constants/gameCosts";
+import { useNpcSpeech } from "../../hooks/useNpcSpeech";
 
 const getIntentLabel = (intent) => {
   if (!intent?.action) {
@@ -73,6 +75,7 @@ export function CharacterDialogue({
   );
   const [preferredCharacterId, setPreferredCharacterId] = useState("");
   const [message, setMessage] = useState("");
+  const speech = useNpcSpeech();
 
   const selectedCharacter = availableCharacters.find(
     (character) => character.id === preferredCharacterId,
@@ -170,8 +173,13 @@ export function CharacterDialogue({
             </div>
 
             <button type="submit" disabled={isSubmitDisabled}>
-              {pending ? "Listening..." : "Send"}
+              {pending
+                ? "Listening..."
+                : `Send · ${GAME_COSTS.dialogue} min`}
             </button>
+            <small className="character-dialogue__time-note">
+              Speak freely. Every exchange advances the clock by {GAME_COSTS.dialogue} minutes.
+            </small>
           </form>
 
           <div className="character-dialogue__history" aria-live="polite">
@@ -193,9 +201,30 @@ export function CharacterDialogue({
                     className={`character-dialogue__message character-dialogue__message--${entry.role}`}
                     key={entry._id || `${entry.characterId}-${entry.role}-${index}`}
                   >
-                    <span>
-                      {entry.role === "player" ? "You" : selectedCharacter.name}
-                    </span>
+                    <div className="character-dialogue__message-head">
+                      <span>
+                        {entry.role === "player" ? "You" : selectedCharacter.name}
+                      </span>
+                      {entry.role === "character" && speech.supported ? (
+                        <button
+                          type="button"
+                          className="character-dialogue__speak"
+                          onClick={() =>
+                            speech.speak({
+                              characterId,
+                              id: entry._id || `${characterId}-${index}`,
+                              text: entry.content,
+                            })
+                          }
+                          aria-label={`${speech.speakingId === (entry._id || `${characterId}-${index}`) ? "Stop" : "Read"} ${selectedCharacter.name}'s reply aloud`}
+                        >
+                          {speech.speakingId ===
+                          (entry._id || `${characterId}-${index}`)
+                            ? "■ Stop"
+                            : "▶ Listen"}
+                        </button>
+                      ) : null}
+                    </div>
                     <p>{entry.content}</p>
                   </li>
                 ))}

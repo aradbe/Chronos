@@ -157,6 +157,28 @@ describe("NPC interaction service", () => {
     assert.equal(game.objectives[1].status, "locked");
   });
 
+  it("only advances a topic-specific conversation with the needed question", async () => {
+    const game = createGame();
+    game.scenarioId.objectives[0].requiredTopics = ["escape"];
+
+    const unrelated = await applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "How much time do we have?",
+    });
+
+    assert.deepEqual(unrelated.completedObjectives, []);
+    assert.equal(game.objectives[0].status, "active");
+
+    const relevant = await applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "Which ship can help me escape?",
+    });
+
+    assert.equal(relevant.completedObjectives[0], "find_marcus");
+  });
+
   it("only completes the final conversation with required items", async () => {
     const game = createGame();
     game.currentLocationId = "harbor";
@@ -167,6 +189,7 @@ describe("NPC interaction service", () => {
     game.triggeredEvents = [];
     game.inventory = [{ itemId: "ship_token", quantity: 1 }];
     game.objectives = [
+      { objectiveId: "question_lucius", status: "completed" },
       { objectiveId: "escape", status: "active" },
     ];
     game.scenarioId.characters.push({
@@ -177,6 +200,11 @@ describe("NPC interaction service", () => {
     });
     game.scenarioId.locations.push({ id: "harbor", name: "Harbor" });
     game.scenarioId.objectives = [
+      {
+        id: "question_lucius",
+        targetId: "lucius",
+        type: "talk_to_character",
+      },
       { id: "escape", targetId: "lucius", type: "talk_to_character" },
     ];
     game.scenarioId.events = [{ id: "deadline", triggerTime: 180, type: "deadline" }];
@@ -198,7 +226,7 @@ describe("NPC interaction service", () => {
     assert.equal(refused.reply, "Bring me a lamp.");
     assert.deepEqual(refused.missingFinalItems, ["oil_lamp"]);
     assert.equal(game.status, "active");
-    assert.equal(game.objectives[0].status, "active");
+    assert.equal(game.objectives[1].status, "active");
 
     game.inventory.push({ itemId: "oil_lamp", quantity: 1 });
     const escaped = await applyNpcInteraction({
@@ -208,7 +236,7 @@ describe("NPC interaction service", () => {
     });
 
     assert.equal(escaped.reply, "We sail now.");
-    assert.equal(game.objectives[0].status, "completed");
+    assert.equal(game.objectives[1].status, "completed");
     assert.equal(game.status, "completed");
   });
 });

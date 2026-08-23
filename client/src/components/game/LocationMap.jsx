@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { describeLocations, LOCATION_STATES } from "../../utils/mapState";
 import "./LocationMap.css";
+import { GAME_COSTS } from "../../constants/gameCosts";
 
 export function LocationMap({
   locations,
@@ -153,7 +154,7 @@ export function LocationMap({
             })}
         </svg>
 
-        {rows.map(({ location, state, label, isDiscovered, canMove }, index) => {
+        {rows.map(({ location, state, label, isDiscovered, canMove, blockedAttemptPenaltyMinutes }, index) => {
           if (!visibleIds.has(location.id)) {
             return null;
           }
@@ -180,7 +181,16 @@ export function LocationMap({
           >
             <span className="location-map__node-marker" aria-hidden="true" />
             <strong>{location.name}</strong>
-            <span>{isDiscovered ? label : `Unexplored · ${label}`}</span>
+            <span>
+              {isDiscovered ? label : `Unexplored · ${label}`}
+              {state === LOCATION_STATES.GATED
+                ? blockedAttemptPenaltyMinutes
+                  ? ` · attempt costs ${blockedAttemptPenaltyMinutes} min`
+                  : ""
+                : canMove
+                  ? ` · ${GAME_COSTS.move} min`
+                  : ""}
+            </span>
             {location.id === objectiveLocationId ? (
               <em>Current objective</em>
             ) : null}
