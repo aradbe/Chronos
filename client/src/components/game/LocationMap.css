@@ -187,6 +187,7 @@
   background: rgba(10, 22, 33, 0.96);
   box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28);
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .location-map__node strong {
@@ -257,7 +258,7 @@
 
 .location-map__node em {
   color: #f1d2a5;
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -292,20 +293,25 @@
 
 .location-map__fog {
   position: absolute;
-  right: -24px;
-  bottom: 12%;
+  inset: 43% 8% 7%;
   display: grid;
-  width: 46%;
-  height: 34%;
   place-items: center;
-  border: 1px dashed rgba(143, 160, 177, 0.18);
-  border-radius: 50%;
   color: rgba(143, 160, 177, 0.55);
-  background: radial-gradient(circle, rgba(58, 71, 84, 0.17), transparent 70%);
+  background:
+    linear-gradient(145deg, transparent 43%, rgba(143, 160, 177, 0.16) 44%, transparent 45%),
+    linear-gradient(35deg, transparent 56%, rgba(143, 160, 177, 0.12) 57%, transparent 58%),
+    radial-gradient(ellipse at center, rgba(25, 39, 52, 0.58), transparent 72%);
   font-size: 0.62rem;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+}
+
+.location-map__fog span {
+  border: 1px dashed rgba(143, 160, 177, 0.28);
+  border-radius: 999px;
+  padding: 7px 12px;
+  background: rgba(8, 18, 27, 0.86);
 }
 
 .location-map__legend {
