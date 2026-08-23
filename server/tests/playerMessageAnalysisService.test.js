@@ -4,6 +4,7 @@ const {
   INTENTS,
   analyzePlayerMessage,
   analyzeTrustChange,
+  analyzeTrust,
   detectDialogueSignals,
   detectActionIntent,
   findClueCandidates,
@@ -77,7 +78,41 @@ describe("player message analysis service", () => {
   it("keeps fear from being treated as hostility", () => {
     assert.equal(analyzeTrustChange("I am scared and worried"), 0);
     assert.equal(analyzeTrustChange("please help me"), 1);
-    assert.equal(analyzeTrustChange("shut up, you useless liar"), -2);
+    assert.equal(analyzeTrustChange("shut up, you useless liar"), -3);
+  });
+
+  it("lowers trust for repeated, demanding and meaningless messages", () => {
+    assert.equal(
+      analyzeTrust({
+        messages: [{ role: "player", content: "Where is the harbor?" }],
+        scenario,
+        text: "Where is the harbor?",
+      }).reason,
+      "repeated",
+    );
+    assert.equal(analyzeTrust({ scenario, text: "Answer me now" }).change, -1);
+    assert.equal(analyzeTrust({ scenario, text: "zzzzzzz" }).reason, "nonsense");
+  });
+
+  it("rewards a relevant courteous question but not an empty please", () => {
+    assert.deepEqual(
+      analyzeTrust({
+        scenario,
+        text: "Please, where is the harbor road?",
+      }).change,
+      1,
+    );
+    assert.equal(analyzeTrust({ scenario, text: "please" }).change, -1);
+  });
+
+  it("understands common topic variants and typos", () => {
+    const signals = detectDialogueSignals({
+      scenario,
+      text: "How do I escpae by boat along the harbour road?",
+    });
+
+    assert.equal(signals.mentionsEscape, true);
+    assert.equal(signals.mentionedLocation, "harbor_road");
   });
 
   it("detects reusable dialogue signals", () => {

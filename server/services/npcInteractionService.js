@@ -78,7 +78,7 @@ const applyNpcInteraction = async ({
   messages = [],
   text,
 }) => {
-  const analysis = analyzePlayerMessage({ game, characterId, text });
+  const analysis = analyzePlayerMessage({ game, characterId, messages, text });
   const character = game.scenarioId.characters.find(({ id }) => id === characterId);
   const currentTrust = getRelationshipValue(game.relationships, characterId);
   const nextTrust = clampTrust(currentTrust + analysis.trustChange);
@@ -132,6 +132,7 @@ const applyNpcInteraction = async ({
     reply: dialogue.reply,
     trust: nextTrust,
     trustChange: analysis.trustChange,
+    trustReason: analysis.trustReason,
   };
 };
 

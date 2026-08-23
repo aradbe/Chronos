@@ -115,6 +115,7 @@ const interactWithCharacter = async (req, res, next) => {
       reply: interaction.reply,
       trust: interaction.trust,
       trustChange: interaction.trustChange,
+      trustReason: interaction.trustReason,
     });
   } catch (error) {
     return next(error);

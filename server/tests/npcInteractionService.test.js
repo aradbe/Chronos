@@ -125,6 +125,21 @@ describe("NPC interaction service", () => {
     assert.equal(result.trustChange, 0);
     assert.deepEqual(result.newClues, []);
     assert.notEqual(result.reply, "Marcus listens, but has nothing new to add yet.");
-    assert.match(result.reply, /Marcus.*(wrong|calm|ground)/);
+    assert.match(result.reply, /Marcus.*(ash|danger|tremors)/i);
+  });
+
+  it("lowers trust when the player repeats the same question", async () => {
+    const game = createGame();
+    const text = "Where is the harbor?";
+    const result = await applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      messages: [{ role: "player", content: text }],
+      text,
+    });
+
+    assert.equal(result.trustChange, -1);
+    assert.equal(result.trustReason, "repeated");
+    assert.match(result.reply, /answered that already/i);
   });
 });

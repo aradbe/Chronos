@@ -57,6 +57,28 @@ const HOSTILE_PATTERNS = [
   "i will kill",
 ];
 
+const DEMANDING_PATTERNS = [
+  "answer me",
+  "give me",
+  "now tell me",
+  "tell me now",
+  "you must",
+];
+
+const GREETING_PATTERNS = ["good day", "hello", "hey", "hi", "salve"];
+
+const TYPO_REPLACEMENTS = {
+  captian: "captain",
+  escpae: "escape",
+  habor: "harbor",
+  harbr: "harbor",
+  harbour: "harbor",
+  moutain: "mountain",
+  shep: "ship",
+  tokken: "token",
+  volcan: "volcano",
+};
+
 const FEAR_PATTERNS = [
   "afraid",
   "scared",
@@ -133,13 +155,39 @@ const ITEM_PATTERNS = [
   "water",
 ];
 
+const TOPIC_ALIASES = {
+  danger: [
+    ...DANGER_PATTERNS,
+    "ash",
+    "collapse",
+    "ground shaking",
+    "volcano",
+  ],
+  escape: [
+    ...ESCAPE_PATTERNS,
+    "boat",
+    "dock",
+    "harbour",
+    "port",
+    "sail",
+    "way out",
+  ],
+  item: [...ITEM_PATTERNS, "coin", "lamp", "token", "flask"],
+  map: [...MAP_PATTERNS, "directions", "find my way", "where do i go"],
+};
+
 const normalizeText = (text = "") => {
-  return text
+  const normalized = text
     .toLowerCase()
     .replace(/[_-]/g, " ")
     .replace(/[^\w\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+
+  return normalized
+    .split(" ")
+    .map((word) => TYPO_REPLACEMENTS[word] || word)
+    .join(" ");
 };
 
 const containsPattern = (normalizedText, patterns) => {
@@ -187,16 +235,19 @@ const detectDialogueSignals = ({ scenario, text }) => {
     asksForHelp: containsPattern(normalizedText, HELP_PATTERNS),
     asksQuestion:
       hasQuestionMark || containsPattern(normalizedText, QUESTION_PATTERNS),
+    isDemanding: containsPattern(normalizedText, DEMANDING_PATTERNS),
     isFearful: containsPattern(normalizedText, FEAR_PATTERNS),
+    isGreeting: containsPattern(normalizedText, GREETING_PATTERNS),
     isHostile: containsPattern(normalizedText, HOSTILE_PATTERNS),
     isPolite: containsPattern(normalizedText, POLITE_PATTERNS),
     mentionedCharacter: mentionedCharacter?.id || null,
     mentionedItem: mentionedItem?.id || null,
     mentionedLocation: mentionedLocation?.id || null,
-    mentionsDanger: containsPattern(normalizedText, DANGER_PATTERNS),
-    mentionsEscape: containsPattern(normalizedText, ESCAPE_PATTERNS),
-    mentionsItem: Boolean(mentionedItem) || containsPattern(normalizedText, ITEM_PATTERNS),
-    mentionsMap: containsPattern(normalizedText, MAP_PATTERNS),
+    mentionsDanger: containsPattern(normalizedText, TOPIC_ALIASES.danger),
+    mentionsEscape: containsPattern(normalizedText, TOPIC_ALIASES.escape),
+    mentionsItem:
+      Boolean(mentionedItem) || containsPattern(normalizedText, TOPIC_ALIASES.item),
+    mentionsMap: containsPattern(normalizedText, TOPIC_ALIASES.map),
   };
 
   if (signals.mentionsEscape) {
@@ -216,6 +267,43 @@ const detectDialogueSignals = ({ scenario, text }) => {
   }
 
   return signals;
+};
+
+const getPlayerMessages = (messages = []) => {
+  return messages
+    .filter(({ role }) => role === "player")
+    .map(({ content }) => normalizeText(content));
+};
+
+const analyzeMessageQuality = ({ messages = [], signals, text }) => {
+  const normalizedText = normalizeText(text);
+  const words = normalizedText.split(" ").filter(Boolean);
+  const letters = normalizedText.replace(/[^a-z]/g, "");
+  const vowelCount = (letters.match(/[aeiou]/g) || []).length;
+  const previousMessages = getPlayerMessages(messages);
+  const isRepeated = previousMessages.slice(-4).includes(normalizedText);
+  const isNonsense =
+    words.length > 0 &&
+    ((letters.length >= 5 && vowelCount === 0) ||
+      words.some((word) => /(.)\1{4,}/.test(word)));
+  const isRelevant = Boolean(
+    signals.asksForHelp ||
+      signals.mentionsDanger ||
+      signals.mentionsEscape ||
+      signals.mentionsItem ||
+      signals.mentionsMap ||
+      signals.mentionedCharacter ||
+      signals.mentionedLocation,
+  );
+  const isLowEffort =
+    !signals.isGreeting && !isRelevant && words.length <= 2 && !signals.isFearful;
+
+  return {
+    isLowEffort,
+    isNonsense,
+    isRepeated,
+    isRelevant,
+  };
 };
 
 const hasIntentWord = (normalizedText, intent) => {
@@ -275,23 +363,44 @@ const detectActionIntent = ({ text, scenario, inventory = [] }) => {
   };
 };
 
-const analyzeTrustChange = (text) => {
+const analyzeTrust = ({ messages = [], scenario = {}, text }) => {
   const normalizedText = normalizeText(text);
-  let trustChange = 0;
-
-  if (containsPattern(normalizedText, POLITE_PATTERNS)) {
-    trustChange += 1;
-  }
+  const signals = detectDialogueSignals({ scenario, text });
+  const quality = analyzeMessageQuality({ messages, signals, text });
 
   if (containsPattern(normalizedText, HOSTILE_PATTERNS)) {
-    trustChange -= 2;
+    return { change: -3, quality, reason: "hostile" };
   }
 
-  if (containsPattern(normalizedText, FEAR_PATTERNS) && trustChange < 0) {
-    trustChange = 0;
+  if (quality.isRepeated) {
+    return { change: -1, quality, reason: "repeated" };
   }
 
-  return clampTrustChange(trustChange);
+  if (quality.isNonsense) {
+    return { change: -1, quality, reason: "nonsense" };
+  }
+
+  if (signals.isDemanding) {
+    return { change: -1, quality, reason: "demanding" };
+  }
+
+  if (quality.isLowEffort) {
+    return { change: -1, quality, reason: "dismissive" };
+  }
+
+  if (
+    signals.isPolite &&
+    quality.isRelevant &&
+    (signals.asksQuestion || signals.asksForHelp)
+  ) {
+    return { change: 1, quality, reason: "thoughtful" };
+  }
+
+  return { change: 0, quality, reason: null };
+};
+
+const analyzeTrustChange = (text) => {
+  return analyzeTrust({ text }).change;
 };
 
 const getKeywords = (text) => {
@@ -334,7 +443,7 @@ const findClueCandidates = ({ text, character, discoveredClues, trust }) => {
   });
 };
 
-const analyzePlayerMessage = ({ game, characterId, text } = {}) => {
+const analyzePlayerMessage = ({ game, characterId, messages = [], text } = {}) => {
   if (typeof text !== "string" || !text.trim()) {
     throw new RangeError("Player message text is required");
   }
@@ -345,7 +454,12 @@ const analyzePlayerMessage = ({ game, characterId, text } = {}) => {
     scenario: context.scenario,
     text,
   });
-  const trustChange = analyzeTrustChange(text);
+  const trust = analyzeTrust({
+    messages,
+    scenario: context.scenario,
+    text,
+  });
+  const trustChange = clampTrustChange(trust.change);
   const effectiveTrust = context.trust + trustChange;
   const clueCandidates = findClueCandidates({
     character: context.character,
@@ -370,7 +484,9 @@ const analyzePlayerMessage = ({ game, characterId, text } = {}) => {
       text,
     }),
     intent,
+    messageQuality: trust.quality,
     trustChange,
+    trustReason: trust.reason,
   };
 };
 
@@ -378,6 +494,8 @@ module.exports = {
   CLUE_TRUST_THRESHOLD,
   INTENTS,
   analyzePlayerMessage,
+  analyzeMessageQuality,
+  analyzeTrust,
   analyzeTrustChange,
   detectDialogueSignals,
   detectActionIntent,
