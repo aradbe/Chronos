@@ -52,6 +52,64 @@ const getObjectives = (game) => {
   });
 };
 
+const unlockNextObjective = (game, completedProgress) => {
+  const completedIndex = game.objectives.indexOf(completedProgress);
+  const nextObjective = game.objectives
+    .slice(completedIndex + 1)
+    .find(({ status }) => status === OBJECTIVE_STATUSES.LOCKED);
+
+  if (nextObjective) {
+    updateObjectiveStatus(
+      game,
+      nextObjective.objectiveId,
+      OBJECTIVE_STATUSES.ACTIVE,
+    );
+  }
+
+  return nextObjective || null;
+};
+
+const isObjectiveAlreadySatisfied = (game, definition) => {
+  if (definition.type === "collect_item") {
+    return (game.inventory || []).some(
+      ({ itemId }) => itemId === definition.targetId,
+    );
+  }
+
+  if (definition.type === "reach_location") {
+    return game.currentLocationId === definition.targetId;
+  }
+
+  if (definition.type === "discover_clue") {
+    return (game.discoveredClues || []).includes(definition.targetId);
+  }
+
+  return false;
+};
+
+const advanceSatisfiedObjectives = (game) => {
+  const completed = [];
+  let active = game.objectives.find(
+    ({ status }) => status === OBJECTIVE_STATUSES.ACTIVE,
+  );
+
+  while (active) {
+    const definition = game.scenarioId?.objectives?.find(
+      ({ id }) => id === active.objectiveId,
+    );
+
+    if (!definition || !isObjectiveAlreadySatisfied(game, definition)) {
+      break;
+    }
+
+    updateObjectiveStatus(game, active.objectiveId, OBJECTIVE_STATUSES.COMPLETED);
+    completed.push(active.objectiveId);
+    active = unlockNextObjective(game, active);
+  }
+
+  return completed;
+};
+
 const updateObjectiveStatus = (game, objectiveId, nextStatus) => {
   if (!OBJECTIVE_STATUS_VALUES.includes(nextStatus)) {
     throw new RangeError(`Unknown objective status: ${nextStatus}`);
@@ -107,27 +165,19 @@ const applyActionToObjectives = (game, action) => {
     OBJECTIVE_STATUSES.COMPLETED,
   );
 
-  const completedIndex = game.objectives.indexOf(progress);
-  const nextObjective = game.objectives
-    .slice(completedIndex + 1)
-    .find(({ status }) => status === OBJECTIVE_STATUSES.LOCKED);
-
-  if (nextObjective) {
-    updateObjectiveStatus(
-      game,
-      nextObjective.objectiveId,
-      OBJECTIVE_STATUSES.ACTIVE,
-    );
-  }
+  unlockNextObjective(game, progress);
+  advanceSatisfiedObjectives(game);
 
   return progress;
 };
 
 module.exports = {
   OBJECTIVE_STATUSES,
+  advanceSatisfiedObjectives,
   applyActionToObjectives,
   buildObjectiveProgress,
   getObjectiveProgress,
   getObjectives,
   updateObjectiveStatus,
+  unlockNextObjective,
 };

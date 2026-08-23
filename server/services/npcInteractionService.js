@@ -9,6 +9,7 @@ const { updateScore } = require("./scoreService");
 const { analyzePlayerMessage } = require("./playerMessageAnalysisService");
 const {
   OBJECTIVE_STATUSES,
+  advanceSatisfiedObjectives,
   getObjectiveProgress,
   updateObjectiveStatus,
 } = require("./objectiveService");
@@ -102,8 +103,12 @@ const applyNpcInteraction = async ({
 
   const completedObjectives = [];
   const finalConversation = evaluateFinalConversation({ characterId, game });
+  const qualifiesForTalkObjective =
+    finalConversation.isFinalConversation ||
+    (analysis.messageQuality.isRelevant && analysis.trustChange >= 0);
   const talkObjective =
-    !finalConversation.isFinalConversation || finalConversation.ready
+    qualifiesForTalkObjective &&
+    (!finalConversation.isFinalConversation || finalConversation.ready)
       ? completeActiveObjective(game, "talk_to_character", characterId)
       : null;
 
@@ -139,6 +144,12 @@ const applyNpcInteraction = async ({
   if (Number.isInteger(game.currentTime)) {
     advanceGameTime(game, DIALOGUE_TIME_COST);
     triggerPendingEvents(game);
+  }
+
+  for (const objectiveId of advanceSatisfiedObjectives(game)) {
+    if (!completedObjectives.includes(objectiveId)) {
+      completedObjectives.push(objectiveId);
+    }
   }
 
   if (!applyLoseCondition(game)) {

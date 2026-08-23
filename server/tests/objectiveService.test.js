@@ -3,6 +3,7 @@ const { describe, it } = require("node:test");
 const {
   OBJECTIVE_STATUSES,
   applyActionToObjectives,
+  advanceSatisfiedObjectives,
   buildObjectiveProgress,
   getObjectiveProgress,
   getObjectives,
@@ -180,5 +181,35 @@ describe("objective service", () => {
       null,
     );
     assert.equal(game.objectives[0].status, "locked");
+  });
+
+  it("catches up when a later quest item was collected early", () => {
+    const game = {
+      currentLocationId: "villa",
+      discoveredClues: [],
+      inventory: [
+        { itemId: "oil_lamp", quantity: 1 },
+        { itemId: "ship_token", quantity: 1 },
+      ],
+      objectives: [
+        { objectiveId: "token", status: "active" },
+        { objectiveId: "lamp", status: "locked" },
+        { objectiveId: "harbor", status: "locked" },
+      ],
+      scenarioId: {
+        objectives: [
+          { id: "token", targetId: "ship_token", type: "collect_item" },
+          { id: "lamp", targetId: "oil_lamp", type: "collect_item" },
+          { id: "harbor", targetId: "harbor", type: "reach_location" },
+        ],
+      },
+    };
+
+    assert.deepEqual(advanceSatisfiedObjectives(game), ["token", "lamp"]);
+    assert.deepEqual(game.objectives.map(({ status }) => status), [
+      "completed",
+      "completed",
+      "active",
+    ]);
   });
 });

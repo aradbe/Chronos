@@ -143,6 +143,20 @@ describe("NPC interaction service", () => {
     assert.match(result.reply, /answered that already/i);
   });
 
+  it("does not complete a conversation objective with a bad question", async () => {
+    const game = createGame();
+    const result = await applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "you useless idiot",
+    });
+
+    assert.equal(result.trustChange, -3);
+    assert.deepEqual(result.completedObjectives, []);
+    assert.equal(game.objectives[0].status, "active");
+    assert.equal(game.objectives[1].status, "locked");
+  });
+
   it("only completes the final conversation with required items", async () => {
     const game = createGame();
     game.currentLocationId = "harbor";
