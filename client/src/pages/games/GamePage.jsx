@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { useParams } from "react-router-dom";
+import { CharacterDialogue } from "../../components/game/CharacterDialogue";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { EventNotifications } from "../../components/game/EventNotifications";
 import { GameHud } from "../../components/game/GameHud";
@@ -61,6 +62,10 @@ export const GamePage = observer(function GamePage() {
       .catch(() => {});
   };
 
+  const handleInteract = (characterId, message) => {
+    gameStore.interact(gameId, characterId, message).catch(() => {});
+  };
+
   // An item error is drawn next to the item it is about, and only in the panel
   // that fired the action — otherwise a failed USE_ITEM would also print under
   // "Items here". Everything else keeps showing in the scene panel.
@@ -109,6 +114,18 @@ export const GamePage = observer(function GamePage() {
 
           <section className="game-panel game-page__scene" aria-label="Game scene">
             <CurrentLocation location={currentLocation} />
+            <CharacterDialogue
+              characters={scenario.characters}
+              currentLocationId={game.currentLocationId}
+              disabled={gameStore.actionPending}
+              error={gameStore.interactionError}
+              interaction={gameStore.interactionResult}
+              messages={gameStore.conversationMessages}
+              messagesError={gameStore.conversationError}
+              messagesLoading={gameStore.conversationLoading}
+              onSend={handleInteract}
+              pending={gameStore.interactionPending}
+            />
             <EventNotifications
               events={scenario.events}
               triggeredEventIds={game.triggeredEvents || []}

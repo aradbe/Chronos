@@ -27,563 +27,201 @@ origin/ilan
   file will be changed, and what the logic is.
 - Do not run Git-changing commands without explicit approval first.
 - Before every commit, ask whether the commit message is acceptable.
-- The user does not like commit messages in the format `docs(frontend): ...`.
-  Prefer plain readable commit messages such as `Build login page`.
+- Prefer plain readable commit messages, not `docs(frontend): ...` format.
 - Work in small, topic-based pulses with separate commits.
+- Do not commit deletions of:
+  - `client/src/assets/hero.png`
+  - `client/src/assets/vite.svg`
+- Also currently avoid touching unrelated local deletions of:
+  - `client/public/favicon.svg`
+  - `client/public/icons.svg`
+- If teammates implemented something that belongs to the user's responsibility
+  area, stop, explain what was found, and ask how to proceed.
+- Avoid changing teammate-owned game/story logic without approval.
 
 ## Current Git State
 
-At the end of the work, `ilan` was synced with `origin/ilan`.
+At the end of Sprint 2 work, `ilan` was pushed and synced with `origin/ilan`.
 
-Remaining local uncommitted items:
+Latest pushed commits:
 
 ```text
+1b61c2b Build NPC conversation history
+8212032 Vary repeated NPC dialogue replies
+32c6c10 Clear stale dialogue after game actions
+9f4d73b Add reusable NPC dialogue engine
+152cf2f Add NPC dialogue UI
+a9c03b6 Add NPC interaction endpoint
+b6d6f29 Add local NPC message analysis
+bfe9c52 Connect My Games to saved sessions
+```
+
+Remaining local uncommitted items at the end of the prior chat:
+
+```text
+D client/public/favicon.svg
+D client/public/icons.svg
 D client/src/assets/hero.png
 D client/src/assets/vite.svg
-?? docs/chat-continuation-summary.md
-?? docs/sprint-1-frontend-summary.md
+M server/.env.example
 ```
 
-The user explicitly said not to make a commit for:
+These were not part of the Sprint 2 NPC dialogue work and should not be
+committed without explicit user approval.
+
+## Sprint 2 Summary
+
+Detailed Sprint 2 notes are in:
 
 ```text
-client/src/assets/hero.png
-client/src/assets/vite.svg
+docs/sprint-2-npc-dialogue-summary.md
 ```
 
-The two docs above were created for handoff/continuation and have not been
-committed unless the user later approves that.
+Implemented during Sprint 2:
 
-## Backend Auth Completed Earlier
+- Real My Games saved-session display.
+- Local rule-based NPC message analysis.
+- Trust changes from player message tone.
+- Clue discovery from NPC hidden knowledge.
+- Blocked clues when trust is too low.
+- Generic `dialogueScriptEngine` for reusable NPC replies.
+- Varied repeated replies using conversation turn count.
+- Authenticated NPC interaction endpoint.
+- Message persistence for player/NPC dialogue.
+- NPC dialogue UI in the game page.
+- Loading and error states for NPC interaction.
+- Conversation history endpoint and UI.
+- Fix for stale dialogue state after moving or acting.
 
-Backend auth is already completed and pushed on `ilan`.
-
-Implemented:
-
-- `User` model with `name`, `email`, `passwordHash`, `role`, timestamps.
-- `POST /api/auth/register`.
-- `POST /api/auth/login`.
-- bcrypt password hashing.
-- JWT token creation.
-- `authenticate` middleware.
-- `authorize(...allowedRoles)` middleware.
-- `GET /api/users/me`.
-
-Backend auth was tested successfully earlier:
-
-- Register creates a user.
-- Login succeeds with correct password.
-- Login fails with wrong password.
-- `/api/users/me` works with a valid JWT.
-- `/api/users/me` returns `401` without a token.
-
-## Backend Dependency Found
-
-For My Games, the API contract mentions:
+Important architectural decision:
 
 ```text
-GET /api/users/me/games
-GET /api/games/:gameId
-```
-
-But current server code does not implement these routes.
-
-Current `server/routes/userRoutes.js` only has:
-
-```text
-GET /me
-```
-
-Current `server/controllers/userController.js` only has:
-
-```text
-getMe
-```
-
-There is a `server/models/GameSession.js`, but no routes/controllers that expose
-saved game sessions yet.
-
-Conclusion:
-
-```text
-My Games can have a frontend shell, but real saved game session display is
-blocked until backend endpoints are implemented.
-```
-
-## Frontend Architecture Decisions
-
-Documented in:
-
-```text
-docs/frontend-architecture.md
-```
-
-Decisions:
-
-- Use React Router from the start.
-- Use MobX for shared application state.
-- Use `RootStore + StoreProvider + StoreContext + useStores()`.
-- Use a centralized `api/` layer.
-- Pages/components must not call `fetch` directly.
-- Use `httpClient.js` for:
-  - API base URL.
-  - JSON request/response handling.
-  - Authorization header.
-  - Normalized errors.
-- Use `VITE_API_BASE_URL` for backend URL.
-- Store JWT in `localStorage` for Sprint/MVP.
-- Only `authStore` may read/write auth `localStorage`.
-- Use feature-based page folders:
-  - `pages/auth`
-  - `pages/games`
-  - `pages/scenarios`
-  - `pages/admin` later
-- Use regular CSS:
-  - page/component CSS beside the component.
-  - shared `styles/variables.css`.
-  - shared `styles/global.css`.
-  - feature-shared CSS allowed only after real duplication exists.
-
-## Frontend Work Completed In This Chat
-
-### 1. Architecture Document
-
-Created:
-
-```text
-docs/frontend-architecture.md
-```
-
-Commit:
-
-```text
-19af5c5 Add frontend architecture plan
-```
-
-### 2. Dependencies
-
-Added:
-
-```text
-react-router-dom
-mobx
-mobx-react-lite
-```
-
-Commit:
-
-```text
-849e0db Add frontend routing and state dependencies
-```
-
-### 3. Architecture Skeleton
-
-Added:
-
-```text
-client/src/api/httpClient.js
-client/src/routes/AppRouter.jsx
-client/src/routes/ProtectedRoute.jsx
-client/src/stores/RootStore.js
-client/src/stores/StoreContext.js
-client/src/stores/StoreProvider.jsx
-client/src/stores/useStores.js
-client/src/styles/global.css
-client/src/styles/variables.css
-```
-
-Updated:
-
-```text
-client/src/App.jsx
-client/src/main.jsx
-docs/frontend-architecture.md
-```
-
-Commit:
-
-```text
-947b965 Create frontend architecture skeleton
-```
-
-### 4. Auth API And Auth Store
-
-Added:
-
-```text
-client/src/api/authApi.js
-client/src/stores/authStore.js
-```
-
-Updated:
-
-```text
-client/src/stores/RootStore.js
-```
-
-Commit:
-
-```text
-32eaa2c Add frontend authentication state and API layer
-```
-
-Auth storage keys:
-
-```text
-chronos_token
-chronos_user
-```
-
-### 5. Register Page
-
-Added:
-
-```text
-client/src/pages/auth/RegisterPage.jsx
-client/src/pages/auth/RegisterPage.css
-```
-
-Updated:
-
-```text
-client/src/routes/AppRouter.jsx
-```
-
-Commit:
-
-```text
-d4dd15d Build register page
-```
-
-### 6. Login Page
-
-Added:
-
-```text
-client/src/pages/auth/LoginPage.jsx
-client/src/pages/auth/LoginPage.css
-```
-
-Updated:
-
-```text
-client/src/routes/AppRouter.jsx
-```
-
-Commit:
-
-```text
-89670fc Build login page
-```
-
-### 7. Shared Auth Styles Refactor
-
-Created shared CSS:
-
-```text
-client/src/pages/auth/AuthPage.css
-```
-
-Updated:
-
-```text
-client/src/pages/auth/RegisterPage.jsx
-client/src/pages/auth/LoginPage.jsx
-docs/frontend-architecture.md
-```
-
-Removed old page-specific duplicate CSS:
-
-```text
-client/src/pages/auth/RegisterPage.css
-client/src/pages/auth/LoginPage.css
-```
-
-Commit:
-
-```text
-0a70651 Share auth page styles
-```
-
-### 8. App Shell And Logout
-
-Added:
-
-```text
-client/src/components/layout/AppShell.jsx
-client/src/components/layout/AppShell.css
-```
-
-Updated:
-
-```text
-client/src/routes/AppRouter.jsx
-```
-
-Behavior:
-
-- Shows Register/Login links when logged out.
-- Shows My Games, current user name, and Logout when logged in.
-- Logout calls `authStore.logout()` and redirects to `/login`.
-
-Commit:
-
-```text
-d805d3b Add app shell and logout
-```
-
-### 9. Redirect After Authentication
-
-Updated:
-
-```text
-client/src/pages/auth/RegisterPage.jsx
-client/src/pages/auth/LoginPage.jsx
-```
-
-Behavior:
-
-- Successful register redirects to `/my-games`.
-- Successful login redirects to `/my-games`.
-- Error display remains through `authStore.error`.
-
-Commit:
-
-```text
-84a5fc0 Redirect after authentication
-```
-
-### 10. Protected My Games Page
-
-Added:
-
-```text
-client/src/pages/games/MyGamesPage.jsx
-client/src/pages/games/MyGamesPage.css
-```
-
-Updated:
-
-```text
-client/src/routes/AppRouter.jsx
-```
-
-Behavior:
-
-- `/my-games` is protected.
-- Shows current user name, email, and role from `authStore`.
-- Shows an empty state for saved games.
-- Provides a link to `/scenarios`.
-
-Commit:
-
-```text
-bc995b8 Build protected my games page
-```
-
-### 11. Scenarios Placeholder Page
-
-Added:
-
-```text
-client/src/pages/scenarios/ScenarioListPage.jsx
-client/src/pages/scenarios/ScenarioListPage.css
-```
-
-Updated:
-
-```text
-client/src/routes/AppRouter.jsx
+Sprint 2 intentionally did not use OpenAI.
 ```
 
 Reason:
 
-- `MyGamesPage` links to `/scenarios`, so the route should exist instead of
-  falling through to `/register`.
+- Avoid API cost.
+- Avoid latency inside the game loop.
+- Avoid dependency on internet/API keys/quota.
+- Keep trust, clue, objective, and action logic deterministic.
+- Leave OpenAI/LLM generation as a future enhancement.
 
-Commit:
+## Trello Sprint 2 Status Guidance
 
-```text
-d7d47fe Add scenarios placeholder page
-```
+Cards that can be marked Done:
 
-## Current Routes
+- Create character interaction endpoint.
+- Store dialogue messages.
+- Build NPC dialogue UI.
+- Build conversation history.
+- Add message input.
+- Add AI loading state.
+- Add AI error handling.
+- Implement trust changes.
+- Implement clue discovery from conversations.
 
-```text
-/register
-/login
-/my-games
-/scenarios
-```
+Cards to rename or clarify before marking Done:
 
-Protected:
+- `Create OpenAI service` -> suggest `Create local NPC dialogue service`.
+- `Create NPC prompt builder` -> suggest `Create reusable NPC dialogue engine`.
 
-```text
-/my-games
-```
+These were completed as local MVP equivalents, not as OpenAI-specific work.
 
-Fallback:
+## Manual Verification Completed
 
-```text
-unknown route -> /register
-```
+The user manually verified:
 
-## Current Verification
+- Register/login works.
+- Starting a new Pompeii game works.
+- Marcus dialogue works.
+- Livia dialogue works.
+- Polite messages can raise trust.
+- Hostile messages lower trust.
+- Neutral messages can keep trust unchanged.
+- Clues stay blocked below trust threshold.
+- Clues unlock after enough trust.
+- Repeated messages can receive varied replies.
+- City Map can be collected.
+- Ship Token and Oil Lamp can be collected.
+- Victory flow works.
+- Lose flow works.
+- Stale dialogue does not remain visible after moving to an empty location.
 
-The client passes:
+## Automated Verification Completed
 
-```text
-npm.cmd run build
-npm.cmd run lint
-```
-
-These were run after the frontend work.
-
-## Runtime Instructions
-
-Terminal 1, run the server:
-
-```powershell
-cd "C:\Users\User\Desktop\Tech_troop\final project - tech troop\Chronos\server"
-node server.js
-```
-
-Expected server output:
-
-```text
-Connected to MongoDB
-Chronos server running on http://localhost:3000
-```
-
-Terminal 2, run the client:
-
-```powershell
-cd "C:\Users\User\Desktop\Tech_troop\final project - tech troop\Chronos\client"
-npm.cmd run dev
-```
-
-Open the Vite URL shown in the terminal, usually:
+Latest verification:
 
 ```text
-http://localhost:5173
+cd server
+npm test
 ```
 
-Recommended client env:
-
-```env
-VITE_API_BASE_URL=http://localhost:3000/api
-```
-
-## Important Runtime Caveat
-
-The server currently does not appear to configure CORS.
-
-Because Vite and Express run on different ports, browser requests from the
-frontend to the backend may fail with a CORS error even though the frontend
-builds successfully.
-
-If that happens, backend CORS setup is needed before browser integration can be
-fully tested.
-
-Do not silently work around this in the frontend. It should be solved in the
-server configuration.
-
-## CORS Fix
-
-The frontend initially failed during browser registration with:
+Result:
 
 ```text
-Failed to fetch
+129 tests passed
 ```
 
-Console showed the real cause:
+Client:
 
 ```text
-Access to fetch at 'http://localhost:3000/api/auth/register'
-from origin 'http://localhost:5173'
-has been blocked by CORS policy
+cd client
+npm run lint
+npm run build
 ```
 
-Backend CORS support was added in:
+Result:
 
 ```text
-92bc3d4 Add backend CORS support for frontend
+passed
 ```
 
-Changed files:
+## Product Questions To Ask Teammates
 
-```text
-server/package.json
-server/package-lock.json
-server/server.js
-server/.env.example
-```
+Do not implement these before team agreement:
 
-The server now uses `cors` with:
+- Should the game end when reaching the Harbor, or only after talking to Lucius
+  / presenting the Ship Token?
+- Should `City Map` and `Oil Lamp` have real use actions?
+- Is Bakery / Quintus optional side content or part of the main required path?
+- Should NPC dialogue advance game time?
+- If dialogue advances time, how many minutes should each message cost?
+- Should the Trello OpenAI cards be renamed to local dialogue cards, or should
+  OpenAI remain an explicit later requirement?
 
-```text
-CLIENT_ORIGIN=http://localhost:5173
-```
+## Recommended Start For The Next Chat
 
-## Manual Browser Verification Passed
+The user wants the next chat to focus first on Sprint 3-safe work:
 
-After the CORS fix, the user manually verified:
+- UI/UX polish for dialogue.
+- Manual test documentation.
+- Additional automated NPC/dialogue tests.
+- Polish existing screens.
+- Improve loading and error messages.
+- Sprint 2 closeout and transition to Sprint 3.
 
-1. Register works.
-2. Successful register redirects to `/my-games`.
-3. User stays logged in after refresh.
-4. Logout works.
-5. Manually opening `/my-games` while logged out redirects to `/login`.
-6. Login works with the registered user.
-7. Login with a wrong password does not log in and shows an error.
-8. Registering again with the same email is blocked and shows an error.
-9. `/scenarios` opens successfully.
+These are safe because they do not change teammate-owned game/story logic.
 
-Conclusion:
+Avoid starting these without teammate agreement:
 
-```text
-Frontend auth flow works end-to-end in the browser.
-```
+- Lucius final flow changes.
+- Pompeii objective changes.
+- Required use behavior for City Map or Oil Lamp.
+- Making Bakery / Quintus mandatory.
+- Dialogue time-cost changes.
+- Win/lose/scoring changes.
+- Real OpenAI integration.
 
-Remaining Sprint 1 limitation:
+## Suggested First Step In New Chat
 
-```text
-My Games saved sessions list still depends on backend endpoint
-GET /api/users/me/games.
-```
+Start with a short manual QA/polish pass for the dialogue UI:
 
-## Suggested Message To Teammates
+1. Restart server and client.
+2. Open an existing game with saved messages.
+3. Confirm conversation history loads after refresh.
+4. Confirm history is filtered by the current/selected NPC.
+5. Confirm repeated messages vary.
+6. Note any UI issues in loading, errors, spacing, or message readability.
 
-```text
-Frontend Sprint 1 auth flow is ready:
-
-- React Router architecture is in place.
-- MobX authStore is in place.
-- Register and Login pages are built.
-- JWT/user are stored through authStore.
-- ProtectedRoute exists.
-- AppShell and Logout are implemented.
-- My Games protected shell exists.
-- Scenarios placeholder route exists.
-
-The remaining My Games requirement, showing real saved sessions and continuing
-play, depends on backend endpoints that are not implemented yet:
-
-GET /api/users/me/games
-GET /api/games/:gameId
-
-Until those routes exist, the frontend can only show the protected My Games
-shell and empty state.
-```
-
-## Recommended Next Step In New Chat
-
-Start by deciding whether to:
-
-1. Add backend CORS support so browser auth can be tested end-to-end.
-2. Ask teammates to implement saved game endpoints.
-3. Continue frontend with API/store scaffolding for games, but keep real data
-   blocked until backend endpoints exist.
-
-The safest immediate technical step is to verify the browser auth flow. If it
-fails because of CORS, fix CORS in the backend with team approval.
+After that, choose one small Sprint 3-safe polish task and commit it separately.

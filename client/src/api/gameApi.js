@@ -1,5 +1,9 @@
 import { httpClient } from "./httpClient";
 
+export const listMyGames = (token) => {
+  return httpClient("/users/me/games", { token });
+};
+
 export const createGame = (scenarioId, token) => {
   return httpClient("/games", {
     method: "POST",
@@ -12,10 +16,22 @@ export const getGame = (gameId, token) => {
   return httpClient(`/games/${gameId}`, { token });
 };
 
+export const listGameMessages = (gameId, token) => {
+  return httpClient(`/games/${gameId}/messages`, { token });
+};
+
 export const performGameAction = (gameId, action, token) => {
   return httpClient(`/games/${gameId}/action`, {
     method: "PATCH",
     body: action,
+    token,
+  });
+};
+
+export const interactWithCharacter = (gameId, characterId, message, token) => {
+  return httpClient(`/games/${gameId}/interact/${characterId}`, {
+    method: "POST",
+    body: { message },
     token,
   });
 };

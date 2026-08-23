@@ -35,6 +35,14 @@ export const AppShell = observer(function AppShell() {
               <NavLink className="app-shell__link" to="/my-games">
                 My Games
               </NavLink>
+              {/* Only admins can open this page, so only admins are shown the
+                  way in. ProtectedRoute still guards the route itself — hiding
+                  a link is not security, it is just not offering a dead end. */}
+              {authStore.user?.role === "admin" ? (
+                <NavLink className="app-shell__link" to="/admin/scenarios">
+                  Admin
+                </NavLink>
+              ) : null}
               <span className="app-shell__user">{authStore.user?.name}</span>
               <button
                 className="app-shell__logout"
