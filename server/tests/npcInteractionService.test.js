@@ -40,9 +40,9 @@ const createGame = ({ trust = 57 } = {}) => ({
 });
 
 describe("NPC interaction service", () => {
-  it("updates trust, clues and objectives after dialogue", () => {
+  it("updates trust, clues and objectives after dialogue", async () => {
     const game = createGame();
-    const result = applyNpcInteraction({
+    const result = await applyNpcInteraction({
       characterId: "marcus",
       game,
       text: "Please tell me, does Lucius the captain need a ship token?",
@@ -61,9 +61,9 @@ describe("NPC interaction service", () => {
     assert.equal(game.objectives[1].status, "completed");
   });
 
-  it("returns a suggested action without performing it", () => {
+  it("returns a suggested action without performing it", async () => {
     const game = createGame();
-    const result = applyNpcInteraction({
+    const result = await applyNpcInteraction({
       characterId: "marcus",
       game,
       text: "Go to harbor road",
@@ -77,9 +77,9 @@ describe("NPC interaction service", () => {
     assert.equal(game.currentLocationId, "forum");
   });
 
-  it("keeps clue hidden below trust threshold while giving a varied reply", () => {
+  it("keeps clue hidden below trust threshold while giving a varied reply", async () => {
     const game = createGame({ trust: 50 });
-    const result = applyNpcInteraction({
+    const result = await applyNpcInteraction({
       characterId: "marcus",
       game,
       text: "Please tell me, does Lucius the captain need a ship token?",
@@ -96,15 +96,15 @@ describe("NPC interaction service", () => {
     );
   });
 
-  it("varies repeat replies by conversation turn", () => {
+  it("varies repeat replies by conversation turn", async () => {
     const text = "Please tell me, does Lucius the captain need a ship token?";
-    const firstResult = applyNpcInteraction({
+    const firstResult = await applyNpcInteraction({
       characterId: "marcus",
       conversationTurn: 0,
       game: createGame({ trust: 50 }),
       text,
     });
-    const secondResult = applyNpcInteraction({
+    const secondResult = await applyNpcInteraction({
       characterId: "marcus",
       conversationTurn: 1,
       game: createGame({ trust: 50 }),
@@ -114,9 +114,9 @@ describe("NPC interaction service", () => {
     assert.notEqual(firstResult.reply, secondResult.reply);
   });
 
-  it("answers danger questions with topical dialogue", () => {
+  it("answers danger questions with topical dialogue", async () => {
     const game = createGame();
-    const result = applyNpcInteraction({
+    const result = await applyNpcInteraction({
       characterId: "marcus",
       game,
       text: "What do you know about the mountain tremors?",

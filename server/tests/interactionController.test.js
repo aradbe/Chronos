@@ -91,6 +91,17 @@ describe("interactWithCharacter", () => {
       });
       return 0;
     });
+    test.mock.method(Message, "find", (query) => {
+      assert.deepEqual(query, {
+        characterId: "marcus",
+        gameSessionId: game._id,
+      });
+      return {
+        sort: () => ({
+          limit: () => ({ lean: async () => [] }),
+        }),
+      };
+    });
 
     const response = createResponse();
 
@@ -109,6 +120,7 @@ describe("interactWithCharacter", () => {
     assert.equal(game.saved, true);
     assert.equal(response.statusCode, 200);
     assert.equal(response.body.trust, 58);
+    assert.equal(response.body.dialogueMode, "scripted");
     assert.deepEqual(response.body.newClues, ["marcus_knowledge_1"]);
     assert.equal(createdMessages.length, 2);
     assert.equal(createdMessages[0].role, "player");

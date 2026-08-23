@@ -73,16 +73,20 @@ const interactWithCharacter = async (req, res, next) => {
       });
     }
 
-    const conversationTurn = await Message.countDocuments({
-      characterId,
-      gameSessionId: game._id,
-      role: "player",
-    });
+    const messageFilter = { characterId, gameSessionId: game._id };
+    const [conversationTurn, recentMessages] = await Promise.all([
+      Message.countDocuments({ ...messageFilter, role: "player" }),
+      Message.find(messageFilter)
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(8)
+        .lean(),
+    ]);
 
-    const interaction = applyNpcInteraction({
+    const interaction = await applyNpcInteraction({
       characterId,
       conversationTurn,
       game,
+      messages: recentMessages.reverse(),
       text: message,
     });
 
@@ -104,6 +108,7 @@ const interactWithCharacter = async (req, res, next) => {
 
     return res.status(200).json({
       completedObjectives: interaction.completedObjectives,
+      dialogueMode: interaction.dialogueMode,
       game,
       intent: interaction.intent,
       newClues: interaction.newClues,
