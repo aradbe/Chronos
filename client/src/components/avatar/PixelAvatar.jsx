@@ -28,20 +28,21 @@ const PALETTES = {
 
 const BackHair = ({ style, colors }) => {
   const [light, main, dark] = colors;
-  if (style === "long") return <><path fill={dark} d="M17 12h30v30h-4v10H21V42h-4z" /><path fill={main} d="M19 10h26v30h-4V20H23v20h-4z" /><path fill={light} d="M23 10h14v3H23z" /></>;
-  if (style === "waves") return <><path fill={dark} d="M16 14h32v28h-4v7h-6V26H26v23h-6v-7h-4z" /><path fill={main} d="M18 11h28v27h-4V22H22v16h-4z" /><path fill={light} d="M22 10h13v3H22zm15 3h6v3h-6z" /></>;
-  if (style === "curls") return <><path fill={dark} d="M15 14h4V9h7V6h14v3h7v5h4v24h-4v5h-7v-4h-5v4h-7v-4h-5v4h-7v-5h-4V18h3z" /><path fill={main} d="M18 12h4V8h17v3h7v9h-5v4h5v7h-6v-5h-5v5h-6v-5h-5v5h-6v-7h5v-6h-5z" /><path fill={light} d="M24 8h9v3h-9zm14 3h5v3h-5zm-17 5h5v3h-5zm15 2h5v3h-5z" /></>;
-  if (style === "braids") return <><path fill={dark} d="M17 12h30v24h-4v4h3v5h-3v5h3v5h-8V23H26v32h-8v-5h3v-5h-3v-5h3v-4h-4z" /><path fill={main} d="M19 10h26v24h-4V20H23v14h-4zm1 27h5v4h-5zm0 7h5v4h-5zm19-7h5v4h-5zm0 7h5v4h-5z" /><path fill={light} d="M24 10h13v3H24z" /><path fill="#d4a754" d="M20 48h5v2h-5zm19 0h5v2h-5z" /></>;
+  if (style === "long") return <><path fill={dark} d="M16 13h32v38h-5v5h-8V24h-6v32h-8v-5h-5z" /><path fill={main} d="M19 11h26v37h-5V22H24v26h-5z" /><path fill={light} d="M22 12h4v27h-4zm18 2h3v22h-3z" /></>;
+  if (style === "waves") return <><path fill={dark} d="M15 14h34v31h-3v7h-7v-5h-4v-8h-6v8h-4v5h-7v-7h-3z" /><path fill={main} d="M18 12h28v27h-4v6h-5v-9h-4V22h-3v14h-4v9h-5v-6h-3z" /><path fill={light} d="M22 12h11v3H22zm-1 7h4v13h-4zm18-3h4v16h-4z" /></>;
+  if (style === "curls") return <><path fill={dark} d="M14 15h4V9h7V6h15v3h7v6h4v21h-4v6h-6v4h-7v-4h-5v4h-7v-4h-6v-6h-4V19h2z" /><path fill={main} d="M17 14h5V9h8V7h9v4h7v8h-5v5h5v7h-6v5h-6v-6h-5v6h-6v-5h-6v-7h5v-5h-5z" /><path fill={light} d="M24 9h7v3h-7zm13 3h5v4h-5zm-16 4h5v4h-5zm11 7h5v4h-5z" /></>;
+  if (style === "braids") return <><path fill={dark} d="M17 13h30v22h-4v4h3v5h-3v4h3v5h-3v5h-7V25h-8v33h-7v-5h-3v-5h3v-4h-3v-5h3v-4h-4z" /><path fill={main} d="M20 11h24v21h-4V22H24v10h-4zm0 26h5v4h-5zm1 6h5v4h-5zm-1 6h5v4h-5zm19-12h5v4h-5zm-1 6h5v4h-5zm1 6h5v4h-5z" /><path fill={light} d="M24 11h7v3h-7zm-2 27h2v2h-2zm18 6h2v2h-2z" /><path fill="#d4a754" d="M20 53h6v2h-6zm18 0h6v2h-6z" /></>;
   return null;
 };
 
 const FrontHair = ({ style, colors }) => {
   const [light, main, dark] = colors;
-  if (style === "mohawk") return <><path fill={dark} d="M27 11V4h3V1h9v3h3v7z" /><path fill={main} d="M30 9V4h3V2h4v3h3v4z" /><path fill={light} d="M33 2h4v2h-4z" /></>;
-  if (style === "curls") return <><path fill={dark} d="M16 14h3V9h7V6h14v3h7v5h3v13h-6v-7h-5v4h-5v-5h-5v5h-5v-4h-3v7h-5z" /><path fill={main} d="M19 12h5V8h15v3h6v7h-5v-4h-6v4h-5v-4h-5v4h-5z" /><path fill={light} d="M25 8h9v3h-9z" /></>;
-  if (style === "waves") return <><path fill={dark} d="M17 13h3V9h7V6h14v3h6v4h3v14h-6v-8h-7v5h-5v-5h-6v6h-5v-6h-4z" /><path fill={main} d="M20 11h7V8h13v3h5v6h-7v-4h-7v5h-6v-4h-5z" /><path fill={light} d="M27 8h10v3H27z" /></>;
-  if (style === "braids" || style === "long") return <><path fill={dark} d="M17 13h3V9h7V6h14v3h6v4h3v14h-6v-8h-8v5h-5v-6h-5v7h-5v-6h-4z" /><path fill={main} d="M20 11h7V8h13v3h5v6h-7v-4h-7v4h-6v-3h-5z" /><path fill={light} d="M27 8h10v3H27z" /></>;
-  return <><path fill={dark} d="M17 13h3V9h7V6h14v3h6v4h3v14h-6v-8h-8v5h-5v-6h-5v6h-5v-5h-4z" /><path fill={main} d="M20 11h7V8h13v3h5v6h-8v-4h-6v4h-6v-3h-5z" /><path fill={light} d="M27 8h10v3H27z" /></>;
+  if (style === "mohawk") return <><path fill={dark} d="M25 12V8h3V4h3V1h5V0h5v3h4v4h3v5z" /><path fill={main} d="M29 9V5h4V2h4v2h4v3h3v2z" /><path fill={light} d="M33 2h4v3h-4zm7 3h3v2h-3z" /><path fill={dark} d="M27 10h18v4H27z" /></>;
+  if (style === "curls") return <><path fill={dark} d="M15 15h3V9h7V6h15v3h7v6h3v13h-6v-7h-5v4h-6v-5h-5v5h-6v-4h-3v7h-5V18h1z" /><path fill={main} d="M18 14h5V9h7V7h9v4h6v7h-5v4h-5v-5h-6v5h-5v-4h-6z" /><path fill={light} d="M24 9h7v3h-7zm13 3h5v3h-5zm-16 3h5v3h-5z" /></>;
+  if (style === "waves") return <><path fill={dark} d="M17 14h3V9h7V6h14v3h6v5h3v14h-6v-9h-6v5h-6v-5h-6v7h-5v-6h-4z" /><path fill={main} d="M20 12h7V8h13v3h5v6h-6v-4h-7v4h-6v5h-4v-5h-2z" /><path fill={light} d="M27 8h10v3H27zm-4 5h5v3h-5z" /></>;
+  if (style === "braids") return <><path fill={dark} d="M17 14h3V9h7V6h14v3h6v5h3v13h-6v-8h-7v4h-5v-5h-5v5h-6v-4h-4z" /><path fill={main} d="M20 12h7V8h5v9h-6v3h-4v-4h-2zm13-4h7v3h5v6h-6v-4h-6z" /><path fill={light} d="M27 8h4v3h-4zm7 0h5v3h-5z" /><path fill={dark} d="M17 25h9v5h-3v4h3v5h-3v4h3v5h-3v6h-7v-6h3v-5h-3v-4h3v-5h-3zm30 0h-9v5h3v4h-3v5h3v4h-3v5h3v6h7v-6h-3v-5h3v-4h-3v-5h3z" /><path fill={main} d="M19 27h5v3h-5zm0 7h5v4h-5zm0 9h5v4h-5zm21-16h5v3h-5zm0 7h5v4h-5zm0 9h5v4h-5z" /><path fill="#d4a754" d="M18 52h6v2h-6zm22 0h6v2h-6z" /></>;
+  if (style === "long") return <><path fill={dark} d="M17 14h3V9h7V6h14v3h6v5h3v15h-6V19h-8v5h-5v-6h-5v8h-5v-7h-4z" /><path fill={main} d="M20 12h7V8h13v3h5v6h-8v-4h-6v4h-5v5h-4v-6h-2z" /><path fill={light} d="M27 8h10v3H27zm-4 5h4v3h-4z" /></>;
+  return <><path fill={dark} d="M17 14h3V9h7V6h14v3h6v5h3v13h-6v-8h-7v4h-5v-5h-5v6h-6v-5h-4z" /><path fill={main} d="M20 12h7V8h13v3h5v6h-8v-4h-6v4h-5v3h-4v-4h-2z" /><path fill={light} d="M27 8h10v3H27zm-4 5h5v2h-5z" /></>;
 };
 
 const Face = ({ expression, dark }) => {
