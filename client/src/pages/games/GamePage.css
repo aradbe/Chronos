@@ -2,7 +2,7 @@
   position: relative;
   z-index: 1;
   min-height: calc(100vh - 72px);
-  padding: clamp(20px, 3vw, 40px);
+  padding: clamp(14px, 2vw, 28px);
   color: #e8edf3;
   background: transparent;
 }
@@ -13,10 +13,10 @@
   justify-content: space-between;
   gap: var(--space-6);
   max-width: 1500px;
-  margin: 0 auto var(--space-4);
+  margin: 0 auto var(--space-3);
   border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-5);
   background: linear-gradient(145deg, rgba(20, 35, 50, 0.98), rgba(12, 24, 35, 0.98));
   box-shadow: var(--shadow-sm);
 }
@@ -71,7 +71,7 @@
 .game-page__layout {
   display: grid;
   grid-template-columns: minmax(220px, 0.8fr) minmax(420px, 1.7fr) minmax(240px, 0.85fr);
-  gap: var(--space-4);
+  gap: var(--space-3);
   max-width: 1500px;
   margin: 0 auto;
 }
@@ -80,7 +80,7 @@
   position: relative;
   border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
-  padding: var(--space-6);
+  padding: var(--space-5);
   background: linear-gradient(150deg, rgba(20, 35, 50, 0.98), rgba(11, 23, 34, 0.98));
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.18);
 }
@@ -95,9 +95,7 @@
 }
 
 .game-page__map,
-.game-page__scene {
-  min-height: 560px;
-}
+.game-page__scene { min-height: 500px; }
 
 .game-page__sidebar {
   display: grid;
