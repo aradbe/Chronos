@@ -1,6 +1,7 @@
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
 const { AdminScenarioError } = require("./adminScenarioError");
+const scenarioAiService = require("./scenarioAiService");
 const {
   validateScenarioDraft,
   validateScenarioForPublish,
@@ -98,6 +99,50 @@ const listScenarios = async () => {
   });
 };
 
+const getScenario = async (scenarioId) => {
+  const scenario = await Scenario.findById(scenarioId);
+  if (!scenario) throw new AdminScenarioError("Scenario not found", "SCENARIO_NOT_FOUND", 404);
+  return scenario;
+};
+
+const generateScenario = async (inputs) => {
+  const seed = {
+    title: inputs?.title,
+    year: Number(inputs?.year),
+    description: inputs?.description,
+    difficulty: inputs?.difficulty,
+    startLocationId: inputs?.startLocationId,
+  };
+  const { valid, errors } = validateScenarioDraft(seed);
+  if (!valid) throw new AdminScenarioError("Check the scenario details before generating", "VALIDATION_ERROR", 400, errors);
+  const generated = await scenarioAiService.generateScenario(seed);
+  return createScenario(generated);
+};
+
+const reviseScenario = async (scenarioId, instruction) => {
+  if (typeof instruction !== "string" || instruction.trim().length < 5) {
+    throw new AdminScenarioError("Describe what you want the AI to change", "VALIDATION_ERROR", 400);
+  }
+
+  const scenario = await getScenario(scenarioId);
+  if (scenario.isActive) {
+    throw new AdminScenarioError("Unpublish the scenario before editing it", "SCENARIO_PUBLISHED", 400);
+  }
+  const savedGames = await GameSession.countDocuments({ scenarioId });
+  if (savedGames > 0) {
+    throw new AdminScenarioError("This scenario already has saved games and cannot be rewritten", "SCENARIO_IN_USE", 400);
+  }
+
+  const revised = await scenarioAiService.reviseScenario(scenario, instruction.trim());
+  const clean = pickCreatableFields(revised);
+  for (const field of CREATABLE_FIELDS) {
+    if (clean[field] !== undefined) scenario[field] = clean[field];
+  }
+  scenario.isActive = false;
+  await scenario.save();
+  return scenario;
+};
+
 // Publishing and unpublishing are the same operation with the flag pointed in
 // opposite directions, so they share one function rather than two near-copies.
 const setPublished = async (scenarioId, isActive) => {
@@ -184,6 +229,9 @@ const deleteScenario = async (scenarioId) => {
 module.exports = {
   createScenario,
   listScenarios,
+  getScenario,
+  generateScenario,
+  reviseScenario,
   publishScenario,
   unpublishScenario,
   deleteScenario,

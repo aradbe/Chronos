@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { observer } from "mobx-react-lite";
-import { createScenario } from "../../api/adminApi";
+import { generateScenario } from "../../api/adminApi";
 import { useStores } from "../../stores/useStores";
 import "./CreateScenarioForm.css";
 
@@ -77,7 +77,7 @@ export const CreateScenarioForm = observer(function CreateScenarioForm({
     setSubmitting(true);
 
     try {
-      const scenario = await createScenario(
+      const scenario = await generateScenario(
         {
           title: draft.title.trim(),
           year: Number(draft.year),
@@ -102,8 +102,9 @@ export const CreateScenarioForm = observer(function CreateScenarioForm({
       <div className="create-scenario__intro">
         <h2>New scenario</h2>
         <p>
-          Saved as an unpublished draft. The locations, characters and items are
-          added afterwards, and nothing is shown to players until you publish it.
+          Give Chronos the historical setup. AI will build the locations,
+          characters, objectives, items, encounters and disaster timeline, then
+          save everything as an unpublished draft for your review.
         </p>
       </div>
 
@@ -185,7 +186,7 @@ export const CreateScenarioForm = observer(function CreateScenarioForm({
 
       <div className="create-scenario__actions">
         <button type="submit" className="admin-button" disabled={submitting}>
-          {submitting ? "Saving..." : "Create draft"}
+          {submitting ? "Building the world..." : "Generate complete scenario"}
         </button>
 
         <button
@@ -197,6 +198,12 @@ export const CreateScenarioForm = observer(function CreateScenarioForm({
           Cancel
         </button>
       </div>
+      {submitting ? (
+        <p className="create-scenario__generating" aria-live="polite">
+          This can take a minute. The draft will be checked for broken routes,
+          missing items and invalid objectives before it is saved.
+        </p>
+      ) : null}
     </form>
   );
 });

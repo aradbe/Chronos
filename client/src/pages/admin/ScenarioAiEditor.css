@@ -1,0 +1,14 @@
+.scenario-ai-editor { margin-bottom: var(--space-6); border: 1px solid var(--color-border-warm); border-radius: var(--radius-md); padding: var(--space-6); background: linear-gradient(145deg, rgba(20,35,50,.96), rgba(11,23,34,.96)); }
+.scenario-ai-editor header { display: flex; justify-content: space-between; gap: var(--space-4); align-items: start; }
+.scenario-ai-editor header span { color: var(--color-primary); font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.scenario-ai-editor h2 { margin: 3px 0 0; color: var(--color-bronze); }
+.scenario-ai-editor header button { border: 0; color: var(--color-muted); background: transparent; cursor: pointer; }
+.scenario-ai-editor__summary { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: var(--space-4) 0; }
+.scenario-ai-editor__summary span { border: 1px solid var(--color-border); border-radius: 999px; padding: 5px 9px; color: var(--color-muted); font-size: .76rem; }
+.scenario-ai-editor__summary strong { color: var(--color-text); }
+.scenario-ai-editor form { display: grid; gap: var(--space-2); }
+.scenario-ai-editor label { color: var(--color-text); font-weight: 700; }
+.scenario-ai-editor textarea { border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: var(--space-3); color: var(--color-text); background: rgba(5,13,21,.52); font: inherit; resize: vertical; }
+.scenario-ai-editor form > div { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.scenario-ai-editor small { color: var(--color-muted); }
+.scenario-ai-editor__error, .scenario-ai-editor__warning { color: var(--color-danger); }

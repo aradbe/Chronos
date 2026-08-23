@@ -8,6 +8,7 @@ import {
 } from "../../api/adminApi";
 import { useStores } from "../../stores/useStores";
 import { CreateScenarioForm } from "./CreateScenarioForm";
+import { ScenarioAiEditor } from "./ScenarioAiEditor";
 import "./AdminScenariosPage.css";
 
 export const AdminScenariosPage = observer(function AdminScenariosPage() {
@@ -22,6 +23,7 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
   const [error, setError] = useState(null);
   const [formOpen, setFormOpen] = useState(false);
   const [busyId, setBusyId] = useState(null);
+  const [editingId, setEditingId] = useState(null);
 
   // Which row is one click away from being deleted. Held here rather than in
   // each row so that arming one row disarms any other — you can never have two
@@ -139,6 +141,15 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
         />
       ) : null}
 
+      {editingId ? (
+        <ScenarioAiEditor
+          scenarioId={editingId}
+          token={authStore.token}
+          onClose={() => setEditingId(null)}
+          onRevised={() => load()}
+        />
+      ) : null}
+
       {loading && scenarios.length === 0 ? (
         <section className="admin-scenarios-page__notice" aria-live="polite">
           <h2>Loading scenarios...</h2>
@@ -217,9 +228,13 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
                       {scenario.isActive ? "Unpublish" : "Publish"}
                     </button>
 
-                    {/* Editing is assignment #10. */}
-                    <button type="button" className="admin-button" disabled>
-                      Edit
+                    <button
+                      type="button"
+                      className="admin-button"
+                      onClick={() => { setEditingId(scenario._id); setFormOpen(false); }}
+                      disabled={busyId === scenario._id}
+                    >
+                      Edit with AI
                     </button>
 
                     <button

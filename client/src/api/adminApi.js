@@ -20,6 +20,23 @@ export const createScenario = (draft, token) =>
     token,
   });
 
+export const generateScenario = (inputs, token) =>
+  httpClient("/admin/scenarios/generate", {
+    method: "POST",
+    body: inputs,
+    token,
+  });
+
+export const getAdminScenario = (scenarioId, token) =>
+  httpClient(`/admin/scenarios/${scenarioId}`, { token });
+
+export const reviseScenario = (scenarioId, instruction, token) =>
+  httpClient(`/admin/scenarios/${scenarioId}/revise`, {
+    method: "POST",
+    body: { instruction },
+    token,
+  });
+
 // The server refuses to publish a scenario with no locations, or one whose
 // start location does not exist. The thrown error carries that reason in its
 // `message`.

@@ -59,6 +59,39 @@ const listScenarios = async (req, res, next) => {
   }
 };
 
+const getScenario = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.scenarioId)) {
+      return res.status(400).json({ error: { message: "A valid scenario ID is required", code: "VALIDATION_ERROR" } });
+    }
+    return res.status(200).json(await adminScenarioService.getScenario(req.params.scenarioId));
+  } catch (error) { return handleAdminError(error, res, next); }
+};
+
+const handleAdminError = (error, res, next) => {
+  if (error instanceof AdminScenarioError) {
+    return res.status(error.status).json({ error: { message: error.message, code: error.code, details: error.details } });
+  }
+  return next(error);
+};
+
+const generateScenario = async (req, res, next) => {
+  try {
+    const scenario = await adminScenarioService.generateScenario(req.body);
+    return res.status(201).json(scenario);
+  } catch (error) { return handleAdminError(error, res, next); }
+};
+
+const reviseScenario = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.scenarioId)) {
+      return res.status(400).json({ error: { message: "A valid scenario ID is required", code: "VALIDATION_ERROR" } });
+    }
+    const scenario = await adminScenarioService.reviseScenario(req.params.scenarioId, req.body.instruction);
+    return res.status(200).json(scenario);
+  } catch (error) { return handleAdminError(error, res, next); }
+};
+
 // Publishing and unpublishing differ by one boolean, so one builder makes both
 // handlers rather than two near-identical copies of the same error handling.
 const setPublished = (publish) => async (req, res, next) => {
@@ -133,8 +166,11 @@ const deleteScenario = async (req, res, next) => {
 
 module.exports = {
   createScenario,
+  generateScenario,
+  getScenario,
   listScenarios,
   publishScenario,
   unpublishScenario,
+  reviseScenario,
   deleteScenario,
 };

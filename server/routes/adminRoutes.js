@@ -31,6 +31,27 @@ router.post(
   adminScenarioController.createScenario,
 );
 
+router.post(
+  "/scenarios/generate",
+  authenticate,
+  authorize("admin"),
+  adminScenarioController.generateScenario,
+);
+
+router.get(
+  "/scenarios/:scenarioId",
+  authenticate,
+  authorize("admin"),
+  adminScenarioController.getScenario,
+);
+
+router.post(
+  "/scenarios/:scenarioId/revise",
+  authenticate,
+  authorize("admin"),
+  adminScenarioController.reviseScenario,
+);
+
 // Two narrow routes instead of one general update. Each does exactly one thing
 // and cannot accidentally change a scenario's content, which leaves the general
 // PATCH /scenarios/:scenarioId from the API contract free for editing later.
