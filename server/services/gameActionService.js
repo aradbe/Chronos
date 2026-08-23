@@ -45,6 +45,10 @@ const move = (game, payload = {}) => {
   }
 
   const destinationId = locationId.trim();
+  const pace = payload.pace || "steady";
+  if (!["steady", "rush"].includes(pace)) {
+    throw new GameActionError("Choose a valid travel pace", "VALIDATION_ERROR");
+  }
 
   const locationExists = game.scenarioId.locations.some(
     (location) => location.id === destinationId,
@@ -91,6 +95,10 @@ const move = (game, payload = {}) => {
   }
 
   game.currentLocationId = destinationId;
+
+  if (pace === "rush") {
+    game.health = Math.max(0, game.health - 6);
+  }
 
   if (!game.discoveredLocationIds.includes(destinationId)) {
     game.discoveredLocationIds.push(destinationId);

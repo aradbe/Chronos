@@ -80,4 +80,20 @@ describe("location encounter service", () => {
       (error) => error.code === "ENCOUNTER_LOCKED",
     );
   });
+
+  it("can require and consume an inventory item", () => {
+    const game = createGame();
+    const choice = game.scenarioId.locations[0].encounters[0].choices[0];
+    choice.requiresItems = ["bread"];
+    choice.consumeItemIds = ["bread"];
+
+    assert.throws(
+      () => resolveEncounter(game, { choiceId: "help", encounterId: "fallen_cart" }),
+      (error) => error.code === "ENCOUNTER_ITEM_REQUIRED",
+    );
+
+    game.inventory.push({ itemId: "bread", quantity: 1 });
+    resolveEncounter(game, { choiceId: "help", encounterId: "fallen_cart" });
+    assert.equal(game.inventory.some(({ itemId }) => itemId === "bread"), false);
+  });
 });

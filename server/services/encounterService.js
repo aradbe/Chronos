@@ -53,6 +53,25 @@ const resolveEncounter = (game, payload = {}) => {
     throw new GameActionError("Choose how to respond", "ENCOUNTER_CHOICE_REQUIRED", 400);
   }
 
+  const inventoryIds = new Set((game.inventory || []).map(({ itemId }) => itemId));
+  const missingItem = (choice.requiresItems || []).find(
+    (itemId) => !inventoryIds.has(itemId),
+  );
+  if (missingItem) {
+    throw new GameActionError(
+      "You are missing something needed for that choice",
+      "ENCOUNTER_ITEM_REQUIRED",
+      409,
+    );
+  }
+
+  for (const itemId of choice.consumeItemIds || []) {
+    const index = game.inventory.findIndex((entry) => entry.itemId === itemId);
+    if (index === -1) continue;
+    game.inventory[index].quantity -= 1;
+    if (game.inventory[index].quantity <= 0) game.inventory.splice(index, 1);
+  }
+
   const healthChange = choice.healthChange || 0;
   game.health = Math.max(0, Math.min(MAX_HEALTH, game.health + healthChange));
 
@@ -86,6 +105,7 @@ const resolveEncounter = (game, payload = {}) => {
     resultText: choice.resultText,
     timeCostMinutes: choice.timeCostMinutes || 0,
     trustChange: choice.trustChange || 0,
+    consumedItemIds: choice.consumeItemIds || [],
   };
 };
 

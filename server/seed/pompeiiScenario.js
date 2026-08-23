@@ -82,6 +82,17 @@ const pompeiiScenario = {
           symbol: "!",
           choices: [
             {
+              id: "calm_with_bread",
+              label: "Offer the mule your bread",
+              resultText: "The familiar scent steadies the animal long enough for its owner to free it. He gives you a vinegar-soaked breathing cloth in thanks.",
+              timeCostMinutes: 2,
+              requiresItems: ["bread"],
+              consumeItemIds: ["bread"],
+              itemId: "breathing_cloth",
+              trustCharacterId: "marcus",
+              trustChange: 6,
+            },
+            {
               id: "cut_harness",
               label: "Cut the harness free",
               resultText: "The mule bolts clear. Its grateful owner presses a vinegar-soaked breathing cloth into your hands.",

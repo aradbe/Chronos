@@ -18,6 +18,7 @@ export function LocationMap({
   error = "",
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [travelTarget, setTravelTarget] = useState(null);
   const rows = describeLocations({
     locations,
     events,
@@ -176,7 +177,7 @@ export function LocationMap({
               .join(" ")}
             disabled={disabled || !canMove}
             key={location.id}
-            onClick={() => onMove(location.id)}
+            onClick={() => setTravelTarget(location)}
             style={{ "--map-x": `${position.x}%`, "--map-y": `${position.y}%` }}
           >
             <span className="location-map__node-marker" aria-hidden="true" />
@@ -204,6 +205,24 @@ export function LocationMap({
           </div>
         ) : null}
       </div>
+
+      {travelTarget ? (
+        <div className="location-map__travel" role="dialog" aria-label={`Travel to ${travelTarget.name}`}>
+          <div>
+            <span>Choose your pace</span>
+            <strong>{travelTarget.name}</strong>
+          </div>
+          <button type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "steady"); setTravelTarget(null); }}>
+            <strong>Take the road</strong>
+            <small>{GAME_COSTS.move} min · no health cost</small>
+          </button>
+          <button className="location-map__travel-risk" type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "rush"); setTravelTarget(null); }}>
+            <strong>Risk a shortcut</strong>
+            <small>{GAME_COSTS.rushMove} min · −6 health</small>
+          </button>
+          <button className="location-map__travel-cancel" type="button" onClick={() => setTravelTarget(null)}>Cancel</button>
+        </div>
+      ) : null}
 
       <div className="location-map__legend" aria-label="Map legend">
         <span><i className="location-map__key location-map__key--current" />Here</span>

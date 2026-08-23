@@ -19,6 +19,8 @@ const encounterChoiceSchema = new mongoose.Schema(
     clueId: { type: String, default: "" },
     trustCharacterId: { type: String, default: "" },
     trustChange: { type: Number, default: 0 },
+    requiresItems: { type: [String], default: [] },
+    consumeItemIds: { type: [String], default: [] },
   },
   { _id: false },
 );

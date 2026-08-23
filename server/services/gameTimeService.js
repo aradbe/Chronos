@@ -18,6 +18,10 @@ const getActionTimeCost = (action) => {
     return action.payload?.minutes;
   }
 
+  if (action.type === "MOVE" && action.payload?.pace === "rush") {
+    return 4;
+  }
+
   return ACTION_TIME_COSTS[action.type] || 0;
 };
 

@@ -5,6 +5,7 @@ const formatEffects = (choice) => {
   if (choice.healthChange) effects.push(`${choice.healthChange > 0 ? "+" : ""}${choice.healthChange} health`);
   if (choice.trustChange) effects.push(`${choice.trustChange > 0 ? "+" : ""}${choice.trustChange} trust`);
   if (choice.itemId) effects.push("item reward");
+  if (choice.consumeItemIds?.length) effects.push("uses item");
   return effects.join(" · ");
 };
 
@@ -12,6 +13,7 @@ export function LocationEncounters({
   actionResult,
   disabled = false,
   encounters = [],
+  inventory = [],
   objectives = [],
   onChoose,
   resolvedEncounterIds = [],
@@ -26,6 +28,7 @@ export function LocationEncounters({
       !resolvedEncounterIds.includes(encounter.id) &&
       (encounter.requiresObjectives || []).every((id) => completed.has(id)),
   );
+  const inventoryIds = new Set(inventory.map(({ itemId }) => itemId));
 
   if (!available.length && !actionResult?.encounterId) return null;
 
@@ -52,17 +55,23 @@ export function LocationEncounters({
             <h3>{encounter.title}</h3>
             <p>{encounter.description}</p>
             <div className="location-encounter__choices">
-              {encounter.choices.map((choice) => (
+              {encounter.choices.map((choice) => {
+                const missingItems = (choice.requiresItems || []).filter(
+                  (itemId) => !inventoryIds.has(itemId),
+                );
+                return (
                 <button
                   type="button"
-                  disabled={disabled}
+                  disabled={disabled || missingItems.length > 0}
                   key={choice.id}
                   onClick={() => onChoose(encounter.id, choice.id)}
                 >
                   <strong>{choice.label}</strong>
                   <span>{formatEffects(choice)}</span>
+                  {missingItems.length ? <em>Requires an item you do not have</em> : null}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </div>
         </article>

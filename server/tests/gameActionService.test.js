@@ -219,6 +219,18 @@ describe("MOVE action", () => {
     );
   });
 
+  it("lets the player trade health for a faster route", async () => {
+    const game = createGame();
+
+    await performAction(game, {
+      type: "MOVE",
+      payload: { locationId: "market", pace: "rush" },
+    });
+
+    assert.equal(game.currentTime, 4);
+    assert.equal(game.health, 94);
+  });
+
   it("charges time and explains a scenario-gated location", async () => {
     const game = createGame();
     game.scenarioId.locationGates = [

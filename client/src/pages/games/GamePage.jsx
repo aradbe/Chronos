@@ -64,9 +64,9 @@ export const GamePage = observer(function GamePage() {
     return null;
   })();
 
-  const handleMove = (locationId) => {
+  const handleMove = (locationId, pace = "steady") => {
     gameStore
-      .runAction(gameId, { type: "MOVE", payload: { locationId } })
+      .runAction(gameId, { type: "MOVE", payload: { locationId, pace } })
       .catch(() => {});
   };
 
@@ -165,6 +165,7 @@ export const GamePage = observer(function GamePage() {
               actionResult={gameStore.actionResult}
               disabled={gameStore.actionPending}
               encounters={currentLocation?.encounters || []}
+              inventory={game.inventory}
               objectives={game.objectives}
               onChoose={handleEncounterChoice}
               resolvedEncounterIds={game.resolvedEncounterIds || []}
