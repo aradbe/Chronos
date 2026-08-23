@@ -3,10 +3,12 @@ const { describe, it } = require("node:test");
 const mongoose = require("mongoose");
 const {
   createGame,
+  deleteGame,
   getGame,
   performGameAction,
 } = require("../controllers/gameController");
 const GameSession = require("../models/GameSession");
+const Message = require("../models/Message");
 const Scenario = require("../models/Scenario");
 const gameActionService = require("../services/gameActionService");
 
@@ -208,6 +210,60 @@ describe("getGame", () => {
     );
 
     assert.equal(forwardedError, expectedError);
+  });
+});
+
+describe("deleteGame", () => {
+  it("deletes an owned run and its conversation history", async (test) => {
+    const gameId = new mongoose.Types.ObjectId();
+    const userId = new mongoose.Types.ObjectId();
+    const game = { _id: gameId };
+    let messageFilter;
+    let deleteFilter;
+
+    test.mock.method(GameSession, "findOne", (query) => {
+      assert.deepEqual(query, { _id: gameId.toString(), userId });
+      return { select: async () => game };
+    });
+    test.mock.method(Message, "deleteMany", async (query) => {
+      messageFilter = query;
+    });
+    test.mock.method(GameSession, "deleteOne", async (query) => {
+      deleteFilter = query;
+    });
+
+    const response = createResponse();
+    await deleteGame(
+      { params: { id: gameId.toString() }, user: { _id: userId } },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(response.body.deletedGameId, gameId);
+    assert.deepEqual(messageFilter, { gameSessionId: gameId });
+    assert.deepEqual(deleteFilter, { _id: gameId, userId });
+  });
+
+  it("does not reveal or delete another player's run", async (test) => {
+    test.mock.method(GameSession, "findOne", () => ({
+      select: async () => null,
+    }));
+    test.mock.method(Message, "deleteMany", assert.fail);
+    test.mock.method(GameSession, "deleteOne", assert.fail);
+
+    const response = createResponse();
+    await deleteGame(
+      {
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(response.statusCode, 404);
+    assert.equal(response.body.error.code, "GAME_NOT_FOUND");
   });
 });
 

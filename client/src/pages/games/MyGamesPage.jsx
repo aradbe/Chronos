@@ -39,6 +39,16 @@ export const MyGamesPage = observer(function MyGamesPage() {
   const user = authStore.user;
   const { savedGames, savedGamesLoading, savedGamesError } = gameStore;
 
+  const handleDelete = (game) => {
+    const confirmed = window.confirm(
+      "Delete this run and its conversation history? This cannot be undone.",
+    );
+
+    if (confirmed) {
+      gameStore.deleteSavedGame(game._id).catch(() => {});
+    }
+  };
+
   useEffect(() => {
     gameStore.loadSavedGames().catch(() => {});
   }, [gameStore]);
@@ -132,9 +142,21 @@ export const MyGamesPage = observer(function MyGamesPage() {
 
               <footer className="my-game-card__footer">
                 <span>Updated {formatDate(game.updatedAt || game.createdAt)}</span>
-                <Link className="my-games-page__action" to={`/games/${game._id}`}>
-                  {game.status === "active" ? "Continue" : "Open"}
-                </Link>
+                <div className="my-game-card__actions">
+                  <button
+                    className="my-games-page__delete"
+                    type="button"
+                    onClick={() => handleDelete(game)}
+                    disabled={gameStore.deletingGameId === game._id}
+                  >
+                    {gameStore.deletingGameId === game._id
+                      ? "Deleting..."
+                      : "Delete"}
+                  </button>
+                  <Link className="my-games-page__action" to={`/games/${game._id}`}>
+                    {game.status === "active" ? "Continue" : "Open"}
+                  </Link>
+                </div>
               </footer>
             </article>
           ))}

@@ -16,6 +16,13 @@ export const getGame = (gameId, token) => {
   return httpClient(`/games/${gameId}`, { token });
 };
 
+export const deleteGame = (gameId, token) => {
+  return httpClient(`/games/${gameId}`, {
+    method: "DELETE",
+    token,
+  });
+};
+
 export const listGameMessages = (gameId, token) => {
   return httpClient(`/games/${gameId}/messages`, { token });
 };

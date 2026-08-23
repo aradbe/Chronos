@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const GameSession = require("../models/GameSession");
 const Scenario = require("../models/Scenario");
+const Message = require("../models/Message");
 const gameActionService = require("../services/gameActionService");
 const objectiveService = require("../services/objectiveService");
 
@@ -76,6 +77,44 @@ const getGame = async (req, res, next) => {
     }
 
     return res.status(200).json({ game });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const deleteGame = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: {
+          message: "A valid game ID is required",
+          code: "VALIDATION_ERROR",
+        },
+      });
+    }
+
+    const game = await GameSession.findOne({
+      _id: id,
+      userId: req.user._id,
+    }).select("_id");
+
+    if (!game) {
+      return res.status(404).json({
+        error: {
+          message: "Game not found",
+          code: "GAME_NOT_FOUND",
+        },
+      });
+    }
+
+    await Promise.all([
+      Message.deleteMany({ gameSessionId: game._id }),
+      GameSession.deleteOne({ _id: game._id, userId: req.user._id }),
+    ]);
+
+    return res.status(200).json({ deletedGameId: game._id });
   } catch (error) {
     return next(error);
   }
@@ -159,6 +198,7 @@ const performGameAction = async (req, res, next) => {
 
 module.exports = {
   createGame,
+  deleteGame,
   getGame,
   performGameAction,
 };

@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import {
   getGame,
+  deleteGame,
   interactWithCharacter,
   listGameMessages,
   listMyGames,
@@ -20,6 +21,7 @@ export class GameStore {
   conversationError = null;
   error = null;
   savedGamesError = null;
+  deletingGameId = null;
   interactionError = null;
   interactionResult = null;
   // The action that produced `error`. The screen needs it to decide where the
@@ -53,6 +55,26 @@ export class GameStore {
         this.savedGamesLoading = false;
       });
 
+      throw error;
+    }
+  }
+
+  async deleteSavedGame(gameId) {
+    this.deletingGameId = gameId;
+    this.savedGamesError = null;
+
+    try {
+      await deleteGame(gameId, this.rootStore.authStore.token);
+
+      runInAction(() => {
+        this.savedGames = this.savedGames.filter(({ _id }) => _id !== gameId);
+        this.deletingGameId = null;
+      });
+    } catch (error) {
+      runInAction(() => {
+        this.savedGamesError = error;
+        this.deletingGameId = null;
+      });
       throw error;
     }
   }

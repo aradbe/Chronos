@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   createGame,
+  deleteGame,
   getGame,
   performGameAction,
 } = require("../controllers/gameController");
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post("/", authenticate, createGame);
 router.get("/:id/messages", authenticate, listGameMessages);
 router.get("/:id", authenticate, getGame);
+router.delete("/:id", authenticate, deleteGame);
 router.patch("/:id/action", authenticate, performGameAction);
 router.post("/:id/interact/:characterId", authenticate, interactWithCharacter);
 
