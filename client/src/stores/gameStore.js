@@ -109,6 +109,9 @@ export class GameStore {
       return game;
     } catch (error) {
       runInAction(() => {
+        if (error.game) {
+          this.currentGame = error.game;
+        }
         this.error = error;
         this.failedAction = action;
         this.actionPending = false;

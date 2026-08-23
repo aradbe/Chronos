@@ -354,4 +354,46 @@ describe("performGameAction", () => {
     assert.equal(response.body.error.code, "UNSUPPORTED_ACTION");
     assert.equal(saved, false);
   });
+
+  it("saves and returns a time penalty from a blocked attempt", async (test) => {
+    let saved = false;
+    const game = {
+      currentTime: 5,
+      status: "active",
+      async populate() {},
+      async save() {
+        saved = true;
+      },
+    };
+    const error = new gameActionService.GameActionError(
+      "You need a map.",
+      "LOCATION_LOCKED",
+      409,
+      {
+        gameChanged: true,
+        guideEvent: { minutesLost: 5, type: "path_blocked" },
+      },
+    );
+
+    test.mock.method(GameSession, "findOne", async () => game);
+    test.mock.method(gameActionService, "performAction", async () => {
+      throw error;
+    });
+
+    const response = createResponse();
+    await performGameAction(
+      {
+        body: { payload: { locationId: "harbor" }, type: "MOVE" },
+        params: { id: new mongoose.Types.ObjectId().toString() },
+        user: { _id: new mongoose.Types.ObjectId() },
+      },
+      response,
+      assert.fail,
+    );
+
+    assert.equal(saved, true);
+    assert.equal(response.statusCode, 409);
+    assert.equal(response.body.game, game);
+    assert.equal(response.body.guideEvents[0].minutesLost, 5);
+  });
 });

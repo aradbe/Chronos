@@ -175,6 +175,39 @@ const objectiveSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    hintText: {
+      type: String,
+      default: "",
+    },
+
+    nextStepText: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: false },
+);
+
+const locationGateSchema = new mongoose.Schema(
+  {
+    locationId: { type: String, required: true },
+    requiresItems: { type: [String], default: [] },
+    requiresObjectives: { type: [String], default: [] },
+    blockedFeedback: { type: String, required: true },
+    blockedAttemptPenaltyMinutes: { type: Number, default: 0, min: 0 },
+  },
+  { _id: false },
+);
+
+const finalConditionSchema = new mongoose.Schema(
+  {
+    type: { type: String, default: "" },
+    characterId: { type: String, default: "" },
+    locationId: { type: String, default: "" },
+    requiredItems: { type: [String], default: [] },
+    successFeedback: { type: String, default: "" },
+    missingRequirementsFeedback: { type: Map, of: String, default: {} },
   },
   { _id: false },
 );
@@ -248,6 +281,22 @@ const scenarioSchema = new mongoose.Schema(
       required: true,
     },
 
+    mainGoal: {
+      type: String,
+      default: "",
+    },
+
+    timeLimitMinutes: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    recommendedPath: {
+      type: [String],
+      default: [],
+    },
+
     difficulty: {
       type: String,
       enum: ["easy", "medium", "hard"],
@@ -294,6 +343,16 @@ const scenarioSchema = new mongoose.Schema(
     events: {
       type: [eventSchema],
       default: [],
+    },
+
+    locationGates: {
+      type: [locationGateSchema],
+      default: [],
+    },
+
+    finalCondition: {
+      type: finalConditionSchema,
+      default: () => ({}),
     },
   },
   {

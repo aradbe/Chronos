@@ -57,6 +57,28 @@
   color: #6ec7ae;
 }
 
+.mission-panel__objective--active {
+  margin: 0 calc(var(--space-3) * -1);
+  border: 1px solid rgba(110, 199, 174, 0.3);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  background: rgba(110, 199, 174, 0.06);
+}
+
+.mission-panel__hint {
+  margin-top: var(--space-2) !important;
+  color: #b7c5d2;
+}
+
+.mission-panel__hint strong {
+  display: inline;
+  margin-right: 4px;
+  color: #d5a96f;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .mission-panel__objective--completed .mission-panel__marker {
   border-color: #6ec7ae;
   background: #6ec7ae;

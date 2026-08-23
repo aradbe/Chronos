@@ -82,6 +82,8 @@ const getGame = async (req, res, next) => {
 };
 
 const performGameAction = async (req, res, next) => {
+  let game;
+
   try {
     const { id } = req.params;
     const action = req.body;
@@ -104,7 +106,7 @@ const performGameAction = async (req, res, next) => {
       });
     }
 
-    const game = await GameSession.findOne({
+    game = await GameSession.findOne({
       _id: id,
       userId: req.user._id,
     });
@@ -137,7 +139,13 @@ const performGameAction = async (req, res, next) => {
     return res.status(200).json({ game });
   } catch (error) {
     if (error instanceof gameActionService.GameActionError) {
+      if (error.gameChanged) {
+        await game.save();
+      }
+
       return res.status(error.status).json({
+        game: error.gameChanged ? game : undefined,
+        guideEvents: error.guideEvent ? [error.guideEvent] : [],
         error: {
           message: error.message,
           code: error.code,

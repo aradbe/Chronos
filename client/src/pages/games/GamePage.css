@@ -42,6 +42,12 @@
   letter-spacing: 0.06em;
 }
 
+.game-page__goal {
+  margin: var(--space-1) 0 0 !important;
+  color: #b7c5d2 !important;
+  font-size: 0.82rem;
+}
+
 .game-page h2 {
   color: #d5a96f;
   font-size: 0.9rem;

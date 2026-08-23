@@ -43,6 +43,23 @@ export const GamePage = observer(function GamePage() {
   const currentLocation = scenario.locations.find(
     (location) => location.id === game.currentLocationId,
   );
+  const activeProgress = game.objectives.find(({ status }) => status === "active");
+  const activeObjective = scenario.objectives.find(
+    ({ id }) => id === activeProgress?.objectiveId,
+  );
+  const objectiveLocationId = (() => {
+    if (!activeObjective) return null;
+    if (activeObjective.type === "reach_location") return activeObjective.targetId;
+    if (activeObjective.type === "talk_to_character") {
+      return scenario.characters.find(({ id }) => id === activeObjective.targetId)
+        ?.startingLocationId;
+    }
+    if (activeObjective.type === "collect_item") {
+      return scenario.items.find(({ id }) => id === activeObjective.targetId)
+        ?.locationId;
+    }
+    return null;
+  })();
 
   const handleMove = (locationId) => {
     gameStore
@@ -85,6 +102,9 @@ export const GamePage = observer(function GamePage() {
         <div>
           <span className="game-page__eyebrow">Current scenario</span>
           <h1>{scenario.title}</h1>
+          {scenario.mainGoal ? (
+            <p className="game-page__goal">{scenario.mainGoal}</p>
+          ) : null}
         </div>
         <GameHud
           health={game.health}
@@ -106,6 +126,10 @@ export const GamePage = observer(function GamePage() {
               currentLocationId={game.currentLocationId}
               triggeredEventIds={game.triggeredEvents || []}
               discoveredLocationIds={game.discoveredLocationIds || []}
+              inventory={game.inventory}
+              locationGates={scenario.locationGates || []}
+              objectives={game.objectives}
+              objectiveLocationId={objectiveLocationId}
               disabled={gameStore.actionPending}
               onMove={handleMove}
               error={moveError?.message || ""}

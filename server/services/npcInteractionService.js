@@ -1,6 +1,11 @@
 const { buildDialogueReply } = require("./dialogueScriptEngine");
 const { createNpcReply } = require("./aiDialogueService");
 const { buildDialogueGuideEvents } = require("./chronosGuideService");
+const { triggerPendingEvents } = require("./eventService");
+const { evaluateFinalConversation } = require("./finalConditionService");
+const { applyLoseCondition, applyWinCondition } = require("./gameOutcomeService");
+const { advanceGameTime } = require("./gameTimeService");
+const { updateScore } = require("./scoreService");
 const { analyzePlayerMessage } = require("./playerMessageAnalysisService");
 const {
   OBJECTIVE_STATUSES,
@@ -10,6 +15,7 @@ const {
 
 const MIN_TRUST = 0;
 const MAX_TRUST = 100;
+const DIALOGUE_TIME_COST = 2;
 
 const clampTrust = (value) => {
   return Math.max(MIN_TRUST, Math.min(MAX_TRUST, value));
@@ -95,11 +101,11 @@ const applyNpcInteraction = async ({
   game.discoveredClues = [...(game.discoveredClues || []), ...newClues];
 
   const completedObjectives = [];
-  const talkObjective = completeActiveObjective(
-    game,
-    "talk_to_character",
-    characterId,
-  );
+  const finalConversation = evaluateFinalConversation({ characterId, game });
+  const talkObjective =
+    !finalConversation.isFinalConversation || finalConversation.ready
+      ? completeActiveObjective(game, "talk_to_character", characterId)
+      : null;
 
   if (talkObjective) {
     completedObjectives.push(talkObjective.objectiveId);
@@ -119,14 +125,26 @@ const applyNpcInteraction = async ({
     conversationTurn,
     text,
   });
-  const dialogue = await createNpcReply({
-    analysis,
-    character,
-    fallbackReply,
-    game,
-    messages,
-    text,
-  });
+  const dialogue = finalConversation.isFinalConversation
+    ? { mode: "scripted", reply: finalConversation.feedback }
+    : await createNpcReply({
+        analysis,
+        character,
+        fallbackReply,
+        game,
+        messages,
+        text,
+      });
+
+  if (Number.isInteger(game.currentTime)) {
+    advanceGameTime(game, DIALOGUE_TIME_COST);
+    triggerPendingEvents(game);
+  }
+
+  if (!applyLoseCondition(game)) {
+    applyWinCondition(game);
+  }
+  updateScore(game);
   const guideEvents = buildDialogueGuideEvents({
     completedObjectives,
     game,
@@ -142,6 +160,7 @@ const applyNpcInteraction = async ({
     newClues,
     dialogueMode: dialogue.mode,
     guideEvents,
+    missingFinalItems: finalConversation.missingItems,
     reply: dialogue.reply,
     trust: nextTrust,
     trustChange: analysis.trustChange,
@@ -150,5 +169,6 @@ const applyNpcInteraction = async ({
 };
 
 module.exports = {
+  DIALOGUE_TIME_COST,
   applyNpcInteraction,
 };

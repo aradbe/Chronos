@@ -85,6 +85,30 @@
   box-shadow: inset 3px 0 #a4544c;
 }
 
+.location-map__node--gated {
+  border-color: rgba(240, 138, 128, 0.72);
+  background: rgba(160, 78, 70, 0.13);
+  box-shadow: inset 3px 0 #a4544c;
+}
+
+.location-map__node--gated span {
+  color: #f08a80;
+}
+
+.location-map__node--objective {
+  outline: 1px solid rgba(213, 169, 111, 0.7);
+  outline-offset: 2px;
+}
+
+.location-map__node em {
+  color: #f1d2a5;
+  font-size: 0.65rem;
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .location-map__node--blocked span {
   color: #f08a80;
 }

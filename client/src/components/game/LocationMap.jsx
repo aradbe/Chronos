@@ -7,6 +7,10 @@ export function LocationMap({
   currentLocationId,
   triggeredEventIds = [],
   discoveredLocationIds = [],
+  inventory = [],
+  locationGates = [],
+  objectives = [],
+  objectiveLocationId = null,
   disabled = false,
   onMove,
   error = "",
@@ -17,6 +21,9 @@ export function LocationMap({
     currentLocationId,
     triggeredEventIds,
     discoveredLocationIds,
+    inventory,
+    locationGates,
+    objectives,
   });
 
   const here = rows.find((row) => row.state === LOCATION_STATES.CURRENT);
@@ -48,6 +55,9 @@ export function LocationMap({
               "location-map__node",
               `location-map__node--${state}`,
               isDiscovered ? "" : "location-map__node--unexplored",
+              location.id === objectiveLocationId
+                ? "location-map__node--objective"
+                : "",
             ]
               .filter(Boolean)
               .join(" ")}
@@ -57,6 +67,9 @@ export function LocationMap({
           >
             <strong>{location.name}</strong>
             <span>{isDiscovered ? label : `Unexplored · ${label}`}</span>
+            {location.id === objectiveLocationId ? (
+              <em>Current objective</em>
+            ) : null}
           </button>
         ))}
       </div>

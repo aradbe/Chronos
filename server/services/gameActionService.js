@@ -1,4 +1,5 @@
 const { GameActionError } = require("./gameActionError");
+const { checkLocationGate } = require("./locationGateService");
 const { triggerPendingEvents } = require("./eventService");
 const {
   advanceGameTime,
@@ -93,6 +94,36 @@ const move = (game, payload = {}) => {
 };
 
 const performAction = async (game, action) => {
+  if (action.type === "MOVE") {
+    const gateResult = checkLocationGate(game, action.payload?.locationId);
+
+    if (!gateResult.allowed) {
+      const penalty = gateResult.gate.blockedAttemptPenaltyMinutes || 0;
+
+      if (penalty) {
+        advanceGameTime(game, penalty);
+        triggerPendingEvents(game);
+        applyLoseCondition(game);
+        updateScore(game);
+      }
+
+      throw new GameActionError(
+        gateResult.gate.blockedFeedback,
+        "LOCATION_LOCKED",
+        409,
+        {
+          gameChanged: penalty > 0,
+          guideEvent: {
+            minutesLost: penalty,
+            message: gateResult.gate.blockedFeedback,
+            title: "Path blocked",
+            type: "path_blocked",
+          },
+        },
+      );
+    }
+  }
+
   switch (action.type) {
     case "MOVE":
       move(game, action.payload);

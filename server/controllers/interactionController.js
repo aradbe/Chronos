@@ -113,6 +113,7 @@ const interactWithCharacter = async (req, res, next) => {
       guideEvents: interaction.guideEvents,
       intent: interaction.intent,
       newClues: interaction.newClues,
+      missingFinalItems: interaction.missingFinalItems,
       reply: interaction.reply,
       trust: interaction.trust,
       trustChange: interaction.trustChange,

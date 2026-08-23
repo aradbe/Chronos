@@ -11,6 +11,17 @@ const pompeiiScenario = {
     "Mount Vesuvius has begun to stir above Pompeii. You have a few hours to " +
     "understand what is coming, earn the trust of the people who can help you, " +
     "and reach a ship before the city is buried.",
+  mainGoal: "Escape Pompeii alive before the final surge.",
+  timeLimitMinutes: 180,
+  recommendedPath: [
+    "find_marcus",
+    "get_city_map",
+    "consult_livia",
+    "find_ship_token",
+    "find_oil_lamp",
+    "reach_harbor",
+    "escape_with_lucius",
+  ],
   difficulty: "medium",
   startLocationId: "forum",
   isActive: true,
@@ -200,6 +211,8 @@ const pompeiiScenario = {
         "Speak to Marcus in the Forum and find out what he knows about the mountain.",
       type: "talk_to_character",
       targetId: "marcus",
+      nextStepText: "Marcus mentioned a map. Look around the Forum.",
+      hintText: "Ask Marcus directly about the danger or the road to the harbor.",
     },
     {
       id: "get_city_map",
@@ -207,6 +220,8 @@ const pompeiiScenario = {
       description: "Find a map of Pompeii so you can reach the harbor road.",
       type: "collect_item",
       targetId: "city_map",
+      nextStepText: "Livia at the Temple of Isis understands the tremors.",
+      hintText: "Marcus keeps a traders' map at his Forum stall.",
     },
     {
       id: "consult_livia",
@@ -215,6 +230,8 @@ const pompeiiScenario = {
         "Livia at the Temple of Isis has been counting the tremors. Learn how much time is left.",
       type: "talk_to_character",
       targetId: "livia",
+      nextStepText: "Livia has given you a reason to search the villa.",
+      hintText: "The Temple of Isis connects to the Forum.",
     },
     {
       id: "find_ship_token",
@@ -223,6 +240,17 @@ const pompeiiScenario = {
         "No captain will take you aboard without a harbor token. Find one.",
       type: "collect_item",
       targetId: "ship_token",
+      nextStepText: "Do not leave the villa without a light for the ship.",
+      hintText: "Search the Villa of the Mysteries for a harbor offering.",
+    },
+    {
+      id: "find_oil_lamp",
+      title: "Prepare a Light",
+      description: "Find an oil lamp before the ash turns day into night.",
+      type: "collect_item",
+      targetId: "oil_lamp",
+      nextStepText: "You have passage and light. Reach the harbor.",
+      hintText: "The oil lamp is also inside the villa.",
     },
     {
       id: "reach_harbor",
@@ -230,8 +258,50 @@ const pompeiiScenario = {
       description: "Get to the harbor and board a ship before the city is buried.",
       type: "reach_location",
       targetId: "harbor",
+      nextStepText: "Find Lucius and prove that you are ready to sail.",
+      hintText: "Follow the market south to the Harbor Road, then the Harbor.",
+    },
+    {
+      id: "escape_with_lucius",
+      title: "Escape with Lucius",
+      description: "Present the ship token and oil lamp to Lucius before he sails.",
+      type: "talk_to_character",
+      targetId: "lucius",
+      hintText: "Lucius is waiting at the Harbor.",
     },
   ],
+
+  locationGates: [
+    {
+      locationId: "harbor_road",
+      requiresItems: ["city_map"],
+      blockedFeedback:
+        "The southern streets split in every direction. You need a reliable map before risking the harbor road.",
+      blockedAttemptPenaltyMinutes: 5,
+    },
+    {
+      locationId: "villa",
+      requiresObjectives: ["consult_livia"],
+      blockedFeedback:
+        "You have no reason to search the abandoned villa yet. Someone nearby may know why it matters.",
+      blockedAttemptPenaltyMinutes: 5,
+    },
+  ],
+
+  finalCondition: {
+    type: "talk_to_character",
+    characterId: "lucius",
+    locationId: "harbor",
+    requiredItems: ["ship_token", "oil_lamp"],
+    missingRequirementsFeedback: {
+      ship_token:
+        'Lucius holds out his hand. "No harbor token, no passage. Come back when you have one."',
+      oil_lamp:
+        'Lucius looks toward the black water. "Your token earns a place, but my ship needs a lamp. Bring one before the ash reaches us."',
+    },
+    successFeedback:
+      "Lucius takes the token and lamp. Ropes fall away, oars bite the dark water, and Pompeii begins to disappear behind you.",
+  },
 
   events: [
     {

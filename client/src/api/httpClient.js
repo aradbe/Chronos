@@ -37,6 +37,8 @@ const normalizeError = (response, responseBody) => {
       "Request failed",
     code: serverError?.code || "REQUEST_FAILED",
     status: response.status,
+    game: responseBody?.game || null,
+    guideEvents: responseBody?.guideEvents || [],
   };
 };
 

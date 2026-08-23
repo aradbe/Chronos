@@ -185,4 +185,17 @@ describe("Pompeii scenario data", () => {
       }
     }
   });
+
+  it("defines a complete guided path and final escape condition", () => {
+    assert.deepEqual(
+      pompeii.recommendedPath,
+      pompeii.objectives.map(({ id }) => id),
+    );
+    assert.equal(pompeii.timeLimitMinutes, 180);
+    assert.deepEqual(pompeii.finalCondition.requiredItems, [
+      "ship_token",
+      "oil_lamp",
+    ]);
+    assert.equal(pompeii.objectives.at(-1).targetId, "lucius");
+  });
 });

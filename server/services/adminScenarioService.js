@@ -20,6 +20,9 @@ const CREATABLE_FIELDS = [
   "title",
   "year",
   "description",
+  "mainGoal",
+  "timeLimitMinutes",
+  "recommendedPath",
   "difficulty",
   "coverImageUrl",
   "startLocationId",
@@ -28,6 +31,8 @@ const CREATABLE_FIELDS = [
   "items",
   "objectives",
   "events",
+  "locationGates",
+  "finalCondition",
 ];
 
 const pickCreatableFields = (draft) => {

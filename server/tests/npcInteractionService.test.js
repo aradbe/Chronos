@@ -142,4 +142,59 @@ describe("NPC interaction service", () => {
     assert.equal(result.trustReason, "repeated");
     assert.match(result.reply, /answered that already/i);
   });
+
+  it("only completes the final conversation with required items", async () => {
+    const game = createGame();
+    game.currentLocationId = "harbor";
+    game.currentTime = 20;
+    game.health = 100;
+    game.status = "active";
+    game.discoveredLocationIds = ["forum", "harbor"];
+    game.triggeredEvents = [];
+    game.inventory = [{ itemId: "ship_token", quantity: 1 }];
+    game.objectives = [
+      { objectiveId: "escape", status: "active" },
+    ];
+    game.scenarioId.characters.push({
+      hiddenKnowledge: [],
+      id: "lucius",
+      name: "Lucius",
+      startingLocationId: "harbor",
+    });
+    game.scenarioId.locations.push({ id: "harbor", name: "Harbor" });
+    game.scenarioId.objectives = [
+      { id: "escape", targetId: "lucius", type: "talk_to_character" },
+    ];
+    game.scenarioId.events = [{ id: "deadline", triggerTime: 180, type: "deadline" }];
+    game.scenarioId.finalCondition = {
+      characterId: "lucius",
+      locationId: "harbor",
+      missingRequirementsFeedback: { oil_lamp: "Bring me a lamp." },
+      requiredItems: ["ship_token", "oil_lamp"],
+      successFeedback: "We sail now.",
+      type: "talk_to_character",
+    };
+
+    const refused = await applyNpcInteraction({
+      characterId: "lucius",
+      game,
+      text: "Please take me with you",
+    });
+
+    assert.equal(refused.reply, "Bring me a lamp.");
+    assert.deepEqual(refused.missingFinalItems, ["oil_lamp"]);
+    assert.equal(game.status, "active");
+    assert.equal(game.objectives[0].status, "active");
+
+    game.inventory.push({ itemId: "oil_lamp", quantity: 1 });
+    const escaped = await applyNpcInteraction({
+      characterId: "lucius",
+      game,
+      text: "I have the lamp and token. Let us sail.",
+    });
+
+    assert.equal(escaped.reply, "We sail now.");
+    assert.equal(game.objectives[0].status, "completed");
+    assert.equal(game.status, "completed");
+  });
 });

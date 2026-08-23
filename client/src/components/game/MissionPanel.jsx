@@ -31,6 +31,11 @@ export function MissionPanel({ objectives, progress }) {
                 <span className="mission-panel__status">
                   {STATUS_LABELS[status]}
                 </span>
+                {status === "active" && objective.hintText ? (
+                  <p className="mission-panel__hint">
+                    <strong>Hint</strong> {objective.hintText}
+                  </p>
+                ) : null}
               </div>
             </li>
           );

@@ -218,4 +218,52 @@ describe("MOVE action", () => {
         error.code === "INVALID_GAME_STATE",
     );
   });
+
+  it("charges time and explains a scenario-gated location", async () => {
+    const game = createGame();
+    game.scenarioId.locationGates = [
+      {
+        blockedAttemptPenaltyMinutes: 5,
+        blockedFeedback: "You need a city map.",
+        locationId: "market",
+        requiresItems: ["city_map"],
+      },
+    ];
+
+    await assert.rejects(
+      performAction(game, {
+        type: "MOVE",
+        payload: { locationId: "market" },
+      }),
+      (error) => {
+        assert.equal(error.code, "LOCATION_LOCKED");
+        assert.equal(error.gameChanged, true);
+        assert.equal(error.guideEvent.minutesLost, 5);
+        return true;
+      },
+    );
+
+    assert.equal(game.currentLocationId, "forum");
+    assert.equal(game.currentTime, 5);
+  });
+
+  it("opens a gated location after its requirements are met", async () => {
+    const game = createGame({
+      inventory: [{ itemId: "city_map", quantity: 1 }],
+    });
+    game.scenarioId.locationGates = [
+      {
+        blockedFeedback: "You need a city map.",
+        locationId: "market",
+        requiresItems: ["city_map"],
+      },
+    ];
+
+    await performAction(game, {
+      type: "MOVE",
+      payload: { locationId: "market" },
+    });
+
+    assert.equal(game.currentLocationId, "market");
+  });
 });
