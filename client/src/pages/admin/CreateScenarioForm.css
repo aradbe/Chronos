@@ -1,0 +1,114 @@
+/* The form opens inside the admin page rather than on a page of its own, so it
+   is drawn as a bordered panel — one clear block, separate from the table
+   below it. */
+.create-scenario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border-warm);
+  border-radius: var(--radius-sm);
+}
+
+.create-scenario__intro h2 {
+  margin: 0 0 var(--space-2);
+  font-size: 1.15rem;
+}
+
+.create-scenario__intro p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.create-scenario__problems {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-bronze);
+  border-radius: var(--radius-sm);
+  color: var(--color-bronze);
+  font-size: 0.88rem;
+}
+
+.create-scenario__problems p {
+  margin: 0;
+}
+
+.create-scenario__problems ul {
+  margin: var(--space-2) 0 0;
+  padding-left: var(--space-4);
+}
+
+.create-scenario__field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.create-scenario__field > span {
+  font-size: 0.88rem;
+}
+
+.create-scenario__field small {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.create-scenario__field input,
+.create-scenario__field textarea,
+.create-scenario__field select {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.create-scenario__field textarea {
+  resize: vertical;
+}
+
+.create-scenario__field input:focus,
+.create-scenario__field textarea:focus,
+.create-scenario__field select:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+/* Each placeholder is an example of a right answer, so it should read as a
+   suggestion rather than as text already typed in. */
+.create-scenario__field ::placeholder {
+  color: var(--color-muted);
+  opacity: 0.75;
+}
+
+.create-scenario__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.create-scenario__cancel {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-muted);
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.create-scenario__cancel:hover:not(:disabled) {
+  color: var(--color-text);
+}
+
+.create-scenario__cancel:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
