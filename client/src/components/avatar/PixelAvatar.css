@@ -8,6 +8,20 @@
   background: #091521;
 }
 
+.pixel-avatar__sprite {
+  transform-origin: center bottom;
+  animation: pixel-avatar-idle 1.8s steps(2, end) infinite;
+}
+
+@keyframes pixel-avatar-idle {
+  0%, 70%, 100% { transform: translateY(0); }
+  85% { transform: translateY(-1px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-avatar__sprite { animation: none; }
+}
+
 .pixel-avatar--large { width: min(270px, 100%); }
 .pixel-avatar--medium { width: 96px; }
 .pixel-avatar--small { width: 38px; border-radius: 4px; box-shadow: none; }
