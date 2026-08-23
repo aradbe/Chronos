@@ -207,6 +207,13 @@ describe("Pompeii scenario data", () => {
       "ship_token",
       "oil_lamp",
     ]);
+    assert.deepEqual(pompeii.finalCondition.requiresObjectives, [
+      "find_oil_lamp",
+    ]);
+    assert.deepEqual(
+      pompeii.items.find(({ id }) => id === "oil_lamp").requiresObjectives,
+      ["learn_lucius_requirements"],
+    );
     assert.equal(pompeii.objectives.at(-1).targetId, "lucius");
   });
 });

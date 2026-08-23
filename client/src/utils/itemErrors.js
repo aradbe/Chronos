@@ -8,6 +8,7 @@ const ITEM_ACTION_TYPES = ["PICK_UP_ITEM", "USE_ITEM"];
 const ITEM_ERROR_MESSAGES = {
   ITEM_NOT_FOUND: "That item does not exist in this scenario.",
   ITEM_NOT_HERE: "That item is not in this location.",
+  ITEM_NOT_REVEALED: "You have not discovered this item yet.",
   ALREADY_HAVE_ITEM: "You are already carrying that item.",
   ITEM_NOT_IN_INVENTORY: "You are not carrying that item.",
   ITEM_NOT_USABLE: "That item has no use.",

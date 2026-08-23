@@ -146,6 +146,10 @@ const CHARACTER_REPLIES = {
       'Lucius says, "A token earns you a place. A lamp gets this ship through the black water. Bring both and we sail."',
       'Lucius snaps, "I leave when the ash reaches the wall. Token and lamp—nothing less."',
     ],
+    help: [
+      'Lucius points toward the darkening water. "Your token buys passage, but I cannot steer blind. The bath attendants keep emergency oil lamps. Bring one back and we cast off."',
+      'Lucius says, "You have the token. Now I need light for the crossing. Find an oil lamp near the Baths and return before the harbor disappears under ash."',
+    ],
     item: [
       'Lucius holds out his hand. "Show me a harbor token and an oil lamp. Promises are not cargo."',
     ],
@@ -246,7 +250,10 @@ const buildDialogueReply = ({
   }
 
   if (signals.asksForHelp) {
-    return replyFrom(REPLIES.help, context);
+    return (
+      getCharacterReply({ character, context, topic: "help" }) ||
+      replyFrom(REPLIES.help, context)
+    );
   }
 
   if (signals.mentionsMap) {

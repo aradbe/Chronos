@@ -127,6 +127,7 @@ export const GamePage = observer(function GamePage() {
               triggeredEventIds={game.triggeredEvents || []}
               discoveredLocationIds={game.discoveredLocationIds || []}
               inventory={game.inventory}
+              objectives={game.objectives}
               locationGates={scenario.locationGates || []}
               objectives={game.objectives}
               objectiveLocationId={objectiveLocationId}

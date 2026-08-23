@@ -140,6 +140,11 @@ const itemSchema = new mongoose.Schema(
       default: "",
     },
 
+    requiresObjectives: {
+      type: [String],
+      default: [],
+    },
+
     // USE_ITEM refuses any item whose effect type is "none".
     effect: {
       type: itemEffectSchema,
@@ -218,6 +223,7 @@ const finalConditionSchema = new mongoose.Schema(
     type: { type: String, default: "" },
     characterId: { type: String, default: "" },
     locationId: { type: String, default: "" },
+    requiresObjectives: { type: [String], default: [] },
     requiredItems: { type: [String], default: [] },
     successFeedback: { type: String, default: "" },
     missingRequirementsFeedback: { type: Map, of: String, default: {} },

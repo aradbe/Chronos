@@ -107,6 +107,9 @@ const HELP_PATTERNS = [
   "can you help",
   "help",
   "i need your help",
+  "what do we need",
+  "what do you need",
+  "what does the ship need",
   "what should i do",
 ];
 

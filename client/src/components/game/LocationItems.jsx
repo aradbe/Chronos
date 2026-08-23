@@ -6,6 +6,7 @@ export function LocationItems({
   items,
   locationId,
   inventory,
+  objectives = [],
   disabled = false,
   onPickUpItem,
   error = null,
@@ -16,8 +17,15 @@ export function LocationItems({
   const itemsHere = items.filter((item) => {
     const isHere = Boolean(item.locationId) && item.locationId === locationId;
     const isCarried = inventory.some((entry) => entry.itemId === item.id);
+    const isRevealed = (item.requiresObjectives || []).every((objectiveId) =>
+      objectives.some(
+        (objective) =>
+          objective.objectiveId === objectiveId &&
+          objective.status === "completed",
+      ),
+    );
 
-    return isHere && !isCarried;
+    return isHere && !isCarried && isRevealed;
   });
 
   const isCardError = itemsHere.some((item) => item.id === failedItemId);

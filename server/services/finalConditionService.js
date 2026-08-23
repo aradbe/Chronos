@@ -4,9 +4,18 @@ const getInventoryIds = (game) => {
 
 const evaluateFinalConversation = ({ characterId, game }) => {
   const condition = game.scenarioId?.finalCondition;
+  const completedObjectives = new Set(
+    (game.objectives || [])
+      .filter(({ status }) => status === "completed")
+      .map(({ objectiveId }) => objectiveId),
+  );
+  const conditionIsActive = (condition?.requiresObjectives || []).every(
+    (objectiveId) => completedObjectives.has(objectiveId),
+  );
 
   if (
     !condition ||
+    !conditionIsActive ||
     condition.type !== "talk_to_character" ||
     condition.characterId !== characterId ||
     condition.locationId !== game.currentLocationId

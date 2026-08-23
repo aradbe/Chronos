@@ -102,6 +102,24 @@ describe("PICK_UP_ITEM action", () => {
 
     assert.equal(game.inventory.length, 1);
   });
+
+  it("keeps a discovered item hidden until its prerequisite is complete", async () => {
+    const game = createGame();
+    game.scenarioId.items[0].requiresObjectives = ["ask_captain"];
+
+    await expectFailure(
+      game,
+      pickUp("bread"),
+      "ITEM_NOT_REVEALED",
+      409,
+    );
+
+    game.objectives = [
+      { objectiveId: "ask_captain", status: "completed" },
+    ];
+    await performAction(game, pickUp("bread"));
+    assert.equal(game.inventory[0].itemId, "bread");
+  });
 });
 
 describe("USE_ITEM action", () => {

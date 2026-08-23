@@ -37,6 +37,23 @@ const pickUpItem = (game, payload = {}) => {
     );
   }
 
+  const completedObjectives = new Set(
+    (game.objectives || [])
+      .filter(({ status }) => status === "completed")
+      .map(({ objectiveId }) => objectiveId),
+  );
+  const itemIsRevealed = (item.requiresObjectives || []).every((objectiveId) =>
+    completedObjectives.has(objectiveId),
+  );
+
+  if (!itemIsRevealed) {
+    throw new GameActionError(
+      "You have not discovered this item yet",
+      "ITEM_NOT_REVEALED",
+      409,
+    );
+  }
+
   if (game.inventory.some((entry) => entry.itemId === itemId)) {
     throw new GameActionError(
       "You are already carrying that item",

@@ -4,13 +4,15 @@ const {
   evaluateFinalConversation,
 } = require("../services/finalConditionService");
 
-const createGame = (inventory = []) => ({
+const createGame = (inventory = [], objectives = []) => ({
   currentLocationId: "harbor",
   inventory,
+  objectives,
   scenarioId: {
     finalCondition: {
       characterId: "lucius",
       locationId: "harbor",
+      requiresObjectives: ["find_lamp"],
       missingRequirementsFeedback: {
         oil_lamp: "Bring me a lamp.",
         ship_token: "Bring me a token.",
@@ -23,10 +25,21 @@ const createGame = (inventory = []) => ({
 });
 
 describe("final conversation", () => {
+  it("stays dormant until its prerequisite objective is complete", () => {
+    const result = evaluateFinalConversation({
+      characterId: "lucius",
+      game: createGame([{ itemId: "ship_token" }]),
+    });
+
+    assert.equal(result.isFinalConversation, false);
+  });
+
   it("refuses the player with the first missing requirement", () => {
     const result = evaluateFinalConversation({
       characterId: "lucius",
-      game: createGame(),
+      game: createGame([], [
+        { objectiveId: "find_lamp", status: "completed" },
+      ]),
     });
 
     assert.equal(result.ready, false);
@@ -37,10 +50,10 @@ describe("final conversation", () => {
   it("allows the ending when every required item is held", () => {
     const result = evaluateFinalConversation({
       characterId: "lucius",
-      game: createGame([
-        { itemId: "ship_token" },
-        { itemId: "oil_lamp" },
-      ]),
+      game: createGame(
+        [{ itemId: "ship_token" }, { itemId: "oil_lamp" }],
+        [{ objectiveId: "find_lamp", status: "completed" }],
+      ),
     });
 
     assert.equal(result.ready, true);
