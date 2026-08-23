@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { describeLocations, LOCATION_STATES } from "../../utils/mapState";
+import { buildMapLayout } from "../../utils/mapLayout";
 import "./LocationMap.css";
 import { GAME_COSTS } from "../../constants/gameCosts";
 
@@ -51,6 +52,7 @@ export function LocationMap({
           .map(({ location }) => location.id),
   );
   const rowsById = new Map(rows.map((row) => [row.location.id, row]));
+  const layout = buildMapLayout(locations);
   const routes = locations.flatMap((location) =>
     location.connectedLocationIds
       .filter((connectedId) => location.id < connectedId)
@@ -60,12 +62,7 @@ export function LocationMap({
       })),
   );
 
-  const getPosition = (location, index) => {
-    return location.mapPosition || {
-      x: 20 + (index % 3) * 30,
-      y: 15 + Math.floor(index / 3) * 30,
-    };
-  };
+  const getPosition = (location) => layout.positions.get(location.id);
 
   const getRouteState = ({ from, to }) => {
     const destination =
@@ -141,10 +138,13 @@ export function LocationMap({
       ) : null}
 
       <div className="location-map__viewport">
-      <div className="location-map__diagram">
+      <div
+        className="location-map__diagram"
+        style={{ width: `${layout.width}px`, height: `${layout.height}px` }}
+      >
         <svg
           className="location-map__routes"
-          viewBox="0 0 100 100"
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
           preserveAspectRatio="none"
           aria-hidden="true"
         >
@@ -154,11 +154,8 @@ export function LocationMap({
                 to && visibleIds.has(from.id) && visibleIds.has(to.id),
             )
             .map((route) => {
-              const from = getPosition(
-                route.from,
-                locations.indexOf(route.from),
-              );
-              const to = getPosition(route.to, locations.indexOf(route.to));
+              const from = getPosition(route.from);
+              const to = getPosition(route.to);
               const state = getRouteState(route);
 
               return (
@@ -174,12 +171,12 @@ export function LocationMap({
             })}
         </svg>
 
-        {rows.map(({ location, state, label, isDiscovered, canMove, blockedAttemptPenaltyMinutes }, index) => {
+        {rows.map(({ location, state, label, isDiscovered, canMove, blockedAttemptPenaltyMinutes }) => {
           if (!visibleIds.has(location.id)) {
             return null;
           }
 
-          const position = getPosition(location, index);
+          const position = getPosition(location);
 
           return (
           <button
@@ -197,7 +194,7 @@ export function LocationMap({
             disabled={disabled || !canMove}
             key={location.id}
             onClick={() => setTravelTarget(location)}
-            style={{ "--map-x": `${position.x}%`, "--map-y": `${position.y}%` }}
+            style={{ "--map-x": `${position.x}px`, "--map-y": `${position.y}px` }}
           >
             <span className="location-map__node-marker" aria-hidden="true" />
             <strong>{location.name}</strong>
