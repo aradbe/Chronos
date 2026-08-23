@@ -34,6 +34,7 @@ const pompeiiScenario = {
         "The stone heart of Pompeii. Traders argue under the colonnades while " +
         "a thin grey haze settles over the paving stones.",
       connectedLocationIds: ["market", "baths", "temple"],
+      mapPosition: { x: 50, y: 9 },
     },
     {
       id: "market",
@@ -42,6 +43,7 @@ const pompeiiScenario = {
         "Crowded stalls and raised voices. Word of the tremors is spreading " +
         "faster than anyone can sell their goods.",
       connectedLocationIds: ["forum", "bakery", "harbor_road"],
+      mapPosition: { x: 24, y: 34 },
     },
     {
       id: "bakery",
@@ -50,6 +52,7 @@ const pompeiiScenario = {
         "Warm ovens and the smell of fresh bread. The baker has not stopped " +
         "working, as if the routine itself will keep the mountain quiet.",
       connectedLocationIds: ["market"],
+      mapPosition: { x: 12, y: 62 },
     },
     {
       id: "baths",
@@ -58,6 +61,7 @@ const pompeiiScenario = {
         "Steam curls off still water. A few citizens linger here, refusing to " +
         "believe the day is anything but ordinary.",
       connectedLocationIds: ["forum"],
+      mapPosition: { x: 82, y: 34 },
     },
     {
       id: "temple",
@@ -66,6 +70,7 @@ const pompeiiScenario = {
         "Incense and low chanting. The priestess watches the mountain through " +
         "the doorway more often than she watches her own altar.",
       connectedLocationIds: ["forum", "villa"],
+      mapPosition: { x: 54, y: 39 },
     },
     {
       id: "villa",
@@ -74,6 +79,7 @@ const pompeiiScenario = {
         "A wealthy house on the edge of the city, half emptied already. Painted " +
         "figures on the walls stare past the abandoned furniture.",
       connectedLocationIds: ["temple"],
+      mapPosition: { x: 70, y: 66 },
     },
     {
       id: "harbor_road",
@@ -82,6 +88,7 @@ const pompeiiScenario = {
         "A long road choked with carts heading south. Ash has begun to gather " +
         "in the wheel ruts.",
       connectedLocationIds: ["market", "harbor"],
+      mapPosition: { x: 31, y: 69 },
     },
     {
       id: "harbor",
@@ -90,6 +97,7 @@ const pompeiiScenario = {
         "Ships strain at their ropes under a darkening sky. This is the last " +
         "way out of Pompeii.",
       connectedLocationIds: ["harbor_road"],
+      mapPosition: { x: 38, y: 94 },
     },
   ],
 

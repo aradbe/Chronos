@@ -48,21 +48,29 @@ export function InventoryPanel({
         <p className="inventory-panel__empty">You are not carrying anything.</p>
       ) : (
         <ul className="inventory-panel__list">
-          {inventory.map((entry) => (
-            <ItemCard
-              key={entry.itemId}
-              item={describeEntry(entry, items)}
-              quantity={entry.quantity}
-              actionLabel="Use"
-              onAction={onUseItem}
-              disabled={disabled}
-              errorMessage={
-                error && entry.itemId === failedItemId
-                  ? getItemErrorMessage(error)
-                  : ""
-              }
-            />
-          ))}
+          {inventory.map((entry) => {
+            const item = describeEntry(entry, items);
+            const isConsumable = item.type === "consumable";
+
+            return (
+              <ItemCard
+                key={entry.itemId}
+                item={item}
+                quantity={entry.quantity}
+                actionLabel={isConsumable ? "Use" : ""}
+                onAction={isConsumable ? onUseItem : null}
+                statusText={
+                  item.id === "city_map" ? "Revealing city routes" : ""
+                }
+                disabled={disabled}
+                errorMessage={
+                  error && entry.itemId === failedItemId
+                    ? getItemErrorMessage(error)
+                    : ""
+                }
+              />
+            );
+          })}
         </ul>
       )}
     </section>

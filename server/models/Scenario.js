@@ -1,5 +1,13 @@
 const mongoose = require("mongoose");
 
+const mapPositionSchema = new mongoose.Schema(
+  {
+    x: { type: Number, min: 0, max: 100 },
+    y: { type: Number, min: 0, max: 100 },
+  },
+  { _id: false },
+);
+
 const locationSchema = new mongoose.Schema(
   {
     id: {
@@ -21,6 +29,11 @@ const locationSchema = new mongoose.Schema(
     connectedLocationIds: {
       type: [String],
       default: [],
+    },
+
+    mapPosition: {
+      type: mapPositionSchema,
+      default: null,
     },
 
     // A Cloudinary URL, or empty. Empty means the screen falls back to the

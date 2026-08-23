@@ -15,6 +15,7 @@ export function ItemCard({
   onAction,
   disabled = false,
   errorMessage = "",
+  statusText = "",
 }) {
   const hasError = Boolean(errorMessage);
 
@@ -46,14 +47,18 @@ export function ItemCard({
         </p>
       ) : null}
 
-      <button
-        type="button"
-        className="item-card__action"
-        disabled={disabled}
-        onClick={() => onAction(item.id)}
-      >
-        {actionLabel}
-      </button>
+      {statusText ? <span className="item-card__status">{statusText}</span> : null}
+
+      {actionLabel && onAction ? (
+        <button
+          type="button"
+          className="item-card__action"
+          disabled={disabled}
+          onClick={() => onAction(item.id)}
+        >
+          {actionLabel}
+        </button>
+      ) : null}
     </li>
   );
 }

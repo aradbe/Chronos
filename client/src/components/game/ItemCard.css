@@ -65,6 +65,14 @@
   background: rgba(20, 35, 50, 0.9);
 }
 
+.item-card__status {
+  color: #79cbb2;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .item-card__action:not(:disabled):hover {
   border-color: #d5a96f;
   color: #f0e2cd;

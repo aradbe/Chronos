@@ -186,6 +186,17 @@ describe("Pompeii scenario data", () => {
     }
   });
 
+  it("places every location on the playable map", () => {
+    const savedShape = new Scenario(pompeii).toObject();
+
+    for (const location of savedShape.locations) {
+      assert.ok(Number.isFinite(location.mapPosition?.x));
+      assert.ok(Number.isFinite(location.mapPosition?.y));
+      assert.ok(location.mapPosition.x >= 0 && location.mapPosition.x <= 100);
+      assert.ok(location.mapPosition.y >= 0 && location.mapPosition.y <= 100);
+    }
+  });
+
   it("defines a complete guided path and final escape condition", () => {
     assert.deepEqual(
       pompeii.recommendedPath,
