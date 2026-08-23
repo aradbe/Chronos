@@ -121,6 +121,7 @@ describe("interactWithCharacter", () => {
     assert.equal(response.statusCode, 200);
     assert.equal(response.body.trust, 58);
     assert.equal(response.body.dialogueMode, "scripted");
+    assert.ok(response.body.guideEvents.length >= 1);
     assert.deepEqual(response.body.newClues, ["marcus_knowledge_1"]);
     assert.equal(createdMessages.length, 2);
     assert.equal(createdMessages[0].role, "player");

@@ -1,5 +1,6 @@
 const { buildDialogueReply } = require("./dialogueScriptEngine");
 const { createNpcReply } = require("./aiDialogueService");
+const { buildDialogueGuideEvents } = require("./chronosGuideService");
 const { analyzePlayerMessage } = require("./playerMessageAnalysisService");
 const {
   OBJECTIVE_STATUSES,
@@ -78,6 +79,9 @@ const applyNpcInteraction = async ({
   messages = [],
   text,
 }) => {
+  const previousObjectiveStatuses = new Map(
+    (game.objectives || []).map(({ objectiveId, status }) => [objectiveId, status]),
+  );
   const analysis = analyzePlayerMessage({ game, characterId, messages, text });
   const character = game.scenarioId.characters.find(({ id }) => id === characterId);
   const currentTrust = getRelationshipValue(game.relationships, characterId);
@@ -123,12 +127,21 @@ const applyNpcInteraction = async ({
     messages,
     text,
   });
+  const guideEvents = buildDialogueGuideEvents({
+    completedObjectives,
+    game,
+    newClues,
+    previousObjectiveStatuses,
+    trustChange: analysis.trustChange,
+    trustReason: analysis.trustReason,
+  });
 
   return {
     completedObjectives,
     intent: analysis.intent,
     newClues,
     dialogueMode: dialogue.mode,
+    guideEvents,
     reply: dialogue.reply,
     trust: nextTrust,
     trustChange: analysis.trustChange,

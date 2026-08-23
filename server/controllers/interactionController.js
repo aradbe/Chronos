@@ -110,6 +110,7 @@ const interactWithCharacter = async (req, res, next) => {
       completedObjectives: interaction.completedObjectives,
       dialogueMode: interaction.dialogueMode,
       game,
+      guideEvents: interaction.guideEvents,
       intent: interaction.intent,
       newClues: interaction.newClues,
       reply: interaction.reply,

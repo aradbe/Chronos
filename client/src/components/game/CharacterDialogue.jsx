@@ -21,6 +21,37 @@ const getIntentLabel = (intent) => {
   return "";
 };
 
+const getSuggestedQuestions = (character) => {
+  const questionsByCharacter = {
+    livia: [
+      "What do the tremors mean?",
+      "How much time does the city have?",
+      "What should I look for before I leave?",
+    ],
+    lucius: [
+      "What do you need before we can sail?",
+      "How much time do we have?",
+      "Will you take me out of Pompeii?",
+    ],
+    marcus: [
+      "What do you know about the mountain?",
+      "How can I reach the harbor?",
+      "Do you have anything that can help me find the road?",
+    ],
+    quintus: [
+      "Have you noticed anything strange?",
+      "Can you spare food or water?",
+      "Do you know a safe way out?",
+    ],
+  };
+
+  return questionsByCharacter[character?.id] || [
+    "What is happening here?",
+    "How can you help me?",
+    "Where should I go next?",
+  ];
+};
+
 export function CharacterDialogue({
   characters,
   currentLocationId,
@@ -48,6 +79,7 @@ export function CharacterDialogue({
   ) || availableCharacters[0];
   const characterId = selectedCharacter?.id || "";
   const intentLabel = getIntentLabel(interaction?.intent);
+  const suggestedQuestions = getSuggestedQuestions(selectedCharacter);
   const shouldShowInteraction = Boolean(interaction && selectedCharacter);
   const characterMessages = useMemo(
     () =>
@@ -121,6 +153,22 @@ export function CharacterDialogue({
               />
             </label>
 
+            <div className="character-dialogue__suggestions">
+              <span>Ask about</span>
+              <div>
+                {suggestedQuestions.map((question) => (
+                  <button
+                    key={question}
+                    type="button"
+                    onClick={() => setMessage(question)}
+                    disabled={disabled || pending}
+                  >
+                    {question}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button type="submit" disabled={isSubmitDisabled}>
               {pending ? "Listening..." : "Send"}
             </button>
@@ -177,6 +225,25 @@ export function CharacterDialogue({
             <span>{interaction.completedObjectives.length} objective updated</span>
           ) : null}
           {intentLabel ? <span>{intentLabel}</span> : null}
+          {interaction.guideEvents?.length ? (
+            <div className="character-dialogue__guide">
+              {interaction.guideEvents.map((event, index) => (
+                <article
+                  className={`character-dialogue__guide-event character-dialogue__guide-event--${event.type}`}
+                  key={`${event.type}-${index}`}
+                >
+                  <small>Chronos Guide</small>
+                  <strong>
+                    {event.title}
+                    {event.change
+                      ? ` (${event.change > 0 ? "+" : ""}${event.change})`
+                      : ""}
+                  </strong>
+                  <p>{event.message}</p>
+                </article>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </section>
