@@ -31,35 +31,16 @@
 
 .pixel-avatar__layer {
   position: absolute;
+  top: 0;
+  left: 50%;
   z-index: 1;
   display: block;
-  max-width: none;
+  width: auto;
+  height: 100%;
   transform: translateX(-50%);
   image-rendering: pixelated;
   pointer-events: none;
 }
-
-.pixel-avatar__body {
-  top: 1%;
-  left: 50%;
-  height: 94%;
-}
-
-.pixel-avatar__body--torso { clip-path: inset(29% 0 0); }
-
-.pixel-avatar__body--head {
-  top: 6%;
-  left: 51%;
-  clip-path: inset(0 0 68%);
-  transform: translateX(-50%) scale(0.76);
-  transform-origin: center top;
-}
-
-.pixel-avatar--masculine .pixel-avatar__body--torso,
-.pixel-avatar--masculine .pixel-avatar__outfit { transform: translateX(-50%) scaleX(1.035); }
-
-.pixel-avatar--feminine .pixel-avatar__body--torso,
-.pixel-avatar--feminine .pixel-avatar__outfit { transform: translateX(-50%) scaleX(0.98); }
 
 .pixel-avatar__body--porcelain { filter: brightness(1.08) saturate(0.82); }
 .pixel-avatar__body--warm { filter: none; }
@@ -69,23 +50,11 @@
 
 .pixel-avatar__outfit {
   z-index: 2;
-  top: 18%;
-  left: 50%;
-  height: 93%;
 }
 
 .pixel-avatar__hair {
   z-index: 5;
-  left: 50%;
-  transform-origin: center top;
 }
-
-.pixel-avatar__hair--short { top: 7%; left: 52%; height: 24%; }
-.pixel-avatar__hair--waves { top: 6%; height: 28%; }
-.pixel-avatar__hair--curls { top: 6%; left: 49%; height: 27%; }
-.pixel-avatar__hair--braids { top: 6%; height: 39%; }
-.pixel-avatar__hair--mohawk { top: 3%; height: 25%; }
-.pixel-avatar__hair--long { top: 6%; height: 37%; }
 
 .pixel-avatar__hair-color--black { filter: grayscale(0.9) brightness(0.42) contrast(1.25); }
 .pixel-avatar__hair-color--brown { filter: none; }
@@ -95,67 +64,12 @@
 .pixel-avatar__hair-color--blue { filter: hue-rotate(145deg) saturate(1.2) brightness(0.82); }
 
 .pixel-avatar__face {
-  position: absolute;
-  z-index: 6;
-  top: 22%;
-  left: 51%;
-  width: 16%;
-  height: 8%;
-  transform: translateX(-50%);
+  z-index: 4;
 }
-
-.pixel-avatar__eye,
-.pixel-avatar__mouth {
-  position: absolute;
-  display: block;
-  background: #152630;
-  box-shadow: none;
-}
-
-.pixel-avatar__eye {
-  top: 2%;
-  width: 20%;
-  height: 34%;
-}
-.pixel-avatar__eye::after {
-  position: absolute;
-  top: 8%;
-  width: 36%;
-  height: 35%;
-  content: "";
-  background: #f3eadb;
-}
-.pixel-avatar__eye--left { left: 15%; }
-.pixel-avatar__eye--left::after { left: 8%; }
-.pixel-avatar__eye--right { right: 15%; }
-.pixel-avatar__eye--right::after { left: 8%; }
-.pixel-avatar__mouth { bottom: 3%; left: 40%; width: 20%; height: 12%; box-shadow: none; background: #713b36; }
-.pixel-avatar__face--bright .pixel-avatar__mouth { left: 28%; width: 44%; height: 22%; background: linear-gradient(#f4dfd0 45%, #713b36 45%); }
-.pixel-avatar__face--bold .pixel-avatar__eye { height: 40%; }
-.pixel-avatar__face--serious .pixel-avatar__eye { height: 22%; }
 
 .pixel-avatar__accessory {
   z-index: 7;
-  left: 50%;
-  height: auto;
   pointer-events: none;
-}
-
-.pixel-avatar__accessory--glasses {
-  top: 22%;
-  left: 51%;
-  width: 18%;
-}
-
-.pixel-avatar__accessory--earring {
-  top: 24%;
-  left: 58%;
-  width: 7%;
-}
-
-.pixel-avatar__accessory--scarf {
-  top: 28%;
-  width: 18%;
 }
 
 @keyframes pixel-avatar-idle {
