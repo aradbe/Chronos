@@ -49,6 +49,7 @@
 
 .pixel-avatar__body--head {
   top: 6%;
+  left: 51%;
   clip-path: inset(0 0 68%);
   transform: translateX(-50%) scale(0.76);
   transform-origin: center top;
@@ -79,7 +80,7 @@
   transform-origin: center top;
 }
 
-.pixel-avatar__hair--short { top: 7%; height: 24%; }
+.pixel-avatar__hair--short { top: 7%; left: 52%; height: 24%; }
 .pixel-avatar__hair--waves { top: 6%; height: 28%; }
 .pixel-avatar__hair--curls { top: 6%; height: 27%; }
 .pixel-avatar__hair--braids { top: 6%; height: 39%; }
@@ -97,7 +98,7 @@
   position: absolute;
   z-index: 6;
   top: 17.5%;
-  left: 50%;
+  left: 51%;
   width: 15%;
   height: 8%;
   transform: translateX(-50%);
@@ -107,31 +108,28 @@
 .pixel-avatar__mouth {
   position: absolute;
   display: block;
-  background: #eee3d2;
+  background: #152630;
   box-shadow: none;
 }
 
 .pixel-avatar__eye {
-  top: 5%;
-  width: 24%;
-  height: 35%;
-  border-top: 1px solid #3c241e;
-  border-bottom: 1px solid #3c241e;
+  top: 8%;
+  width: 18%;
+  height: 31%;
 }
 .pixel-avatar__eye::after {
   position: absolute;
-  top: 0;
-  width: 48%;
-  height: 100%;
+  top: 8%;
+  width: 36%;
+  height: 35%;
   content: "";
-  background: #16313c;
-  border-top: 1px solid #79cbb2;
+  background: #f3eadb;
 }
-.pixel-avatar__eye--left { left: 7%; }
-.pixel-avatar__eye--left::after { right: 0; }
-.pixel-avatar__eye--right { right: 7%; }
-.pixel-avatar__eye--right::after { left: 0; }
-.pixel-avatar__mouth { bottom: 1%; left: 39%; width: 22%; height: 14%; box-shadow: none; background: #713b36; }
+.pixel-avatar__eye--left { left: 15%; }
+.pixel-avatar__eye--left::after { left: 8%; }
+.pixel-avatar__eye--right { right: 15%; }
+.pixel-avatar__eye--right::after { left: 8%; }
+.pixel-avatar__mouth { bottom: 3%; left: 40%; width: 20%; height: 12%; box-shadow: none; background: #713b36; }
 .pixel-avatar__face--bright .pixel-avatar__mouth { left: 28%; width: 44%; height: 22%; background: linear-gradient(#f4dfd0 45%, #713b36 45%); }
 .pixel-avatar__face--bold .pixel-avatar__eye { height: 40%; }
 .pixel-avatar__face--serious .pixel-avatar__eye { height: 22%; }
@@ -145,6 +143,7 @@
 
 .pixel-avatar__accessory--glasses {
   top: 17.5%;
+  left: 51%;
   width: 18%;
 }
 
