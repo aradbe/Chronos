@@ -15,7 +15,12 @@ export function PixelAvatar({ avatar = {}, size = "large", label = "Your charact
       <div className="pixel-avatar__stage">
         <img
           alt=""
-          className={`pixel-avatar__layer pixel-avatar__body pixel-avatar__body--${value.skin}`}
+          className={`pixel-avatar__layer pixel-avatar__body pixel-avatar__body--torso pixel-avatar__body--${value.skin}`}
+          src={`${ASSET_ROOT}/body.png`}
+        />
+        <img
+          alt=""
+          className={`pixel-avatar__layer pixel-avatar__body pixel-avatar__body--head pixel-avatar__body--${value.skin}`}
           src={`${ASSET_ROOT}/body.png`}
         />
         <img
@@ -34,7 +39,11 @@ export function PixelAvatar({ avatar = {}, size = "large", label = "Your charact
           src={`${ASSET_ROOT}/${value.hair}.png`}
         />
         {value.accessory !== "none" && (
-          <span className={`pixel-avatar__accessory pixel-avatar__accessory--${value.accessory}`} />
+          <img
+            alt=""
+            className={`pixel-avatar__layer pixel-avatar__accessory pixel-avatar__accessory--${value.accessory}`}
+            src={`${ASSET_ROOT}/accessory-${value.accessory}.png`}
+          />
         )}
       </div>
     </div>
