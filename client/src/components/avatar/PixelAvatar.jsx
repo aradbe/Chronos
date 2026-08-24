@@ -2,6 +2,7 @@ import { AVATAR_DEFAULTS } from "./avatarOptions";
 import "./PixelAvatar.css";
 
 const ASSET_ROOT = "/assets/avatars/sprite-v2/normalized";
+const assetPath = (name) => `${ASSET_ROOT}/${name}?v=4`;
 
 export function PixelAvatar({ avatar = {}, size = "large", label = "Your character" }) {
   const value = { ...AVATAR_DEFAULTS, ...avatar };
@@ -16,28 +17,28 @@ export function PixelAvatar({ avatar = {}, size = "large", label = "Your charact
         <img
           alt=""
           className={`pixel-avatar__layer pixel-avatar__body pixel-avatar__body--${value.skin}`}
-          src={`${ASSET_ROOT}/body.png`}
+          src={assetPath("body.png")}
         />
         <img
           alt=""
           className="pixel-avatar__layer pixel-avatar__outfit"
-          src={`${ASSET_ROOT}/outfit-${value.outfit}.png`}
+          src={assetPath(`outfit-${value.outfit}.png`)}
         />
         <img
           alt=""
           className="pixel-avatar__layer pixel-avatar__face"
-          src={`${ASSET_ROOT}/face-${value.face}.png`}
+          src={assetPath(`face-${value.face}.png`)}
         />
         <img
           alt=""
           className={`pixel-avatar__layer pixel-avatar__hair pixel-avatar__hair--${value.hair} pixel-avatar__hair-color--${value.hairColor}`}
-          src={`${ASSET_ROOT}/${value.hair}.png`}
+          src={assetPath(`${value.hair}.png`)}
         />
         {value.accessory !== "none" && (
           <img
             alt=""
             className={`pixel-avatar__layer pixel-avatar__accessory pixel-avatar__accessory--${value.accessory}`}
-            src={`${ASSET_ROOT}/accessory-${value.accessory}.png`}
+            src={assetPath(`accessory-${value.accessory}.png`)}
           />
         )}
       </div>
