@@ -50,7 +50,7 @@ export const AVATAR_OPTIONS = {
   ],
   outfit: [
     { id: "traveler", label: "Traveler", color: "#3b756c" },
-    { id: "scholar", label: "Scholar", color: "#695286" },
+    { id: "modern", label: "Modern", color: "#286f80" },
     { id: "explorer", label: "Explorer", color: "#8b623c" },
     { id: "engineer", label: "Engineer", color: "#526a78" },
     { id: "royal", label: "Royal", color: "#8a394d" },

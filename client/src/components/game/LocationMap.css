@@ -39,6 +39,10 @@
   box-shadow: 0 0 0 100vmax rgba(2, 8, 13, 0.86), 0 24px 80px #000;
 }
 
+.game-panel .location-map--expanded {
+  overflow: auto;
+}
+
 .location-map--expanded .location-map__diagram {
   min-width: 100%;
 }
@@ -63,7 +67,7 @@
 .location-map__here {
   display: grid;
   gap: 2px;
-  margin: 0 0 var(--space-4);
+  margin: 0 0 var(--space-3);
   border: 1px solid rgba(211, 168, 117, 0.28);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
@@ -101,7 +105,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-3);
   border: 1px dashed rgba(211, 168, 117, 0.28);
   border-radius: var(--radius-sm);
   padding: 9px 11px;
@@ -135,11 +139,33 @@
 }
 
 .location-map__viewport {
-  max-height: 350px;
-  overflow: auto;
+  width: 100%;
+  max-height: 300px;
+  overflow: scroll;
   border: 1px solid rgba(211, 168, 117, 0.18);
   border-radius: var(--radius-sm);
+  scrollbar-gutter: stable;
   scrollbar-color: rgba(121, 203, 178, 0.42) rgba(5, 13, 21, 0.5);
+  scrollbar-width: auto;
+}
+
+.location-map__viewport::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.location-map__viewport::-webkit-scrollbar-track {
+  background: rgba(5, 13, 21, 0.68);
+}
+
+.location-map__viewport::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(5, 13, 21, 0.68);
+  border-radius: 999px;
+  background: #45776f;
+}
+
+.location-map__viewport::-webkit-scrollbar-corner {
+  background: rgba(5, 13, 21, 0.68);
 }
 
 .location-map__diagram {
@@ -376,7 +402,7 @@
 }
 
 @media (max-width: 1050px) {
-  .location-map__viewport { max-height: 330px; }
+  .location-map__viewport { max-height: 300px; }
 }
 
 @media (max-width: 620px) {

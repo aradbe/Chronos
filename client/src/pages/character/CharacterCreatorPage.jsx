@@ -13,11 +13,9 @@ const GROUPS = [
   ["body", "Build"],
   ["pronouns", "Pronouns"],
   ["skin", "Skin tone"],
-  ["face", "Expression"],
   ["hair", "Hair"],
   ["hairColor", "Hair color"],
   ["outfit", "Outfit"],
-  ["accessory", "Accessory"],
 ];
 
 export const CharacterCreatorPage = observer(function CharacterCreatorPage() {

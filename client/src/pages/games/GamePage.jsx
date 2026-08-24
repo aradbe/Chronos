@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { CharacterDialogue } from "../../components/game/CharacterDialogue";
 import { CurrentLocation } from "../../components/game/CurrentLocation";
 import { EventNotifications } from "../../components/game/EventNotifications";
@@ -117,6 +117,13 @@ export const GamePage = observer(function GamePage() {
     <main className={`game-page game-page--${disasterStage.id}`}>
       <DisasterAtmosphere stage={disasterStage} />
       <header className="game-page__header">
+        <Link className="game-page__brand" to="/scenarios" aria-label="Chronos scenarios">
+          <span aria-hidden="true">⌛</span>
+          <span>
+            <strong>Chronos</strong>
+            <small>Time Traveler</small>
+          </span>
+        </Link>
         <div className="game-page__identity">
           <PixelAvatar
             avatar={authStore.user?.avatar}
@@ -140,6 +147,9 @@ export const GamePage = observer(function GamePage() {
           status={game.status}
           timeLimit={scenario.timeLimitMinutes}
         />
+        <Link className="game-page__exit" to="/my-games">
+          Exit scenario
+        </Link>
       </header>
 
       {game.status === "completed" ? (
@@ -152,21 +162,35 @@ export const GamePage = observer(function GamePage() {
         <GameOverScreen game={game} scenario={scenario} />
       ) : (
         <div className="game-page__layout">
-          <aside className="game-panel game-page__map" aria-label="Location map">
-            <LocationMap
-              locations={scenario.locations}
-              events={scenario.events}
-              currentLocationId={game.currentLocationId}
-              triggeredEventIds={game.triggeredEvents || []}
-              discoveredLocationIds={game.discoveredLocationIds || []}
-              inventory={game.inventory}
-              locationGates={scenario.locationGates || []}
-              objectives={game.objectives}
-              objectiveLocationId={objectiveLocationId}
-              disabled={gameStore.actionPending}
-              onMove={handleMove}
-              error={moveError?.message || ""}
-            />
+          <aside className="game-page__rail game-page__rail--left">
+            <div className="game-panel game-page__map" aria-label="Location map">
+              <LocationMap
+                locations={scenario.locations}
+                events={scenario.events}
+                currentLocationId={game.currentLocationId}
+                triggeredEventIds={game.triggeredEvents || []}
+                discoveredLocationIds={game.discoveredLocationIds || []}
+                inventory={game.inventory}
+                locationGates={scenario.locationGates || []}
+                objectives={game.objectives}
+                objectiveLocationId={objectiveLocationId}
+                disabled={gameStore.actionPending}
+                onMove={handleMove}
+                error={moveError?.message || ""}
+              />
+            </div>
+            <div className="game-panel">
+              <LocationItems
+                items={scenario.items}
+                locationId={game.currentLocationId}
+                inventory={game.inventory}
+                objectives={game.objectives}
+                disabled={gameStore.actionPending}
+                onPickUpItem={handlePickUpItem}
+                error={pickUpError}
+                failedItemId={failedItemId}
+              />
+            </div>
           </aside>
 
           <section className="game-panel game-page__scene" aria-label="Game scene">
@@ -192,32 +216,24 @@ export const GamePage = observer(function GamePage() {
               onSend={handleInteract}
               pending={gameStore.interactionPending}
             />
-            <EventNotifications
-              events={scenario.events}
-              triggeredEventIds={game.triggeredEvents || []}
-            />
             {gameStore.error && !itemError && !moveError ? (
               <p className="game-page__action-error" role="alert">
                 {gameStore.error.message}
               </p>
             ) : null}
-            <LocationItems
-              items={scenario.items}
-              locationId={game.currentLocationId}
-              inventory={game.inventory}
-              objectives={game.objectives}
-              disabled={gameStore.actionPending}
-              onPickUpItem={handlePickUpItem}
-              error={pickUpError}
-              failedItemId={failedItemId}
-            />
           </section>
 
-          <aside className="game-page__sidebar">
+          <aside className="game-page__rail game-page__rail--right">
             <div className="game-panel">
               <MissionPanel
                 objectives={scenario.objectives}
                 progress={game.objectives}
+              />
+            </div>
+            <div className="game-panel">
+              <EventNotifications
+                events={scenario.events}
+                triggeredEventIds={game.triggeredEvents || []}
               />
             </div>
             <div className="game-panel">

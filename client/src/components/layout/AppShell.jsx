@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useMatch, useNavigate } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
 import { PixelAvatar } from "../avatar/PixelAvatar";
 import "./AppShell.css";
@@ -7,6 +7,7 @@ import "./AppShell.css";
 export const AppShell = observer(function AppShell() {
   const { authStore } = useStores();
   const navigate = useNavigate();
+  const isPlaying = Boolean(useMatch("/games/:gameId"));
 
   const handleLogout = () => {
     authStore.logout();
@@ -15,7 +16,7 @@ export const AppShell = observer(function AppShell() {
 
   return (
     <div className="app-shell">
-      <header className="app-shell__header">
+      {!isPlaying ? <header className="app-shell__header">
         <NavLink
           className="app-shell__brand"
           to={authStore.isAuthenticated ? "/scenarios" : "/register"}
@@ -69,7 +70,7 @@ export const AppShell = observer(function AppShell() {
             </>
           )}
         </nav>
-      </header>
+      </header> : null}
 
       <Outlet />
     </div>

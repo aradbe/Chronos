@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { describeLocations, LOCATION_STATES } from "../../utils/mapState";
 import { buildMapLayout } from "../../utils/mapLayout";
 import "./LocationMap.css";
@@ -20,6 +20,7 @@ export function LocationMap({
 }) {
   const [expanded, setExpanded] = useState(false);
   const [travelTarget, setTravelTarget] = useState(null);
+  const viewportRef = useRef(null);
   const rows = describeLocations({
     locations,
     events,
@@ -63,6 +64,18 @@ export function LocationMap({
   );
 
   const getPosition = (location) => layout.positions.get(location.id);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    const currentPosition = layout.positions.get(currentLocationId);
+    if (!viewport || !currentPosition) return;
+
+    viewport.scrollTo({
+      left: Math.max(0, currentPosition.x - viewport.clientWidth / 2),
+      top: Math.max(0, currentPosition.y - viewport.clientHeight / 2),
+      behavior: "instant",
+    });
+  }, [currentLocationId, expanded, layout.height, layout.positions, layout.width]);
 
   const getRouteState = ({ from, to }) => {
     const destination =
@@ -137,7 +150,7 @@ export function LocationMap({
         </div>
       ) : null}
 
-      <div className="location-map__viewport">
+      <div className="location-map__viewport" ref={viewportRef}>
       <div
         className="location-map__diagram"
         style={{ width: `${layout.width}px`, height: `${layout.height}px` }}

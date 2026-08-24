@@ -1,13 +1,11 @@
 .event-notifications {
-  margin-top: var(--space-6);
-  padding-top: var(--space-5);
-  border-top: 1px solid rgba(211, 168, 117, 0.22);
+  margin: 0;
 }
 
 .event-notifications__list {
   display: grid;
   gap: var(--space-3);
-  max-height: 240px;
+  max-height: 180px;
   margin: 0;
   padding: 0;
   overflow-y: auto;
@@ -15,7 +13,7 @@
 }
 
 .event-notifications__event {
-  padding: var(--space-3) var(--space-4);
+  padding: 9px var(--space-3);
   border-left: 2px solid #d5a96f;
   background: rgba(213, 169, 111, 0.06);
 }

@@ -42,45 +42,68 @@
   pointer-events: none;
 }
 
-.pixel-avatar__body--porcelain { filter: brightness(1.08) saturate(0.82); }
-.pixel-avatar__body--warm { filter: none; }
-.pixel-avatar__body--golden { filter: sepia(0.2) saturate(1.12) brightness(0.92); }
-.pixel-avatar__body--brown { filter: sepia(0.22) saturate(1.25) brightness(0.72); }
-.pixel-avatar__body--deep { filter: sepia(0.3) saturate(1.2) brightness(0.5); }
-
-.pixel-avatar__body,
-.pixel-avatar__face,
-.pixel-avatar__hair,
-.pixel-avatar__accessory {
-  left: 46.4%;
-  transform: translateX(-50%) scale(1.32);
-  transform-origin: 50% 24%;
-}
-
 .pixel-avatar__outfit {
   z-index: 2;
 }
 
+.pixel-avatar__neck {
+  position: absolute;
+  top: 25.5%;
+  left: 50%;
+  z-index: 2;
+  width: 7%;
+  height: 5%;
+  transform: translateX(-50%);
+  border: 2px solid #271920;
+  background: #f9d5ba;
+  image-rendering: pixelated;
+}
+
+.pixel-avatar__neck--porcelain { background: #f6d7ca; }
+.pixel-avatar__neck--warm { background: #f9d5ba; }
+.pixel-avatar__neck--golden { background: #c98b5f; }
+.pixel-avatar__neck--brown { background: #966044; }
+.pixel-avatar__neck--deep { background: #603d32; }
+
+.pixel-avatar--feminine .pixel-avatar__outfit {
+  transform: translateX(-50%) scale(0.92, 0.82);
+  transform-origin: 50% 88%;
+}
+
+.pixel-avatar--feminine.pixel-avatar--outfit-engineer .pixel-avatar__outfit {
+  transform: translate(-50%, -3%) scale(0.92, 0.82);
+}
+
+.pixel-avatar__head { z-index: 3; }
+.pixel-avatar__hair--back { z-index: 1; }
+.pixel-avatar__hair--front { z-index: 5; }
+
+.pixel-avatar__head,
 .pixel-avatar__hair {
-  z-index: 5;
-  transform: translateX(-50%) scale(1.38, 1.32);
+  top: -0.35%;
 }
 
-.pixel-avatar__hair-color--black { filter: grayscale(0.9) brightness(0.42) contrast(1.25); }
-.pixel-avatar__hair-color--brown { filter: none; }
-.pixel-avatar__hair-color--auburn { filter: hue-rotate(338deg) saturate(1.35) brightness(0.92); }
-.pixel-avatar__hair-color--blonde { filter: sepia(0.65) saturate(1.45) brightness(1.3); }
-.pixel-avatar__hair-color--silver { filter: grayscale(1) brightness(1.45) contrast(0.85); }
-.pixel-avatar__hair-color--blue { filter: hue-rotate(145deg) saturate(1.2) brightness(0.82); }
-
-.pixel-avatar__face {
-  z-index: 4;
+.pixel-avatar--feminine .pixel-avatar__head,
+.pixel-avatar--feminine .pixel-avatar__hair {
+  top: 2.5%;
 }
 
-.pixel-avatar__accessory {
-  z-index: 7;
-  pointer-events: none;
+.pixel-avatar--masculine.pixel-avatar--outfit-traveler .pixel-avatar__head,
+.pixel-avatar--masculine.pixel-avatar--outfit-traveler .pixel-avatar__hair {
+  top: 0.9%;
 }
+
+.pixel-avatar--masculine.pixel-avatar--outfit-royal .pixel-avatar__neck {
+  display: none;
+}
+
+.pixel-avatar__hair-color--black { filter: grayscale(0.95) brightness(0.28) contrast(1.35); }
+.pixel-avatar__hair-color--brown { filter: hue-rotate(350deg) saturate(0.72) brightness(0.64); }
+.pixel-avatar__hair-color--auburn { filter: hue-rotate(345deg) saturate(1.1) brightness(0.76); }
+.pixel-avatar__hair-color--blonde { filter: hue-rotate(6deg) saturate(0.8) brightness(1.22); }
+.pixel-avatar__hair-color--silver { filter: grayscale(1) brightness(1.35) contrast(0.82); }
+.pixel-avatar__hair-color--blue { filter: hue-rotate(150deg) saturate(1.3) brightness(0.72); }
+
 
 @keyframes pixel-avatar-idle {
   0%, 70%, 100% { transform: translateY(0); }

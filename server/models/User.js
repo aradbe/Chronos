@@ -9,7 +9,7 @@ const avatarSchema = new mongoose.Schema(
     face: { type: String, enum: ["calm", "bright", "bold", "serious"], default: "calm" },
     hair: { type: String, enum: ["short", "waves", "curls", "braids", "mohawk", "long"], default: "short" },
     hairColor: { type: String, enum: ["black", "brown", "auburn", "blonde", "silver", "blue"], default: "brown" },
-    outfit: { type: String, enum: ["traveler", "scholar", "explorer", "engineer", "royal"], default: "traveler" },
+    outfit: { type: String, enum: ["traveler", "scholar", "modern", "explorer", "engineer", "royal"], default: "traveler" },
     accessory: { type: String, enum: ["none", "glasses", "earring", "scarf"], default: "none" },
     completed: { type: Boolean, default: false },
   },
