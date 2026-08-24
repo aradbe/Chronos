@@ -48,6 +48,15 @@
 .pixel-avatar__body--brown { filter: sepia(0.22) saturate(1.25) brightness(0.72); }
 .pixel-avatar__body--deep { filter: sepia(0.3) saturate(1.2) brightness(0.5); }
 
+.pixel-avatar__body,
+.pixel-avatar__face,
+.pixel-avatar__hair,
+.pixel-avatar__accessory {
+  left: 48.8%;
+  transform: translateX(-50%) scale(1.12);
+  transform-origin: 50% 24%;
+}
+
 .pixel-avatar__outfit {
   z-index: 2;
 }
