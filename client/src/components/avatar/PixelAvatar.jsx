@@ -2,7 +2,7 @@ import { AVATAR_DEFAULTS } from "./avatarOptions";
 import "./PixelAvatar.css";
 
 const ASSET_ROOT = "/assets/avatars/sprite-v2/normalized";
-const assetPath = (name) => `${ASSET_ROOT}/${name}?v=7`;
+const assetPath = (name) => `${ASSET_ROOT}/${name}?v=8`;
 
 export function PixelAvatar({ avatar = {}, size = "large", label = "Your character" }) {
   const value = { ...AVATAR_DEFAULTS, ...avatar };

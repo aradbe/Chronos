@@ -52,7 +52,7 @@
 .pixel-avatar__face,
 .pixel-avatar__hair,
 .pixel-avatar__accessory {
-  left: 48.8%;
+  left: 47.6%;
   transform: translateX(-50%) scale(1.12);
   transform-origin: 50% 24%;
 }
@@ -63,6 +63,7 @@
 
 .pixel-avatar__hair {
   z-index: 5;
+  transform: translateX(-50%) scale(1.18, 1.12);
 }
 
 .pixel-avatar__hair-color--black { filter: grayscale(0.9) brightness(0.42) contrast(1.25); }
