@@ -82,7 +82,7 @@
 
 .pixel-avatar__hair--short { top: 7%; left: 52%; height: 24%; }
 .pixel-avatar__hair--waves { top: 6%; height: 28%; }
-.pixel-avatar__hair--curls { top: 6%; height: 27%; }
+.pixel-avatar__hair--curls { top: 6%; left: 49%; height: 27%; }
 .pixel-avatar__hair--braids { top: 6%; height: 39%; }
 .pixel-avatar__hair--mohawk { top: 3%; height: 25%; }
 .pixel-avatar__hair--long { top: 6%; height: 37%; }
@@ -97,9 +97,9 @@
 .pixel-avatar__face {
   position: absolute;
   z-index: 6;
-  top: 17.5%;
+  top: 22%;
   left: 51%;
-  width: 15%;
+  width: 16%;
   height: 8%;
   transform: translateX(-50%);
 }
@@ -113,9 +113,9 @@
 }
 
 .pixel-avatar__eye {
-  top: 8%;
-  width: 18%;
-  height: 31%;
+  top: 2%;
+  width: 20%;
+  height: 34%;
 }
 .pixel-avatar__eye::after {
   position: absolute;
@@ -142,13 +142,13 @@
 }
 
 .pixel-avatar__accessory--glasses {
-  top: 17.5%;
+  top: 22%;
   left: 51%;
   width: 18%;
 }
 
 .pixel-avatar__accessory--earring {
-  top: 20%;
+  top: 24%;
   left: 58%;
   width: 7%;
 }
