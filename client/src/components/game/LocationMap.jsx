@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { describeLocations, LOCATION_STATES } from "../../utils/mapState";
 import { buildMapLayout } from "../../utils/mapLayout";
 import "./LocationMap.css";
@@ -77,6 +78,33 @@ export function LocationMap({
     });
   }, [currentLocationId, expanded, layout.height, layout.positions, layout.width]);
 
+  useEffect(() => {
+    if (!expanded) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [expanded]);
+
+  useEffect(() => {
+    if (!travelTarget) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setTravelTarget(null);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+
+    return () => {
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [travelTarget]);
+
   const getRouteState = ({ from, to }) => {
     const destination =
       from.id === currentLocationId
@@ -88,7 +116,41 @@ export function LocationMap({
     return destination?.state || "known";
   };
 
+  const travelDialog = travelTarget ? (
+    <div
+      className="location-map__travel"
+      role="dialog"
+      aria-label={`Travel to ${travelTarget.name}`}
+      aria-modal={expanded ? "true" : undefined}
+    >
+      {expanded ? (
+        <button
+          className="location-map__travel-close"
+          type="button"
+          aria-label="Back to map"
+          onClick={() => setTravelTarget(null)}
+        >
+          ×
+        </button>
+      ) : null}
+      <div>
+        <span>Choose your pace</span>
+        <strong>{travelTarget.name}</strong>
+      </div>
+      <button type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "steady"); setTravelTarget(null); }}>
+        <strong>Take the road</strong>
+        <small>{GAME_COSTS.move} min · no health cost</small>
+      </button>
+      <button className="location-map__travel-risk" type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "rush"); setTravelTarget(null); }}>
+        <strong>Risk a shortcut</strong>
+        <small>{GAME_COSTS.rushMove} min · −6 health</small>
+      </button>
+      <button className="location-map__travel-cancel" type="button" onClick={() => setTravelTarget(null)}>Back to map</button>
+    </div>
+  ) : null;
+
   return (
+    <>
     <section
       className={`location-map ${expanded ? "location-map--expanded" : ""}`}
       aria-labelledby="map-title"
@@ -132,23 +194,7 @@ export function LocationMap({
         </p>
       ) : null}
 
-      {travelTarget ? (
-        <div className="location-map__travel" role="dialog" aria-label={`Travel to ${travelTarget.name}`}>
-          <div>
-            <span>Choose your pace</span>
-            <strong>{travelTarget.name}</strong>
-          </div>
-          <button type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "steady"); setTravelTarget(null); }}>
-            <strong>Take the road</strong>
-            <small>{GAME_COSTS.move} min · no health cost</small>
-          </button>
-          <button className="location-map__travel-risk" type="button" disabled={disabled} onClick={() => { onMove(travelTarget.id, "rush"); setTravelTarget(null); }}>
-            <strong>Risk a shortcut</strong>
-            <small>{GAME_COSTS.rushMove} min · −6 health</small>
-          </button>
-          <button className="location-map__travel-cancel" type="button" onClick={() => setTravelTarget(null)}>Cancel</button>
-        </div>
-      ) : null}
+      {travelTarget && !expanded ? travelDialog : null}
 
       <div className="location-map__viewport" ref={viewportRef}>
       <div
@@ -242,5 +288,20 @@ export function LocationMap({
         <span><i className="location-map__key location-map__key--locked" />Locked</span>
       </div>
     </section>
+    {travelTarget && expanded
+      ? createPortal(
+          <div
+            className="location-map__travel-modal"
+            role="presentation"
+            onClick={() => setTravelTarget(null)}
+          >
+            <div onClick={(event) => event.stopPropagation()}>
+            {travelDialog}
+            </div>
+          </div>,
+          document.body,
+        )
+      : null}
+    </>
   );
 }

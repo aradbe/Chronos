@@ -31,16 +31,14 @@
   position: fixed;
   z-index: 9000;
   inset: clamp(12px, 3vw, 28px);
-  overflow: auto;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  overflow: hidden;
   border: 1px solid rgba(211, 168, 117, 0.5);
   border-radius: var(--radius-md);
   padding: clamp(18px, 3vw, 34px);
   background: linear-gradient(145deg, #142332, #08121c);
   box-shadow: 0 0 0 100vmax rgba(2, 8, 13, 0.92), 0 24px 80px #000;
-}
-
-.game-panel .location-map--expanded {
-  overflow: auto;
 }
 
 .location-map--expanded .location-map__diagram {
@@ -49,8 +47,33 @@
 }
 
 .location-map--expanded .location-map__viewport {
-  max-height: 68vh;
+  max-height: none;
+  min-height: 0;
   background: rgba(5, 13, 21, 0.52);
+}
+
+.location-map--expanded .location-map__here,
+.location-map--expanded .location-map__map-status {
+  margin-bottom: var(--space-3);
+}
+
+.location-map__travel-modal {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 48px);
+  background: rgba(3, 9, 15, 0.78);
+}
+
+.location-map__travel-modal .location-map__travel {
+  position: relative;
+  width: min(430px, 100%);
+  margin: 0;
+  border-color: rgba(211, 168, 117, 0.62);
+  background: linear-gradient(145deg, #142535, #07111b);
+  box-shadow: 0 22px 62px rgba(0, 0, 0, 0.66);
 }
 
 .location-map--expanded .location-map__node {
@@ -185,6 +208,7 @@
 .location-map__routes {
   position: absolute;
   inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -211,7 +235,7 @@
 
 .location-map__node {
   position: absolute;
-  z-index: 2;
+  z-index: 3;
   left: var(--map-x);
   top: var(--map-y);
   display: grid;
@@ -222,7 +246,7 @@
   border-radius: var(--radius-sm);
   padding: 9px 8px 8px;
   color: #d3dce6;
-  background: rgba(10, 22, 33, 0.96);
+  background: #0a1621;
   box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28);
   text-align: center;
   overflow-wrap: anywhere;
@@ -253,7 +277,7 @@
 .location-map__node--current {
   border-color: #d5a96f;
   color: #f7e3c4;
-  background: rgba(213, 169, 111, 0.12);
+  background: linear-gradient(145deg, #302a22, #131b22);
   box-shadow: inset 3px 0 #d5a96f, 0 0 18px rgba(213, 169, 111, 0.12);
 }
 
@@ -263,7 +287,7 @@
 
 .location-map__node--reachable {
   border-color: rgba(121, 203, 178, 0.78);
-  background: rgba(121, 203, 178, 0.12);
+  background: linear-gradient(145deg, #12302e, #0b1b22);
   box-shadow: inset 3px 0 #79cbb2, 0 0 16px rgba(121, 203, 178, 0.08);
 }
 
@@ -273,7 +297,7 @@
 
 .location-map__node--blocked {
   border-color: #a4544c;
-  background: rgba(160, 78, 70, 0.1);
+  background: linear-gradient(145deg, #29191b, #0d151c);
   box-shadow: inset 3px 0 #a4544c;
 }
 
@@ -289,7 +313,7 @@
 
 .location-map__node--gated {
   border-color: rgba(240, 138, 128, 0.72);
-  background: rgba(160, 78, 70, 0.13);
+  background: linear-gradient(145deg, #2b191b, #0d151c);
   box-shadow: inset 3px 0 #a4544c;
 }
 
@@ -380,7 +404,7 @@
 
 .location-map__node--out-of-reach {
   border-color: rgba(196, 102, 92, 0.48);
-  background: rgba(160, 78, 70, 0.07);
+  background: linear-gradient(145deg, #231719, #0b141b);
   box-shadow: inset 3px 0 rgba(196, 102, 92, 0.5);
 }
 
@@ -394,11 +418,13 @@
 }
 
 .location-map__travel {
+  position: relative;
+  z-index: 5;
   display: grid;
   grid-template-columns: 1fr;
   gap: 8px;
   align-items: stretch;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   border: 1px solid rgba(211, 168, 117, 0.35);
   border-radius: var(--radius-sm);
   padding: 10px;
@@ -411,6 +437,27 @@
 .location-map__travel button small { color: #91a8b7; }
 .location-map__travel .location-map__travel-risk { border-color: rgba(240, 138, 128, 0.48); background: rgba(240, 138, 128, 0.08); }
 .location-map__travel .location-map__travel-cancel { display: block; border-color: rgba(130, 145, 162, 0.25); color: #91a8b7; background: transparent; }
+.location-map__travel .location-map__travel-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border: 1px solid rgba(130, 145, 162, 0.32);
+  border-radius: 4px;
+  padding: 0;
+  color: #d3dce6;
+  background: rgba(5, 13, 21, 0.52);
+  font-size: 1.2rem;
+  line-height: 1;
+  text-align: center;
+}
+.location-map__travel .location-map__travel-close:hover {
+  border-color: rgba(121, 203, 178, 0.62);
+  color: #79cbb2;
+}
 
 .location-map__legend span {
   display: inline-flex;
