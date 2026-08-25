@@ -47,9 +47,7 @@ export const CharacterCreatorPage = observer(function CharacterCreatorPage() {
   return (
     <main className="character-creator">
       <header className="character-creator__intro">
-        <p>Traveler identity</p>
         <h1>Create your character</h1>
-        <span>Build the version of you that steps through the Chronos gate.</span>
       </header>
 
       <div className="character-creator__layout">
@@ -81,8 +79,13 @@ export const CharacterCreatorPage = observer(function CharacterCreatorPage() {
             />
           </label>
           {GROUPS.map(([group, title]) => (
-            <fieldset key={group}>
-              <legend>{title}</legend>
+            <div
+              aria-label={title}
+              className={`character-creator__group character-creator__group--${group}`}
+              key={group}
+              role="group"
+            >
+              <span className="character-creator__group-title">{title}</span>
               <div className="character-creator__choices">
                 {AVATAR_OPTIONS[group].map((option) => (
                   <button
@@ -99,7 +102,7 @@ export const CharacterCreatorPage = observer(function CharacterCreatorPage() {
                   </button>
                 ))}
               </div>
-            </fieldset>
+            </div>
           ))}
 
           {message ? <p className="character-creator__message" role="status">{message}</p> : null}

@@ -44,23 +44,27 @@ export function GameHud({ health, currentTime, events = [], status, timeLimit = 
         </div>
       </div>
 
-      <div className="game-hud__item">
-        <span>Time left</span>
-        <strong>{formatTime(timeLeft)}</strong>
-        <small>{formatTimeWords(timeLeft)}</small>
-        <div
-          className={`game-hud__time-track game-hud__time-track--${pressure}`}
-          role="progressbar"
-          aria-label="Journey time remaining"
-          aria-valuemin="0"
-          aria-valuemax={timeLimit}
-          aria-valuenow={timeLeft}
-        >
-          <span style={{ width: `${remainingPercent}%` }} />
+      <div className="game-hud__item game-hud__item--time">
+        <div className="game-hud__time-main">
+          <span>Time left</span>
+          <strong>{formatTime(timeLeft)}</strong>
         </div>
-        {nextEvent && status === "active" ? (
-          <small>Next danger in {nextEvent.triggerTime - currentTime} min</small>
-        ) : null}
+        <div className="game-hud__time-details">
+          <small>{formatTimeWords(timeLeft)}</small>
+          <div
+            className={`game-hud__time-track game-hud__time-track--${pressure}`}
+            role="progressbar"
+            aria-label="Journey time remaining"
+            aria-valuemin="0"
+            aria-valuemax={timeLimit}
+            aria-valuenow={timeLeft}
+          >
+            <span style={{ width: `${remainingPercent}%` }} />
+          </div>
+          {nextEvent && status === "active" ? (
+            <small>Next danger in {nextEvent.triggerTime - currentTime} min</small>
+          ) : null}
+        </div>
       </div>
 
       <div className="game-hud__item">

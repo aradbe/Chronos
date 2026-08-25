@@ -53,7 +53,7 @@ export function LocationMap({
           .map(({ location }) => location.id),
   );
   const rowsById = new Map(rows.map((row) => [row.location.id, row]));
-  const layout = buildMapLayout(locations);
+  const layout = buildMapLayout(locations, { scale: expanded ? 1.22 : 1 });
   const routes = locations.flatMap((location) =>
     location.connectedLocationIds
       .filter((connectedId) => location.id < connectedId)

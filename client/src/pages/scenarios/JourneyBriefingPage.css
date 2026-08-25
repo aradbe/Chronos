@@ -12,13 +12,24 @@
 }
 
 .journey-briefing__back {
-  display: inline-block;
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  border: 1px solid rgba(121, 203, 178, 0.46);
+  border-radius: var(--radius-sm);
   margin-bottom: var(--space-6);
-  color: var(--color-muted);
+  padding: 0 16px;
+  color: var(--color-primary);
+  background: rgba(121, 203, 178, 0.08);
+  font-size: 0.92rem;
+  font-weight: 800;
   text-decoration: none;
 }
 
-.journey-briefing__back:hover { color: var(--color-primary); }
+.journey-briefing__back:hover {
+  color: var(--color-bg-deep);
+  background: var(--color-primary);
+}
 
 .journey-briefing__hero {
   display: grid;
@@ -123,26 +134,66 @@
 
 .journey-briefing__trust {
   display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
   gap: var(--space-6);
   margin-top: var(--space-4);
   border: 1px solid rgba(121, 203, 178, 0.3);
   border-radius: var(--radius-md);
-  padding: var(--space-5) var(--space-6);
+  padding: clamp(26px, 3vw, 36px);
   background: rgba(121, 203, 178, 0.05);
 }
 
-.journey-briefing__trust p { margin: 0; color: var(--color-text); font-family: Georgia, "Times New Roman", serif; font-size: 1.15rem; }
-.journey-briefing__trust-meter { display: grid; gap: 4px; text-align: right; }
-.journey-briefing__trust-meter span { color: var(--color-muted); font-size: 0.72rem; text-transform: uppercase; }
-.journey-briefing__trust-meter strong { color: var(--color-primary); }
+.journey-briefing__trust-header {
+  display: block;
+}
+
+.journey-briefing__trust-examples {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.journey-briefing__trust-card {
+  display: grid;
+  gap: var(--space-3);
+  border: 1px solid rgba(121, 203, 178, 0.22);
+  border-radius: var(--radius-sm);
+  padding: clamp(18px, 2vw, 24px);
+  background: rgba(5, 13, 21, 0.34);
+}
+
+.journey-briefing__trust-label em {
+  color: var(--color-muted);
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.journey-briefing__trust-card span {
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.journey-briefing__trust-card p {
+  margin: 0;
+  color: var(--color-text);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.journey-briefing__trust-card strong {
+  color: var(--color-bronze);
+}
 
 .journey-briefing__footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-6);
+  justify-content: flex-start;
+  gap: var(--space-4);
   margin-top: var(--space-8);
   border-top: 1px solid var(--color-border);
   padding-top: var(--space-6);
@@ -170,8 +221,16 @@
   .journey-briefing__hero { grid-template-columns: 1fr; }
   .journey-briefing__seal { width: 112px; height: 112px; }
   .journey-briefing__rules { grid-template-columns: 1fr; }
-  .journey-briefing__trust, .journey-briefing__footer { align-items: stretch; grid-template-columns: 1fr; }
-  .journey-briefing__trust-meter { text-align: left; }
+  .journey-briefing__trust-header {
+    display: grid;
+  }
+  .journey-briefing__trust-header p {
+    text-align: left;
+  }
+  .journey-briefing__trust-examples {
+    grid-template-columns: 1fr;
+  }
+  .journey-briefing__footer { align-items: stretch; grid-template-columns: 1fr; }
   .journey-briefing__footer { flex-direction: column; }
   .journey-briefing__footer button { width: 100%; }
 }

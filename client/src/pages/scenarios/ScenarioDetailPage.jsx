@@ -43,10 +43,6 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
 
   return (
     <main className="scenario-detail-page">
-      <Link className="scenario-detail-page__back" to="/scenarios">
-        &larr; All scenarios
-      </Link>
-
       <ImageFrame
         src={scenario.coverImageUrl}
         alt={`${scenario.title} cover image`}
@@ -54,41 +50,43 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
         className="scenario-detail-page__cover"
       />
 
-      <header className="scenario-detail-page__hero">
-        <p className="scenario-detail-page__eyebrow">
-          {scenario.year} AD &middot; {scenario.difficulty}
-        </p>
-        <h1>{scenario.title}</h1>
-        <p className="scenario-detail-page__lead">{scenario.description}</p>
+      <section className="scenario-detail-page__overview">
+        <header className="scenario-detail-page__hero">
+          <p className="scenario-detail-page__eyebrow">
+            {scenario.year} AD &middot; {scenario.difficulty}
+          </p>
+          <h1>{scenario.title}</h1>
+          <p className="scenario-detail-page__lead">{scenario.description}</p>
 
-        <div className="scenario-detail-page__start">
-          <button
-            className="scenario-detail-page__cta"
-            type="button"
-            onClick={handleStart}
-          >
-            Begin journey
-          </button>
-        </div>
-      </header>
+          <div className="scenario-detail-page__start">
+            <button
+              className="scenario-detail-page__cta"
+              type="button"
+              onClick={handleStart}
+            >
+              Begin journey
+            </button>
+          </div>
+        </header>
 
-      <section className="scenario-detail-page__stats" aria-label="Scenario summary">
-        <div className="scenario-stat">
-          <span className="scenario-stat__value">{scenario.locations.length}</span>
-          <span className="scenario-stat__label">Locations</span>
-        </div>
-        <div className="scenario-stat">
-          <span className="scenario-stat__value">{scenario.characters.length}</span>
-          <span className="scenario-stat__label">People to meet</span>
-        </div>
-        <div className="scenario-stat">
-          <span className="scenario-stat__value">{scenario.items.length}</span>
-          <span className="scenario-stat__label">Items to find</span>
-        </div>
-        <div className="scenario-stat">
-          <span className="scenario-stat__value">{scenario.objectives.length}</span>
-          <span className="scenario-stat__label">Objectives</span>
-        </div>
+        <section className="scenario-detail-page__stats" aria-label="Scenario summary">
+          <div className="scenario-stat">
+            <span className="scenario-stat__value">{scenario.locations.length}</span>
+            <span className="scenario-stat__label">Locations</span>
+          </div>
+          <div className="scenario-stat">
+            <span className="scenario-stat__value">{scenario.characters.length}</span>
+            <span className="scenario-stat__label">People to meet</span>
+          </div>
+          <div className="scenario-stat">
+            <span className="scenario-stat__value">{scenario.items.length}</span>
+            <span className="scenario-stat__label">Items to find</span>
+          </div>
+          <div className="scenario-stat">
+            <span className="scenario-stat__value">{scenario.objectives.length}</span>
+            <span className="scenario-stat__label">Objectives</span>
+          </div>
+        </section>
       </section>
 
       {startLocation ? (

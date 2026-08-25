@@ -59,17 +59,14 @@ export const ScenarioListPage = observer(function ScenarioListPage() {
                 className="scenario-card__cover"
               />
 
-              <header className="scenario-card__header">
-                <span className="scenario-card__year">{scenario.year} AD</span>
-                <span
-                  className={`scenario-card__difficulty scenario-card__difficulty--${scenario.difficulty}`}
-                >
-                  {scenario.difficulty}
-                </span>
-              </header>
-
               <h2>{scenario.title}</h2>
+              <span className="scenario-card__year">{scenario.year} AD</span>
               <p>{scenario.description}</p>
+              <span
+                className={`scenario-card__difficulty scenario-card__difficulty--${scenario.difficulty}`}
+              >
+                {scenario.difficulty}
+              </span>
 
               <Link
                 className="scenario-card__link"

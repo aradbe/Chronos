@@ -1,14 +1,17 @@
 const ROW_TOLERANCE = 12;
-const NODE_SPACING = 116;
-const ROW_SPACING = 138;
-const EDGE_PADDING = 52;
+const NODE_SPACING = 280;
+const ROW_SPACING = 174;
+const EDGE_PADDING = 118;
 
 const fallbackPosition = (index) => ({
   x: 20 + (index % 3) * 30,
   y: 15 + Math.floor(index / 3) * 30,
 });
 
-export const buildMapLayout = (locations = []) => {
+export const buildMapLayout = (locations = [], { scale = 1 } = {}) => {
+  const nodeSpacing = NODE_SPACING * scale;
+  const rowSpacing = ROW_SPACING * scale;
+  const edgePadding = EDGE_PADDING * scale;
   const positioned = locations
     .map((location, index) => ({
       location,
@@ -33,17 +36,17 @@ export const buildMapLayout = (locations = []) => {
 
   rows.sort((a, b) => a.averageY - b.averageY);
   const widestRow = Math.max(1, ...rows.map(({ entries }) => entries.length));
-  const width = Math.max(520, widestRow * NODE_SPACING + EDGE_PADDING * 2);
-  const height = Math.max(440, rows.length * ROW_SPACING + EDGE_PADDING * 2);
+  const width = Math.max(1080 * scale, widestRow * nodeSpacing + edgePadding * 2);
+  const height = Math.max(620 * scale, rows.length * rowSpacing + edgePadding * 2);
   const positions = new Map();
 
   rows.forEach((row, rowIndex) => {
     row.entries.sort((a, b) => a.position.x - b.position.x);
-    const gap = (width - EDGE_PADDING * 2) / (row.entries.length + 1);
+    const gap = (width - edgePadding * 2) / (row.entries.length + 1);
     row.entries.forEach(({ location }, columnIndex) => {
       positions.set(location.id, {
-        x: EDGE_PADDING + gap * (columnIndex + 1),
-        y: EDGE_PADDING + ((height - EDGE_PADDING * 2) * (rowIndex + 1)) / (rows.length + 1),
+        x: edgePadding + gap * (columnIndex + 1),
+        y: edgePadding + ((height - edgePadding * 2) * (rowIndex + 1)) / (rows.length + 1),
       });
     });
   });

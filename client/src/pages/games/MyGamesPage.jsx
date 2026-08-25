@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
+import { PixelAvatar } from "../../components/avatar/PixelAvatar";
 import { useStores } from "../../stores/useStores";
 import "./MyGamesPage.css";
 
@@ -55,29 +56,41 @@ export const MyGamesPage = observer(function MyGamesPage() {
 
   return (
     <main className="my-games-page">
-      <section className="my-games-page__hero">
-        <p className="my-games-page__eyebrow">Player dashboard</p>
-        <h1>My Games</h1>
-        <p>
-          Welcome back{user?.name ? `, ${user.name}` : ""}. Your saved Chronos
-          runs are gathered here so you can continue an active escape or review
-          how a finished timeline ended.
-        </p>
-      </section>
+      <section className="my-games-page__overview">
+        <div className="my-games-page__hero">
+          <p className="my-games-page__eyebrow">Player dashboard</p>
+          <h1>My Games</h1>
+          <p>
+            Welcome back{user?.name ? `, ${user.name}` : ""}. Your saved Chronos
+            runs are gathered here so you can continue an active escape or review
+            how a finished timeline ended.
+          </p>
+        </div>
 
-      <section className="my-games-page__summary" aria-label="Account summary">
-        <div>
-          <span className="my-games-page__summary-label">Player</span>
-          <strong>{user?.name || "Unknown player"}</strong>
-        </div>
-        <div>
-          <span className="my-games-page__summary-label">Email</span>
-          <strong>{user?.email || "No email loaded"}</strong>
-        </div>
-        <div>
-          <span className="my-games-page__summary-label">Role</span>
-          <strong>{user?.role || "player"}</strong>
-        </div>
+        <section className="my-games-page__profile" aria-label="Account summary">
+          <div className="my-games-page__avatar-card">
+            <PixelAvatar
+              avatar={user?.avatar}
+              label={user?.avatar?.name || user?.name || "Traveler"}
+              size="medium"
+            />
+            <strong>{user?.avatar?.name || "Traveler"}</strong>
+          </div>
+          <div className="my-games-page__summary">
+            <div>
+              <span className="my-games-page__summary-label">Player</span>
+              <strong>{user?.name || "Unknown player"}</strong>
+            </div>
+            <div>
+              <span className="my-games-page__summary-label">Email</span>
+              <strong>{user?.email || "No email loaded"}</strong>
+            </div>
+            <div>
+              <span className="my-games-page__summary-label">Role</span>
+              <strong>{user?.role || "player"}</strong>
+            </div>
+          </div>
+        </section>
       </section>
 
       {savedGamesLoading && savedGames.length === 0 ? (

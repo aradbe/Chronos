@@ -29,14 +29,14 @@
 
 .location-map--expanded {
   position: fixed;
-  z-index: 1000;
-  inset: 24px;
+  z-index: 9000;
+  inset: clamp(12px, 3vw, 28px);
   overflow: auto;
   border: 1px solid rgba(211, 168, 117, 0.5);
   border-radius: var(--radius-md);
   padding: clamp(18px, 3vw, 34px);
   background: linear-gradient(145deg, #142332, #08121c);
-  box-shadow: 0 0 0 100vmax rgba(2, 8, 13, 0.86), 0 24px 80px #000;
+  box-shadow: 0 0 0 100vmax rgba(2, 8, 13, 0.92), 0 24px 80px #000;
 }
 
 .game-panel .location-map--expanded {
@@ -44,24 +44,26 @@
 }
 
 .location-map--expanded .location-map__diagram {
-  min-width: 100%;
+  min-width: 0;
+  margin: 0 auto;
 }
 
 .location-map--expanded .location-map__viewport {
-  max-height: 72vh;
+  max-height: 68vh;
+  background: rgba(5, 13, 21, 0.52);
 }
 
 .location-map--expanded .location-map__node {
-  width: clamp(118px, 16%, 190px);
-  padding: 12px;
+  width: 196px;
+  padding: 15px 16px;
 }
 
 .location-map--expanded .location-map__node strong {
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .location-map--expanded .location-map__node span {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
 }
 
 .location-map__here {
@@ -213,7 +215,7 @@
   left: var(--map-x);
   top: var(--map-y);
   display: grid;
-  width: clamp(64px, 26%, 78px);
+  width: 96px;
   gap: 2px;
   transform: translate(-50%, -50%);
   border: 1px solid var(--color-border-warm);
@@ -249,14 +251,24 @@
 }
 
 .location-map__node--current {
-  border-color: #79cbb2;
-  color: #dff9f0;
-  background: rgba(119, 200, 174, 0.08);
-  box-shadow: inset 3px 0 #79cbb2, 0 0 18px rgba(119, 200, 174, 0.08);
+  border-color: #d5a96f;
+  color: #f7e3c4;
+  background: rgba(213, 169, 111, 0.12);
+  box-shadow: inset 3px 0 #d5a96f, 0 0 18px rgba(213, 169, 111, 0.12);
 }
 
 .location-map__node--current span {
-  color: #79cbb2;
+  color: #f1d2a5;
+}
+
+.location-map__node--reachable {
+  border-color: rgba(121, 203, 178, 0.78);
+  background: rgba(121, 203, 178, 0.12);
+  box-shadow: inset 3px 0 #79cbb2, 0 0 16px rgba(121, 203, 178, 0.08);
+}
+
+.location-map__node--reachable span {
+  color: #9ce0cc;
 }
 
 .location-map__node--blocked {
@@ -265,7 +277,11 @@
   box-shadow: inset 3px 0 #a4544c;
 }
 
-.location-map__node--current .location-map__node-marker,
+.location-map__node--current .location-map__node-marker {
+  border-color: #d5a96f;
+  background: #d5a96f;
+}
+
 .location-map__node--reachable .location-map__node-marker {
   border-color: #79cbb2;
   background: #79cbb2;
@@ -294,7 +310,7 @@
 
 .location-map__node em {
   color: #f1d2a5;
-  font-size: 0.58rem;
+  font-size: 0.54rem;
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -353,11 +369,28 @@
 .location-map__legend {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  justify-content: center;
+  gap: var(--space-4);
   margin-top: var(--space-3);
   color: #8291a2;
-  font-size: 0.66rem;
-  font-weight: 700;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.location-map__node--out-of-reach {
+  border-color: rgba(196, 102, 92, 0.48);
+  background: rgba(160, 78, 70, 0.07);
+  box-shadow: inset 3px 0 rgba(196, 102, 92, 0.5);
+}
+
+.location-map__node--out-of-reach span {
+  color: rgba(240, 138, 128, 0.76);
+}
+
+.location-map__node--out-of-reach .location-map__node-marker {
+  border-color: rgba(240, 138, 128, 0.72);
+  background: rgba(164, 84, 76, 0.82);
 }
 
 .location-map__travel {
@@ -382,22 +415,31 @@
 .location-map__legend span {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 7px;
 }
 
 .location-map__key {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  transform: rotate(45deg);
+  border: 1px solid currentColor;
+  border-radius: 2px;
   background: #778594;
 }
 
-.location-map__key--current,
+.location-map__key--current {
+  color: #d5a96f;
+  background: #d5a96f;
+}
+
 .location-map__key--reachable {
+  color: #79cbb2;
   background: #79cbb2;
 }
 
 .location-map__key--locked {
+  color: #c4665c;
   background: #c4665c;
 }
 

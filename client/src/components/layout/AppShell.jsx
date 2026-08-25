@@ -1,15 +1,29 @@
+import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
-import { NavLink, Outlet, useMatch, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Outlet,
+  useLocation,
+  useMatch,
+  useNavigate,
+} from "react-router-dom";
 import { useStores } from "../../stores/useStores";
 import { PixelAvatar } from "../avatar/PixelAvatar";
 import "./AppShell.css";
 
 export const AppShell = observer(function AppShell() {
   const { authStore } = useStores();
+  const location = useLocation();
   const navigate = useNavigate();
   const isPlaying = Boolean(useMatch("/games/:gameId"));
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   const handleLogout = () => {
+    setIsMenuOpen(false);
     authStore.logout();
     navigate("/login", { replace: true });
   };
@@ -28,7 +42,24 @@ export const AppShell = observer(function AppShell() {
           </span>
         </NavLink>
 
-        <nav className="app-shell__nav" aria-label="Primary navigation">
+        <button
+          aria-controls="primary-navigation"
+          aria-expanded={isMenuOpen}
+          aria-label="Toggle navigation menu"
+          className="app-shell__menu-toggle"
+          onClick={() => setIsMenuOpen((open) => !open)}
+          type="button"
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav
+          className={`app-shell__nav${isMenuOpen ? " is-open" : ""}`}
+          id="primary-navigation"
+          aria-label="Primary navigation"
+        >
           {authStore.isAuthenticated ? (
             <>
               <NavLink className="app-shell__link" to="/scenarios">

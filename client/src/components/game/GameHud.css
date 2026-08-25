@@ -1,20 +1,32 @@
 .game-hud {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 3vw, 36px);
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .game-hud__item {
-  min-width: 88px;
-  border-left: 1px solid rgba(211, 168, 117, 0.2);
-  padding-left: clamp(12px, 2vw, 24px);
+  min-width: 122px;
+  border: 1px solid rgba(211, 168, 117, 0.22);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: rgba(5, 13, 21, 0.22);
 }
 
-.game-hud__item > span {
+.game-hud__item--time {
+  display: grid;
+  grid-template-columns: auto minmax(150px, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-width: 300px;
+}
+
+.game-hud__item > span,
+.game-hud__time-main > span {
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
   color: #98a7b8;
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -23,20 +35,27 @@
 .game-hud__item strong {
   color: #f1d2a5;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.08rem;
+  font-size: 1.32rem;
+  line-height: 1;
 }
 
 .game-hud__item small {
   display: block;
-  margin-top: 4px;
+  margin-top: 0;
   color: #8291a2;
-  font-size: 0.62rem;
+  font-size: 0.76rem;
   white-space: nowrap;
 }
 
+.game-hud__time-details {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
 .game-hud__health-track {
-  width: 100px;
-  height: 4px;
+  width: 100%;
+  height: 5px;
   margin-top: 6px;
   overflow: hidden;
   border-radius: 999px;
@@ -51,8 +70,8 @@
 }
 
 .game-hud__time-track {
-  width: 112px;
-  height: 4px;
+  width: 100%;
+  height: 5px;
   margin-top: 6px;
   overflow: hidden;
   border-radius: 999px;
@@ -76,6 +95,27 @@
 
 @media (max-width: 720px) {
   .game-hud {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-3);
+  }
+
+  .game-hud__item,
+  .game-hud__item--time {
+    min-width: 0;
+    border-left: 0;
+    border-top: 1px solid rgba(211, 168, 117, 0.18);
+    padding: var(--space-3) 0 0;
+  }
+
+  .game-hud__item--time {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}
+
+@media (max-width: 520px) {
+  .game-hud {
+    grid-template-columns: 1fr;
   }
 }

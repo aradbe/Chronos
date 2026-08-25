@@ -27,6 +27,24 @@ const rules = [
   },
 ];
 
+const dialogueExamples = [
+  {
+    label: "Trust gain",
+    quote: "What have you seen, and which road is still safe?",
+    response: "+ Thoughtful",
+  },
+  {
+    label: "Neutral",
+    quote: "What is happening here?",
+    response: "No change",
+  },
+  {
+    label: "Trust loss",
+    quote: "Tell me now or I will force you.",
+    response: "- Threatening",
+  },
+];
+
 export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
   const { scenarioId } = useParams();
   const navigate = useNavigate();
@@ -104,25 +122,31 @@ export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
         ))}
       </section>
 
-      <section className="journey-briefing__trust">
-        <div>
-          <span className="journey-briefing__trust-label">Dialogue example</span>
-          <p>“What have you seen, and which road is still safe?”</p>
-        </div>
-        <div className="journey-briefing__trust-meter">
-          <span>Trust response</span>
-          <strong>+ Thoughtful</strong>
+      <section className="journey-briefing__trust" aria-label="Dialogue trust examples">
+        <header className="journey-briefing__trust-header">
+          <span className="journey-briefing__trust-label">
+            Dialogue examples - <em>Different tones can raise, preserve, or damage trust.</em>
+          </span>
+        </header>
+        <div className="journey-briefing__trust-examples">
+          {dialogueExamples.map((example) => (
+            <article className="journey-briefing__trust-card" key={example.label}>
+              <span>{example.label}</span>
+              <p>“{example.quote}”</p>
+              <strong>{example.response}</strong>
+            </article>
+          ))}
         </div>
       </section>
 
       <footer className="journey-briefing__footer">
+        <button type="button" onClick={handleEnter} disabled={scenarioStore.starting}>
+          {scenarioStore.starting ? "Opening timeline..." : "Enter the timeline"}
+        </button>
         <div>
           <strong>Once you enter, the clock starts.</strong>
           <span>Your choices are saved automatically.</span>
         </div>
-        <button type="button" onClick={handleEnter} disabled={scenarioStore.starting}>
-          {scenarioStore.starting ? "Opening timeline..." : "Enter the timeline"}
-        </button>
       </footer>
 
       {startError ? <p className="journey-briefing__error" role="alert">{startError}</p> : null}

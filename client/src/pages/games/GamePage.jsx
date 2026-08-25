@@ -112,6 +112,20 @@ export const GamePage = observer(function GamePage() {
     game.currentTime,
     scenario.timeLimitMinutes,
   );
+  const itemsHere = scenario.items.filter((item) => {
+    const isHere = Boolean(item.locationId) && item.locationId === game.currentLocationId;
+    const isCarried = game.inventory.some((entry) => entry.itemId === item.id);
+    const isRevealed = (item.requiresObjectives || []).every((objectiveId) =>
+      game.objectives.some(
+        (objective) =>
+          objective.objectiveId === objectiveId &&
+          objective.status === "completed",
+      ),
+    );
+
+    return isHere && !isCarried && isRevealed;
+  });
+  const showLocationItems = itemsHere.length > 0 || Boolean(pickUpError);
 
   return (
     <main className={`game-page game-page--${disasterStage.id}`}>
@@ -132,24 +146,23 @@ export const GamePage = observer(function GamePage() {
           />
           <div>
             <span className="game-page__eyebrow">
-              {authStore.user?.avatar?.name || authStore.user?.name || "Traveler"} · Current scenario
+              Current scenario
             </span>
             <h1>{scenario.title}</h1>
-            {scenario.mainGoal ? (
-              <p className="game-page__goal">{scenario.mainGoal}</p>
-            ) : null}
           </div>
         </div>
-        <GameHud
-          health={game.health}
-          currentTime={game.currentTime}
-          events={scenario.events}
-          status={game.status}
-          timeLimit={scenario.timeLimitMinutes}
-        />
-        <Link className="game-page__exit" to="/my-games">
-          Exit scenario
-        </Link>
+        <div className="game-page__statusbar">
+          <GameHud
+            health={game.health}
+            currentTime={game.currentTime}
+            events={scenario.events}
+            status={game.status}
+            timeLimit={scenario.timeLimitMinutes}
+          />
+          <Link className="game-page__exit" to="/my-games">
+            Exit scenario
+          </Link>
+        </div>
       </header>
 
       {game.status === "completed" ? (
@@ -179,18 +192,20 @@ export const GamePage = observer(function GamePage() {
                 error={moveError?.message || ""}
               />
             </div>
-            <div className="game-panel">
-              <LocationItems
-                items={scenario.items}
-                locationId={game.currentLocationId}
-                inventory={game.inventory}
-                objectives={game.objectives}
-                disabled={gameStore.actionPending}
-                onPickUpItem={handlePickUpItem}
-                error={pickUpError}
-                failedItemId={failedItemId}
-              />
-            </div>
+            {showLocationItems ? (
+              <div className="game-panel">
+                <LocationItems
+                  items={scenario.items}
+                  locationId={game.currentLocationId}
+                  inventory={game.inventory}
+                  objectives={game.objectives}
+                  disabled={gameStore.actionPending}
+                  onPickUpItem={handlePickUpItem}
+                  error={pickUpError}
+                  failedItemId={failedItemId}
+                />
+              </div>
+            ) : null}
           </aside>
 
           <section className="game-panel game-page__scene" aria-label="Game scene">
