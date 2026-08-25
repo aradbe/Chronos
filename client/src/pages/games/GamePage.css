@@ -120,6 +120,40 @@
 .game-page--storm .game-panel, .game-page--storm .game-page__header { border-color: rgba(203, 111, 67, 0.5); box-shadow: 0 16px 42px rgba(92, 35, 20, 0.22); }
 .game-page--critical .game-panel, .game-page--critical .game-page__header { border-color: rgba(207, 77, 66, 0.58); box-shadow: 0 16px 48px rgba(90, 12, 18, 0.3); }
 
+.game-page,
+.game-page * {
+  scrollbar-color: rgba(121, 203, 178, 0.62) rgba(5, 13, 21, 0.68);
+  scrollbar-width: auto;
+}
+
+.game-page::-webkit-scrollbar,
+.game-page *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.game-page::-webkit-scrollbar-track,
+.game-page *::-webkit-scrollbar-track {
+  background: rgba(5, 13, 21, 0.68);
+}
+
+.game-page::-webkit-scrollbar-thumb,
+.game-page *::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(5, 13, 21, 0.68);
+  border-radius: 999px;
+  background: #4f8379;
+}
+
+.game-page::-webkit-scrollbar-thumb:hover,
+.game-page *::-webkit-scrollbar-thumb:hover {
+  background: #79cbb2;
+}
+
+.game-page::-webkit-scrollbar-corner,
+.game-page *::-webkit-scrollbar-corner {
+  background: rgba(5, 13, 21, 0.68);
+}
+
 .game-page__goal {
   margin: var(--space-1) 0 0 !important;
   color: #b7c5d2 !important;

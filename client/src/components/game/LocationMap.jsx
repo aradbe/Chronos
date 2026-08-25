@@ -236,6 +236,8 @@ export function LocationMap({
           }
 
           const position = getPosition(location);
+          const opensTravelChoice =
+            canMove && state === LOCATION_STATES.REACHABLE;
 
           return (
           <button
@@ -250,9 +252,13 @@ export function LocationMap({
             ]
               .filter(Boolean)
               .join(" ")}
-            disabled={disabled || !canMove}
+            disabled={disabled || !opensTravelChoice}
             key={location.id}
-            onClick={() => setTravelTarget(location)}
+            onClick={() => {
+              if (opensTravelChoice) {
+                setTravelTarget(location);
+              }
+            }}
             style={{ "--map-x": `${position.x}px`, "--map-y": `${position.y}px` }}
           >
             <span className="location-map__node-marker" aria-hidden="true" />
