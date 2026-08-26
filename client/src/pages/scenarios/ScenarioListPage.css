@@ -60,42 +60,64 @@
   line-height: 1.7;
 }
 
+/* Flexbox, not grid, and for one reason: the last row.
+   A grid puts every item into a fixed column, so a final row holding two cards
+   out of three still sits hard left. Flex has no columns — each row centres its
+   own contents, so a short last row sits in the middle where it belongs.
+
+   `flex: 1 1 340px` reads as: may grow, may shrink, and wants to be 340px.
+   Paired with the 400px ceiling on the card, that gives cards that share the
+   width evenly without any single one becoming too wide to read comfortably. */
 .scenario-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 420px));
-  gap: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(20px, 2.2vw, 34px);
 }
 
 .scenario-card {
   display: flex;
+  flex: 1 1 340px;
   flex-direction: column;
+  min-width: 0;
+  max-width: 400px;
   border: 1px solid var(--color-border-warm);
   border-radius: var(--radius-md);
-  padding: clamp(18px, 2.5vw, 24px);
+  padding: clamp(20px, 2.5vw, 26px);
   background: linear-gradient(145deg, rgba(20, 35, 50, 0.95), rgba(12, 24, 35, 0.95));
   box-shadow: var(--shadow-sm);
+  transition: border-color 0.16s ease, transform 0.16s ease;
+}
+
+.scenario-card:hover {
+  border-color: var(--color-bronze-soft);
+  transform: translateY(-2px);
 }
 
 .scenario-card__year {
   display: block;
-  margin: -4px 0 var(--space-3);
+  margin: 0 0 var(--space-3);
   color: var(--color-primary);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
   text-transform: uppercase;
 }
 
+/* `margin-top: auto` on the badge pushes it — and the button below it — to the
+   bottom of the card. However long or short the description, every button in a
+   row lines up. */
 .scenario-card__difficulty {
   align-self: flex-start;
-  margin: var(--space-1) 0 var(--space-6);
+  margin: auto 0 var(--space-4);
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  padding: 3px 10px;
+  padding: 3px 11px;
   color: var(--color-muted);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
 }
 
@@ -114,29 +136,46 @@
   color: var(--color-danger);
 }
 
+/* Titles are one or two lines depending on the scenario ("9/11" against
+   "Chernobyl: The First Night"). Reserving two lines on every card means the
+   year, the description and the button all start at the same height across a
+   row, which is what makes the row look deliberate rather than ragged. */
 .scenario-card h2 {
-  margin: 0 0 var(--space-3);
+  display: flex;
+  align-items: start;
+  min-height: calc(2 * 1.22em);
+  margin: 0 0 var(--space-2);
   color: var(--color-bronze);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.6rem;
-  line-height: 1.15;
-  letter-spacing: 0;
+  font-size: clamp(1.28rem, 1.45vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: 0.005em;
+  text-wrap: balance;
 }
 
+/* 0.94rem with a 1.6 line-height and a slightly warmer grey is easier on the
+   eye than the old 1rem at 1.7: the lines sit closer together, so a paragraph
+   reads as one block instead of separate stripes. */
 .scenario-card p {
-  margin: 0 0 var(--space-3);
+  margin: 0 0 var(--space-4);
   color: var(--color-muted);
-  line-height: 1.7;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  text-wrap: pretty;
 }
 
 .scenario-card__link {
-  align-self: flex-start;
-  margin-top: var(--space-1);
+  align-self: stretch;
   border: 1px solid var(--color-primary);
   border-radius: var(--radius-sm);
-  padding: 10px 20px;
+  padding: 11px 20px;
   color: var(--color-primary);
+  font-size: 0.9rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
   text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease;
 }

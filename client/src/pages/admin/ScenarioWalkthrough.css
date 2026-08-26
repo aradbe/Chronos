@@ -1,0 +1,229 @@
+.walkthrough {
+  margin-top: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  background: rgba(5, 13, 21, 0.42);
+}
+
+.walkthrough__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.walkthrough__header span {
+  color: var(--color-primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.walkthrough__header h3 {
+  margin: 3px 0 0;
+  color: var(--color-bronze);
+  font-size: 1.02rem;
+}
+
+.walkthrough__header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.walkthrough__close {
+  border: 0;
+  color: var(--color-muted);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.walkthrough__close:hover {
+  color: var(--color-text);
+}
+
+.walkthrough__badge {
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.walkthrough__badge--ok {
+  border: 1px solid rgba(126, 200, 155, 0.45);
+  color: #7ec89b;
+  background: rgba(126, 200, 155, 0.09);
+}
+
+.walkthrough__badge--broken {
+  border: 1px solid rgba(240, 138, 128, 0.5);
+  color: #f08a80;
+  background: rgba(240, 138, 128, 0.09);
+}
+
+.walkthrough__goal {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text);
+  font-style: italic;
+}
+
+.walkthrough__meta {
+  margin: var(--space-2) 0 var(--space-4);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+}
+
+.walkthrough__meta strong {
+  color: var(--color-text);
+}
+
+.walkthrough__problems {
+  margin: 0 0 var(--space-4);
+  border: 1px solid rgba(240, 138, 128, 0.4);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  color: #f08a80;
+  background: rgba(240, 138, 128, 0.07);
+  font-size: 0.84rem;
+}
+
+.walkthrough__empty {
+  color: var(--color-muted);
+}
+
+.walkthrough__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The vertical line down the left is what makes this read as one journey
+   rather than a pile of separate instructions. */
+.walkthrough__step {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: var(--space-3);
+  position: relative;
+  padding: 0 0 var(--space-4) 0;
+}
+
+.walkthrough__step::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: 0;
+  left: 12px;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.walkthrough__step:last-child::before {
+  display: none;
+}
+
+.walkthrough__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  width: 25px;
+  height: 25px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: #0b1722;
+  font-size: 0.76rem;
+}
+
+.walkthrough__step--finish .walkthrough__icon {
+  border-color: var(--color-bronze);
+  color: var(--color-bronze);
+}
+
+.walkthrough__action {
+  margin: 3px 0 0;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.walkthrough__number {
+  margin-right: 6px;
+  color: var(--color-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.walkthrough__where {
+  color: var(--color-muted);
+}
+
+/* Walking is context, not an instruction, so it is quieter than the actions. */
+.walkthrough__travel {
+  margin: 4px 0 0;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.walkthrough__arrow {
+  margin: 0 6px;
+  opacity: 0.6;
+}
+
+.walkthrough__from {
+  opacity: 0.75;
+}
+
+.walkthrough__lock {
+  margin-left: 6px;
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: #d5a96f;
+  background: rgba(213, 169, 111, 0.12);
+  font-size: 0.7rem;
+  font-style: normal;
+}
+
+.walkthrough__hint {
+  margin: 3px 0 0;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.walkthrough__topics,
+.walkthrough__carry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  margin: 5px 0 0;
+  color: var(--color-muted);
+  font-size: 0.76rem;
+}
+
+.walkthrough__topic,
+.walkthrough__item {
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 2px 8px;
+  color: var(--color-text);
+}
+
+.walkthrough__item {
+  border-color: rgba(213, 169, 111, 0.4);
+  color: #d5a96f;
+}
+
+@media (max-width: 640px) {
+  .walkthrough {
+    padding: var(--space-4);
+  }
+
+  .walkthrough__step {
+    grid-template-columns: 22px 1fr;
+  }
+}

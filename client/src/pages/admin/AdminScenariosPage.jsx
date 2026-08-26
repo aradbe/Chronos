@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   createScenarioPlaytest,
   deleteScenario,
+  getAdminScenario,
   listAdminScenarios,
   publishScenario,
   unpublishScenario,
@@ -11,6 +12,7 @@ import {
 import { useStores } from "../../stores/useStores";
 import { CreateScenarioForm } from "./CreateScenarioForm";
 import { ScenarioAiEditor } from "./ScenarioAiEditor";
+import { ScenarioWalkthrough } from "./ScenarioWalkthrough";
 import "./AdminScenariosPage.css";
 
 export const AdminScenariosPage = observer(function AdminScenariosPage() {
@@ -27,6 +29,12 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [busyId, setBusyId] = useState(null);
   const [editingId, setEditingId] = useState(null);
+
+  // The worked solution for one scenario, fetched only when its button is
+  // pressed. Kept as the whole answer rather than an id, because the walkthrough
+  // arrives with the scenario and there is nothing to look up a second time.
+  const [solution, setSolution] = useState(null);
+  const [solutionLoading, setSolutionLoading] = useState(false);
 
   // Which row is one click away from being deleted. Held here rather than in
   // each row so that arming one row disarms any other — you can never have two
@@ -116,6 +124,34 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
     }
   };
 
+  const handleShowSolution = async (scenario) => {
+    setConfirmingId(null);
+    setError(null);
+
+    // Pressing the button of the scenario already open closes it again.
+    if (solution?.id === scenario._id) {
+      setSolution(null);
+      return;
+    }
+
+    setSolution({ id: scenario._id, title: scenario.title, walkthrough: null });
+    setSolutionLoading(true);
+
+    try {
+      const full = await getAdminScenario(scenario._id, authStore.token);
+      setSolution({
+        id: scenario._id,
+        title: scenario.title,
+        walkthrough: full.walkthrough,
+      });
+    } catch (solutionError) {
+      setError(solutionError);
+      setSolution(null);
+    } finally {
+      setSolutionLoading(false);
+    }
+  };
+
   const handlePlaytest = async (scenario) => {
     setConfirmingId(null);
     setBusyId(scenario._id);
@@ -169,6 +205,15 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
         />
       ) : null}
 
+      {solution ? (
+        <ScenarioWalkthrough
+          title={solution.title}
+          walkthrough={solution.walkthrough}
+          loading={solutionLoading}
+          onClose={() => setSolution(null)}
+        />
+      ) : null}
+
       {loading && scenarios.length === 0 ? (
         <section className="admin-scenarios-page__notice" aria-live="polite">
           <h2>Loading scenarios...</h2>
@@ -191,98 +236,84 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
       ) : null}
 
       {scenarios.length > 0 ? (
-        <section className="admin-scenarios-table__wrap">
-          <table className="admin-scenarios-table">
-            <caption className="admin-scenarios-table__caption">
-              {scenarios.length}{" "}
-              {scenarios.length === 1 ? "scenario" : "scenarios"}
-            </caption>
+        <>
+          <p className="admin-scenarios-page__count">
+            {scenarios.length} {scenarios.length === 1 ? "scenario" : "scenarios"}
+          </p>
 
-            <thead>
-              <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Year</th>
-                <th scope="col">Difficulty</th>
-                <th scope="col">Status</th>
-                <th scope="col">Description</th>
-                <th scope="col">
-                  <span className="visually-hidden">Actions</span>
-                </th>
-              </tr>
-            </thead>
+          <section className="admin-grid" aria-label="Scenarios">
+            {scenarios.map((scenario) => (
+              <article className="admin-card" key={scenario._id}>
+                <h2 className="admin-card__title">{scenario.title}</h2>
 
-            <tbody>
-              {scenarios.map((scenario) => (
-                <tr key={scenario._id}>
-                  <th scope="row">{scenario.title}</th>
-                  <td>{scenario.year} AD</td>
-                  <td>
-                    <span
-                      className={`admin-tag admin-tag--${scenario.difficulty}`}
-                    >
-                      {scenario.difficulty}
-                    </span>
-                  </td>
-                  <td>
-                    <span
-                      className={
-                        scenario.isActive
-                          ? "admin-status admin-status--published"
-                          : "admin-status admin-status--draft"
-                      }
-                    >
-                      {scenario.isActive ? "Published" : "Draft"}
-                    </span>
-                  </td>
-                  <td className="admin-scenarios-table__description">
-                    <div className="admin-scenarios-table__description-text">
-                      {scenario.description}
-                    </div>
-                  </td>
-                  <td className="admin-scenarios-table__actions">
-                    <button
-                      type="button"
-                      className="admin-button admin-button--playtest"
-                      onClick={() => handlePlaytest(scenario)}
-                      disabled={busyId === scenario._id}
-                    >
-                      {busyId === scenario._id ? "Opening..." : "Test level"}
-                    </button>
+                <p className="admin-card__meta">
+                  <span className="admin-card__year">{scenario.year} AD</span>
+                  <span className={`admin-tag admin-tag--${scenario.difficulty}`}>
+                    {scenario.difficulty}
+                  </span>
+                  <span
+                    className={
+                      scenario.isActive
+                        ? "admin-status admin-status--published"
+                        : "admin-status admin-status--draft"
+                    }
+                  >
+                    {scenario.isActive ? "Published" : "Draft"}
+                  </span>
+                </p>
 
-                    <button
-                      type="button"
-                      className="admin-button"
-                      onClick={() => handleTogglePublished(scenario)}
-                      disabled={busyId === scenario._id}
-                    >
-                      {scenario.isActive ? "Unpublish" : "Publish"}
-                    </button>
+                <p className="admin-card__description">{scenario.description}</p>
 
-                    <button
-                      type="button"
-                      className="admin-button"
-                      onClick={() => { setEditingId(scenario._id); setFormOpen(false); }}
-                      disabled={busyId === scenario._id}
-                    >
-                      Edit with AI
-                    </button>
+                <div className="admin-card__actions">
+                  <button
+                    type="button"
+                    className="admin-button admin-button--playtest"
+                    onClick={() => handlePlaytest(scenario)}
+                    disabled={busyId === scenario._id}
+                  >
+                    {busyId === scenario._id ? "Opening..." : "Test level"}
+                  </button>
 
-                    <button
-                      type="button"
-                      className="admin-button admin-button--danger"
-                      onClick={() => handleDelete(scenario)}
-                      disabled={busyId === scenario._id}
-                    >
-                      {confirmingId === scenario._id
-                        ? "Really delete?"
-                        : "Delete"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
+                  <button
+                    type="button"
+                    className="admin-button admin-button--solution"
+                    onClick={() => handleShowSolution(scenario)}
+                    disabled={busyId === scenario._id}
+                  >
+                    {solution?.id === scenario._id ? "Hide solution" : "Solution"}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-button"
+                    onClick={() => handleTogglePublished(scenario)}
+                    disabled={busyId === scenario._id}
+                  >
+                    {scenario.isActive ? "Unpublish" : "Publish"}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-button"
+                    onClick={() => { setEditingId(scenario._id); setFormOpen(false); }}
+                    disabled={busyId === scenario._id}
+                  >
+                    Edit with AI
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-button admin-button--danger"
+                    onClick={() => handleDelete(scenario)}
+                    disabled={busyId === scenario._id}
+                  >
+                    {confirmingId === scenario._id ? "Really delete?" : "Delete"}
+                  </button>
+                </div>
+              </article>
+            ))}
+          </section>
+        </>
       ) : null}
     </main>
   );
