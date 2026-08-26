@@ -235,7 +235,9 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
                     </span>
                   </td>
                   <td className="admin-scenarios-table__description">
-                    {scenario.description}
+                    <div className="admin-scenarios-table__description-text">
+                      {scenario.description}
+                    </div>
                   </td>
                   <td className="admin-scenarios-table__actions">
                     <button

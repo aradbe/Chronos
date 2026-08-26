@@ -100,6 +100,14 @@
   color: var(--color-muted);
 }
 
+.admin-scenarios-table__description-text {
+  max-height: 8.5rem;
+  padding-right: var(--space-2);
+  overflow-y: auto;
+  line-height: 1.45;
+  scrollbar-gutter: stable;
+}
+
 .admin-scenarios-table__actions {
   text-align: right;
   white-space: nowrap;
