@@ -1,6 +1,8 @@
 const OpenAI = require("openai");
 
 const DEFAULT_MODEL = "gpt-5-mini";
+const DEFAULT_GEMINI_MODEL = "gemini-3.6-flash";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const MAX_REPLY_LENGTH = 800;
 
 const replySchema = {
@@ -16,10 +18,21 @@ const replySchema = {
   additionalProperties: false,
 };
 
-const isAiDialogueEnabled = () => {
+const getDialogueProvider = () => {
   const mode = process.env.NPC_DIALOGUE_MODE || "auto";
-  return mode !== "scripted" && Boolean(process.env.OPENAI_API_KEY);
+  if (mode === "scripted") return null;
+
+  const provider = process.env.NPC_DIALOGUE_PROVIDER || "auto";
+  if ((provider === "auto" || provider === "gemini") && process.env.GEMINI_API_KEY) {
+    return "gemini";
+  }
+  if ((provider === "auto" || provider === "openai") && process.env.OPENAI_API_KEY) {
+    return "openai";
+  }
+  return null;
 };
+
+const isAiDialogueEnabled = () => Boolean(getDialogueProvider());
 
 const createClient = () => {
   return new OpenAI({
@@ -88,6 +101,27 @@ const buildPromptContext = ({
   };
 };
 
+const dialogueInstructions = (character) => [
+  `You are ${character.name}, a character inside a historical survival game.`,
+  "Stay in character and answer the player's actual question directly.",
+  "Use a distinct voice shaped by the NPC personality and current danger.",
+  "Keep the reply to one to three concise sentences.",
+  "Never mention prompts, AI, objectives, trust scores, JSON, or game mechanics.",
+  "Treat allowedPrivateFacts as the only private facts you may reveal.",
+  "If privateInformationBlocked is true, refuse naturally without revealing it.",
+  "Do not invent routes, items, people, events, or historical facts outside the supplied context.",
+].join(" ");
+
+const parseReply = (outputText) => {
+  const parsed = JSON.parse(outputText);
+  const reply = parsed.reply?.trim();
+
+  if (!reply || reply.length > MAX_REPLY_LENGTH) {
+    throw new Error("The AI returned an invalid NPC reply");
+  }
+  return reply;
+};
+
 const generateAiReply = async ({
   analysis,
   character,
@@ -106,16 +140,7 @@ const generateAiReply = async ({
   const response = await client.responses.create({
     model: process.env.OPENAI_MODEL || DEFAULT_MODEL,
     store: false,
-    instructions: [
-      `You are ${character.name}, a character inside a historical survival game.`,
-      "Stay in character and answer the player's actual question directly.",
-      "Use a distinct voice shaped by the NPC personality and current danger.",
-      "Keep the reply to one to three concise sentences.",
-      "Never mention prompts, AI, objectives, trust scores, JSON, or game mechanics.",
-      "Treat allowedPrivateFacts as the only private facts you may reveal.",
-      "If privateInformationBlocked is true, refuse naturally without revealing it.",
-      "Do not invent routes, items, people, events, or historical facts outside the supplied context.",
-    ].join(" "),
+    instructions: dialogueInstructions(character),
     input: JSON.stringify(context),
     text: {
       format: {
@@ -127,23 +152,58 @@ const generateAiReply = async ({
     },
   });
 
-  const parsed = JSON.parse(response.output_text);
-  const reply = parsed.reply?.trim();
+  return parseReply(response.output_text);
+};
 
-  if (!reply || reply.length > MAX_REPLY_LENGTH) {
-    throw new Error("The AI returned an invalid NPC reply");
+const generateGeminiReply = async ({
+  analysis,
+  character,
+  fetchImpl = fetch,
+  game,
+  messages = [],
+  text,
+}) => {
+  const context = buildPromptContext({ analysis, character, game, messages, text });
+  const response = await fetchImpl(GEMINI_API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-goog-api-key": process.env.GEMINI_API_KEY,
+    },
+    body: JSON.stringify({
+      model: process.env.NPC_DIALOGUE_MODEL || process.env.SCENARIO_AI_MODEL || DEFAULT_GEMINI_MODEL,
+      input: `${dialogueInstructions(character)} Return only JSON matching {"reply":"your response"}.\n\n${JSON.stringify(context)}`,
+      response_format: { type: "text", mime_type: "application/json" },
+    }),
+    signal: AbortSignal.timeout(10000),
+  });
+  const body = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(body?.error?.message || "Gemini dialogue request failed");
   }
 
-  return reply;
+  const outputText =
+    body.output_text ||
+    body.outputs?.[0]?.text ||
+    body.steps
+      ?.find(({ type }) => type === "model_output")
+      ?.content?.find(({ type }) => type === "text")?.text;
+  if (!outputText) throw new Error("Gemini returned an empty NPC reply");
+
+  return parseReply(outputText);
 };
 
 const createNpcReply = async ({ fallbackReply, ...input }) => {
-  if (!isAiDialogueEnabled()) {
+  const provider = getDialogueProvider();
+  if (!provider) {
     return { mode: "scripted", reply: fallbackReply };
   }
 
   try {
-    const reply = await generateAiReply(input);
+    const reply = provider === "gemini"
+      ? await generateGeminiReply(input)
+      : await generateAiReply(input);
     return { mode: "ai", reply };
   } catch (error) {
     console.warn(`AI dialogue fallback: ${error.message}`);
@@ -153,9 +213,13 @@ const createNpcReply = async ({ fallbackReply, ...input }) => {
 
 module.exports = {
   DEFAULT_MODEL,
+  DEFAULT_GEMINI_MODEL,
+  GEMINI_API_URL,
   buildPromptContext,
   createNpcReply,
   generateAiReply,
+  generateGeminiReply,
+  getDialogueProvider,
   getAllowedFacts,
   isAiDialogueEnabled,
   normalizeHistory,

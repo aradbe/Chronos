@@ -4,12 +4,16 @@ const {
   buildPromptContext,
   createNpcReply,
   generateAiReply,
+  generateGeminiReply,
+  getDialogueProvider,
   getAllowedFacts,
   normalizeHistory,
 } = require("../services/aiDialogueService");
 
 const originalKey = process.env.OPENAI_API_KEY;
+const originalGeminiKey = process.env.GEMINI_API_KEY;
 const originalMode = process.env.NPC_DIALOGUE_MODE;
+const originalProvider = process.env.NPC_DIALOGUE_PROVIDER;
 
 afterEach(() => {
   if (originalKey === undefined) {
@@ -18,10 +22,22 @@ afterEach(() => {
     process.env.OPENAI_API_KEY = originalKey;
   }
 
+  if (originalGeminiKey === undefined) {
+    delete process.env.GEMINI_API_KEY;
+  } else {
+    process.env.GEMINI_API_KEY = originalGeminiKey;
+  }
+
   if (originalMode === undefined) {
     delete process.env.NPC_DIALOGUE_MODE;
   } else {
     process.env.NPC_DIALOGUE_MODE = originalMode;
+  }
+
+  if (originalProvider === undefined) {
+    delete process.env.NPC_DIALOGUE_PROVIDER;
+  } else {
+    process.env.NPC_DIALOGUE_PROVIDER = originalProvider;
   }
 });
 
@@ -127,8 +143,61 @@ describe("AI dialogue service", () => {
     assert.equal(request.text.format.strict, true);
   });
 
+  it("uses Gemini first when the existing Gemini key is available", () => {
+    process.env.GEMINI_API_KEY = "gemini-test-key";
+    process.env.OPENAI_API_KEY = "openai-test-key";
+    process.env.NPC_DIALOGUE_PROVIDER = "auto";
+
+    assert.equal(getDialogueProvider(), "gemini");
+  });
+
+  it("requests and parses a structured Gemini reply", async () => {
+    process.env.GEMINI_API_KEY = "gemini-test-key";
+    let request;
+    const fetchImpl = async (url, options) => {
+      request = { url, options };
+      return {
+        ok: true,
+        async json() {
+          return {
+            output_text: JSON.stringify({
+              reply: "The harbor lies beyond the market, but bring a ship token.",
+            }),
+          };
+        },
+      };
+    };
+
+    const reply = await generateGeminiReply({ ...createInput(), fetchImpl });
+    const body = JSON.parse(request.options.body);
+
+    assert.match(reply, /ship token/);
+    assert.equal(request.options.headers["x-goog-api-key"], "gemini-test-key");
+    assert.equal(body.response_format.mime_type, "application/json");
+    assert.match(body.input, /allowedPrivateFacts/);
+  });
+
+  it("uses Gemini for NPC replies when it is configured", async () => {
+    process.env.GEMINI_API_KEY = "gemini-test-key";
+    process.env.NPC_DIALOGUE_PROVIDER = "gemini";
+
+    const result = await createNpcReply({
+      ...createInput(),
+      fetchImpl: async () => ({
+        ok: true,
+        async json() {
+          return { output_text: JSON.stringify({ reply: "Follow the eastern road." }) };
+        },
+      }),
+      fallbackReply: "Scripted reply",
+    });
+
+    assert.deepEqual(result, { mode: "ai", reply: "Follow the eastern road." });
+  });
+
   it("uses scripted dialogue when AI mode is unavailable", async () => {
     delete process.env.OPENAI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
     process.env.NPC_DIALOGUE_MODE = "auto";
 
     const result = await createNpcReply({
@@ -140,6 +209,7 @@ describe("AI dialogue service", () => {
   });
 
   it("falls back when the AI request fails", async () => {
+    delete process.env.GEMINI_API_KEY;
     process.env.OPENAI_API_KEY = "test-key";
     const originalWarn = console.warn;
     console.warn = () => {};
