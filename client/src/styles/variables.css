@@ -21,6 +21,10 @@
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
+  /* Ten rules across the app already ask for --space-5. Until it was defined
+     here every one of them collapsed to no spacing at all, because a CSS
+     variable that was never declared makes the whole line invalid. */
+  --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
 

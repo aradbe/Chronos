@@ -388,6 +388,57 @@ them out.
 
 ---
 
+## GET /api/admin/scenarios/:scenarioId
+
+Returns one scenario in full — every content array included — plus a `walkthrough`
+field that is not stored anywhere.
+
+The walkthrough is worked out from the scenario itself each time this is called:
+`recommendedPath` gives the objective order, the locations graph gives the routes,
+`locationGates` says what is locked, and `finalCondition` says how it ends. No AI
+call is involved, so it costs nothing and works on every scenario, including ones
+written before this field existed.
+
+Response (scenario fields trimmed here for length):
+
+{
+"_id": "6a819c261272a19c22c7510a",
+"title": "Escape Pompeii",
+"locations": [ ... ],
+"objectives": [ ... ],
+"walkthrough": {
+"solvable": true,
+"startLocationName": "The Forum",
+"timeLimitMinutes": 210,
+"mainGoal": "Escape Pompeii alive before the final surge.",
+"problems": [],
+"steps": [ ... ]
+}
+}
+
+Each entry in `steps` is one of:
+
+| kind | Fields |
+| --- | --- |
+| travel | from, path[{ id, name, unlockedBy[] }] |
+| talk_to_character | objectiveId, title, target, at, topics[], hint |
+| collect_item | objectiveId, title, target, at, topics[], hint |
+| reach_location | objectiveId, title, target, at, topics[], hint |
+| use_item | objectiveId, title, target, at, topics[], hint |
+| finish | at, character, mustCarry[], successText |
+
+Consecutive moves are merged into a single `travel` step, and `unlockedBy` names
+what a gated location needs, so the reason for a long detour is visible.
+
+`solvable` is false when `problems` is not empty. A problem is a plain sentence —
+an unreachable location, an objective named in `recommendedPath` that does not
+exist, or an ending the route reaches without a required item. This makes the
+field a free completability check on AI-generated drafts.
+
+Nothing is written to the database, and no other endpoint's shape changed.
+
+---
+
 ## POST /api/admin/scenarios
 
 Creates a scenario. Always saved as a draft — isActive is forced to false

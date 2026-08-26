@@ -144,11 +144,11 @@ export const GamePage = observer(function GamePage() {
             size="medium"
             label={authStore.user?.avatar?.name || authStore.user?.name || "Traveler"}
           />
-          <div>
+          <div className="game-page__scenario">
             <span className="game-page__eyebrow">
               Current scenario
             </span>
-            <h1>{scenario.title}</h1>
+            <h1 title={scenario.title}>{scenario.title}</h1>
           </div>
         </div>
         <div className="game-page__statusbar">

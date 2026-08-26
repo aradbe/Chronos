@@ -4,6 +4,7 @@ const Scenario = require("../models/Scenario");
 const { AdminScenarioError } = require("./adminScenarioError");
 const objectiveService = require("./objectiveService");
 const scenarioAiService = require("./scenarioAiService");
+const { buildWalkthrough } = require("./scenarioWalkthroughService");
 const {
   validateScenarioDraft,
   validateScenarioForPublish,
@@ -105,6 +106,19 @@ const getScenario = async (scenarioId) => {
   const scenario = await Scenario.findById(scenarioId);
   if (!scenario) throw new AdminScenarioError("Scenario not found", "SCENARIO_NOT_FOUND", 404);
   return scenario;
+};
+
+// What the admin screen asks for: the scenario plus a worked solution.
+//
+// Kept apart from `getScenario` on purpose. That one is also called by revise
+// and playtest, which expect a real Mongoose document they can save. This one
+// returns a plain object with an extra field, which would break them.
+const getScenarioForAdmin = async (scenarioId) => {
+  const scenario = await getScenario(scenarioId);
+  return {
+    ...scenario.toObject(),
+    walkthrough: buildWalkthrough(scenario),
+  };
 };
 
 const generateScenario = async (inputs) => {
@@ -281,6 +295,7 @@ module.exports = {
   createScenario,
   listScenarios,
   getScenario,
+  getScenarioForAdmin,
   generateScenario,
   createPlaytest,
   reviseScenario,

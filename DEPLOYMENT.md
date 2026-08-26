@@ -10,14 +10,14 @@ Chronos is deployed as two services from the same GitHub repository:
 
 Create a new Web Service and connect the Chronos GitHub repository.
 
-| Setting | Value |
-| --- | --- |
-| Branch | `main` |
-| Root Directory | `server` |
-| Runtime | Node |
-| Build Command | `npm ci` |
-| Start Command | `npm start` |
-| Health Check Path | `/` |
+| Setting           | Value       |
+| ----------------- | ----------- |
+| Branch            | `main`      |
+| Root Directory    | `server`    |
+| Runtime           | Node        |
+| Build Command     | `npm ci`    |
+| Start Command     | `npm start` |
+| Health Check Path | `/`         |
 
 Add the following environment variables in Render:
 
@@ -42,13 +42,13 @@ Open the Render URL after deployment. It should display `Chronos server is runni
 
 Import the same repository as a new Vercel project.
 
-| Setting | Value |
-| --- | --- |
-| Branch | `main` |
-| Root Directory | `client` |
-| Framework Preset | Vite |
-| Build Command | `npm run build` |
-| Output Directory | `dist` |
+| Setting          | Value           |
+| ---------------- | --------------- |
+| Branch           | `main`          |
+| Root Directory   | `client`        |
+| Framework Preset | Vite            |
+| Build Command    | `npm run build` |
+| Output Directory | `dist`          |
 
 Add this environment variable before deploying:
 

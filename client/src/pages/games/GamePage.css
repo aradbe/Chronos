@@ -88,6 +88,23 @@
 
 .game-page__identity .pixel-avatar { width: clamp(72px, 5vw, 88px); flex: 0 0 auto; }
 
+.game-page__scenario {
+  min-width: 0;
+}
+
+/* The scenario title is the one heading that has to survive any length an admin
+   or the AI invents. Instead of cutting it off with an ellipsis, it shrinks and
+   wraps onto a second line, so the whole name stays readable. */
+.game-page .game-page__scenario h1 {
+  display: block;
+  overflow: visible;
+  font-size: clamp(0.82rem, 1.1vw, 1.15rem);
+  line-height: 1.2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-overflow: clip;
+}
+
 .game-page__eyebrow {
   display: block;
   margin-bottom: 2px;
