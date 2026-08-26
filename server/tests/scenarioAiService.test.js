@@ -2,7 +2,11 @@ const assert = require("node:assert/strict");
 const { describe, it } = require("node:test");
 const pompeiiScenario = require("../seed/pompeiiScenario");
 const { validateGeneratedScenario } = require("../services/generatedScenarioValidator");
-const { buildGenerationPrompt, callGemini } = require("../services/scenarioAiService");
+const {
+  buildGenerationPrompt,
+  buildRevisionPrompt,
+  callGemini,
+} = require("../services/scenarioAiService");
 
 describe("scenario AI service", () => {
   it("accepts Pompeii as a structurally playable reference", async () => {
@@ -100,6 +104,35 @@ describe("scenario AI service", () => {
     assert.match(prompt, /pudding_lane/);
     assert.match(prompt, /Characters never move/);
     assert.match(prompt, /exactly one acquisition method/);
+  });
+
+  it("keeps revision prompts focused on the current scenario", () => {
+    const prompt = buildRevisionPrompt({ title: "Apollo 13", locations: [] }, "Improve the ending");
+
+    assert.match(prompt, /CURRENT SCENARIO/);
+    assert.match(prompt, /Improve the ending/);
+    assert.doesNotMatch(prompt, /QUALITY REFERENCE/);
+    assert.doesNotMatch(prompt, /Escape Pompeii/);
+  });
+
+  it("turns request timeouts into a useful admin error", async () => {
+    const previous = process.env.GEMINI_API_KEY;
+    process.env.GEMINI_API_KEY = "test-key";
+    const timeout = new Error("timed out");
+    timeout.name = "TimeoutError";
+
+    try {
+      await assert.rejects(
+        () => callGemini("Build it", { fetchImpl: async () => { throw timeout; } }),
+        (error) =>
+          error.code === "SCENARIO_AI_TIMEOUT" &&
+          error.status === 504 &&
+          error.message.includes("too long"),
+      );
+    } finally {
+      if (previous === undefined) delete process.env.GEMINI_API_KEY;
+      else process.env.GEMINI_API_KEY = previous;
+    }
   });
 
   it("falls back to the stable model when the preferred model is busy", async () => {

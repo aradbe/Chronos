@@ -40,15 +40,26 @@ const callGemini = async (prompt, { fetchImpl = fetch, retryDelay = 1200 } = {})
   let response;
   let body;
   const models = [...new Set([requestBody.model, FALLBACK_MODEL])];
-  for (const model of models) {
-    requestBody.model = model;
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      response = await fetchImpl(API_URL, { ...requestOptions, body: JSON.stringify(requestBody) });
-      body = await response.json().catch(() => ({}));
+  try {
+    for (const model of models) {
+      requestBody.model = model;
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        response = await fetchImpl(API_URL, { ...requestOptions, body: JSON.stringify(requestBody) });
+        body = await response.json().catch(() => ({}));
+        if (response.status !== 503) break;
+        if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, retryDelay));
+      }
       if (response.status !== 503) break;
-      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, retryDelay));
     }
-    if (response.status !== 503) break;
+  } catch (error) {
+    const timedOut = error?.name === "AbortError" || error?.name === "TimeoutError";
+    throw new AdminScenarioError(
+      timedOut
+        ? "Gemini took too long to revise the scenario. Please try again."
+        : "Could not reach Gemini. Please try again.",
+      timedOut ? "SCENARIO_AI_TIMEOUT" : "SCENARIO_AI_UNAVAILABLE",
+      timedOut ? 504 : 502,
+    );
   }
 
   if (!response.ok) {
@@ -136,18 +147,20 @@ const generateScenario = async (inputs, options) => {
   return validateWithRepair(draft, inputs, applyAdminInputs, options);
 };
 
+const buildRevisionPrompt = (current, instruction) => [
+  "Revise this Chronos scenario according to the admin request.",
+  "Return the entire updated scenario, not a patch. Preserve good content that the request does not affect.",
+  "Keep every id reference, route, objective, gate, item, event, and final condition coherent and playable.",
+  "Characters remain at startingLocationId, generated requiredTopics must appear in their hiddenKnowledge, and critical items must not have duplicate acquisition methods.",
+  "The current scenario already uses the required Chronos schema. Preserve its field names and nested shapes exactly.",
+  "Return only one JSON object without markdown or commentary.",
+  `ADMIN REQUEST:\n${instruction}`,
+  `CURRENT SCENARIO:\n${JSON.stringify(current)}`,
+].join("\n\n");
+
 const reviseScenario = async (scenario, instruction, options) => {
   const current = typeof scenario.toObject === "function" ? scenario.toObject() : scenario;
-  const prompt = [
-    "Revise this Chronos scenario according to the admin request.",
-    "Return the entire updated scenario, not a patch. Preserve good content that the request does not affect.",
-    "Keep every id reference, route, objective, gate, item, event, and final condition coherent and playable.",
-    "Characters remain at startingLocationId, generated requiredTopics must appear in their hiddenKnowledge, and critical items must not have duplicate acquisition methods.",
-    "Return only one JSON object with the same field names and nested shapes as the current scenario, without markdown or commentary.",
-    `ADMIN REQUEST:\n${instruction}`,
-    `CURRENT SCENARIO:\n${JSON.stringify(current)}`,
-    `QUALITY REFERENCE:\n${JSON.stringify(cleanExample())}`,
-  ].join("\n\n");
+  const prompt = buildRevisionPrompt(current, instruction);
   const revised = await callGemini(prompt, options);
   const preserveIdentity = (updated) => {
     updated.title = current.title;
@@ -162,6 +175,7 @@ module.exports = {
   DEFAULT_MODEL,
   FALLBACK_MODEL,
   buildGenerationPrompt,
+  buildRevisionPrompt,
   callGemini,
   generateScenario,
   reviseScenario,

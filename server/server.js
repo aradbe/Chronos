@@ -57,13 +57,20 @@ async function startServer() {
 
 //global catch
 app.use((err,req,res,next) => {
-  res.status(err.status || 500).json(
-  {
-  error: {
-    message: "Server error",
-    code: "SERVER_ERROR"
+  const status = Number.isInteger(err.status) ? err.status : 500;
+  const knownError = Boolean(err.code && err.status);
+
+  if (!knownError) console.error(err);
+
+  const error = {
+    message: knownError ? err.message : "Server error",
+    code: knownError ? err.code : "SERVER_ERROR",
+  };
+  if (knownError && Array.isArray(err.details) && err.details.length) {
+    error.details = err.details;
   }
-})
+
+  res.status(status).json({ error });
 })
 
 startServer();
