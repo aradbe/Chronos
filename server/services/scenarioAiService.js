@@ -130,6 +130,7 @@ const buildGenerationPrompt = (inputs) => [
   "Use lowercase requiredTopics words or short phrases that appear naturally in the target NPC's hiddenKnowledge so scripted dialogue can recognize and answer them.",
   "Give every critical item exactly one acquisition method. An item may be picked up at locationId or rewarded by an encounter choice, but never both. Use an empty locationId for encounter-only rewards.",
   "Do not invent resource systems outside health, time, trust, inventory, objectives, gates, encounters, and timed events. Represent concepts such as oxygen or power through those supported mechanics.",
+  "Write description as a short player-facing teaser of one or two sentences, no more than 240 characters. Do not copy the admin's detailed creation brief into description.",
   "Return only one JSON object. Follow the quality reference's exact field names, nested shapes, and value types, without markdown or commentary.",
   `ADMIN INPUTS:\n${JSON.stringify(inputs)}`,
   `QUALITY REFERENCE:\n${JSON.stringify(cleanExample())}`,
@@ -140,7 +141,6 @@ const generateScenario = async (inputs, options) => {
   const applyAdminInputs = (scenario) => {
     scenario.title = inputs.title.trim();
     scenario.year = Number(inputs.year);
-    scenario.description = inputs.description.trim();
     scenario.difficulty = inputs.difficulty;
     if (inputs.startLocationId?.trim()) scenario.startLocationId = inputs.startLocationId.trim();
   };

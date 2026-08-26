@@ -105,6 +105,8 @@ describe("scenario AI service", () => {
     assert.match(prompt, /pudding_lane/);
     assert.match(prompt, /Characters never move/);
     assert.match(prompt, /exactly one acquisition method/);
+    assert.match(prompt, /short player-facing teaser/);
+    assert.match(prompt, /Do not copy the admin's detailed creation brief/);
   });
 
   it("keeps revision prompts focused on the current scenario", () => {
