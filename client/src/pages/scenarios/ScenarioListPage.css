@@ -154,10 +154,17 @@
   text-wrap: balance;
 }
 
-/* 0.94rem with a 1.6 line-height and a slightly warmer grey is easier on the
-   eye than the old 1rem at 1.7: the lines sit closer together, so a paragraph
-   reads as one block instead of separate stripes. */
-.scenario-card p {
+/* Two changes merged here.
+   The five-line clamp came from main: it stops one long summary making its card
+   taller than the rest of the row.
+   The type came from this branch: 0.94rem at 1.6 is easier on the eye than
+   1rem at 1.7, because the lines sit closer together and a paragraph reads as
+   one block instead of separate stripes. */
+.scenario-card > p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
   margin: 0 0 var(--space-4);
   color: var(--color-muted);
   font-size: 0.94rem;
