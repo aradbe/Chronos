@@ -10,6 +10,58 @@ describe("scenario AI service", () => {
     assert.equal(result.valid, true, JSON.stringify(result.errors));
   });
 
+  it("rejects generated topics the target NPC cannot answer", async () => {
+    const draft = structuredClone(pompeiiScenario);
+    draft.objectives[0].requiredTopics = ["oxygen"];
+
+    const result = await validateGeneratedScenario(draft);
+
+    assert.equal(result.valid, false);
+    assert.ok(
+      result.errors.some(
+        ({ field, message }) =>
+          field === "objectives.find_marcus" &&
+          message.includes("target character needs knowledge"),
+      ),
+    );
+  });
+
+  it("rejects progression items with two acquisition methods", async () => {
+    const draft = structuredClone(pompeiiScenario);
+    draft.locations[0].encounters[0].choices[0].itemId = "ship_token";
+
+    const result = await validateGeneratedScenario(draft);
+
+    assert.equal(result.valid, false);
+    assert.ok(
+      result.errors.some(
+        ({ field, message }) =>
+          field === "items.ship_token" && message.includes("both picked up"),
+      ),
+    );
+  });
+
+  it("rejects an objective location gated by a later objective", async () => {
+    const draft = structuredClone(pompeiiScenario);
+    draft.locationGates.push({
+      blockedAttemptPenaltyMinutes: 5,
+      blockedFeedback: "Come back later.",
+      locationId: "forum",
+      requiresItems: [],
+      requiresObjectives: ["consult_livia"],
+    });
+
+    const result = await validateGeneratedScenario(draft);
+
+    assert.equal(result.valid, false);
+    assert.ok(
+      result.errors.some(
+        ({ field, message }) =>
+          field === "objectives.find_marcus" && message.includes("not completed yet"),
+      ),
+    );
+  });
+
   it("sends a private key in the header and parses structured output", async () => {
     const previous = process.env.GEMINI_API_KEY;
     process.env.GEMINI_API_KEY = "test-key";
@@ -46,6 +98,8 @@ describe("scenario AI service", () => {
     assert.match(prompt, /QUALITY REFERENCE/);
     assert.match(prompt, /Do not copy/);
     assert.match(prompt, /pudding_lane/);
+    assert.match(prompt, /Characters never move/);
+    assert.match(prompt, /exactly one acquisition method/);
   });
 
   it("falls back to the stable model when the preferred model is busy", async () => {
