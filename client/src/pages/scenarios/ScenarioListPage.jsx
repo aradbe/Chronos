@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
 import { ImageFrame } from "../../components/media/ImageFrame";
 import { useStores } from "../../stores/useStores";
+import { formatYear } from "../../utils/formatYear";
 import "./ScenarioListPage.css";
 
 export const ScenarioListPage = observer(function ScenarioListPage() {
@@ -60,7 +61,7 @@ export const ScenarioListPage = observer(function ScenarioListPage() {
               />
 
               <h2>{scenario.title}</h2>
-              <span className="scenario-card__year">{scenario.year} AD</span>
+              <span className="scenario-card__year">{formatYear(scenario.year)}</span>
               <p>{scenario.description}</p>
               <span
                 className={`scenario-card__difficulty scenario-card__difficulty--${scenario.difficulty}`}

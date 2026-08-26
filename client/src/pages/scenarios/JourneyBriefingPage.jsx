@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useStores } from "../../stores/useStores";
+import { formatYear } from "../../utils/formatYear";
 import "./JourneyBriefingPage.css";
 
 const rules = [
@@ -90,7 +91,7 @@ export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
 
       <header className="journey-briefing__hero">
         <div>
-          <p className="journey-briefing__eyebrow">Chronos field briefing · {scenario.year} AD</p>
+          <p className="journey-briefing__eyebrow">Chronos field briefing · {formatYear(scenario.year)}</p>
           <h1>Before you enter the timeline</h1>
           <p className="journey-briefing__lead">
             You are not following a script. Read the situation, speak carefully,

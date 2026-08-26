@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ImageFrame } from "../../components/media/ImageFrame";
 import { useStores } from "../../stores/useStores";
+import { formatYear } from "../../utils/formatYear";
 import "./ScenarioDetailPage.css";
 
 export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
@@ -53,7 +54,7 @@ export const ScenarioDetailPage = observer(function ScenarioDetailPage() {
       <section className="scenario-detail-page__overview">
         <header className="scenario-detail-page__hero">
           <p className="scenario-detail-page__eyebrow">
-            {scenario.year} AD &middot; {scenario.difficulty}
+            {formatYear(scenario.year)} &middot; {scenario.difficulty}
           </p>
           <h1>{scenario.title}</h1>
           <p className="scenario-detail-page__lead">{scenario.description}</p>

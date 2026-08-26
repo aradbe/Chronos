@@ -10,6 +10,7 @@ import {
   unpublishScenario,
 } from "../../api/adminApi";
 import { useStores } from "../../stores/useStores";
+import { formatYear } from "../../utils/formatYear";
 import { CreateScenarioForm } from "./CreateScenarioForm";
 import { ScenarioAiEditor } from "./ScenarioAiEditor";
 import { ScenarioWalkthrough } from "./ScenarioWalkthrough";
@@ -247,7 +248,7 @@ export const AdminScenariosPage = observer(function AdminScenariosPage() {
                 <h2 className="admin-card__title">{scenario.title}</h2>
 
                 <p className="admin-card__meta">
-                  <span className="admin-card__year">{scenario.year} AD</span>
+                  <span className="admin-card__year">{formatYear(scenario.year)}</span>
                   <span className={`admin-tag admin-tag--${scenario.difficulty}`}>
                     {scenario.difficulty}
                   </span>
