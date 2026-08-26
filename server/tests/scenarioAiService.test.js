@@ -5,6 +5,7 @@ const { validateGeneratedScenario } = require("../services/generatedScenarioVali
 const {
   buildGenerationPrompt,
   buildRevisionPrompt,
+  applyRevisionPatch,
   callGemini,
 } = require("../services/scenarioAiService");
 
@@ -113,6 +114,26 @@ describe("scenario AI service", () => {
     assert.match(prompt, /Improve the ending/);
     assert.doesNotMatch(prompt, /QUALITY REFERENCE/);
     assert.doesNotMatch(prompt, /Escape Pompeii/);
+    assert.match(prompt, /only the top-level scenario fields that need to change/);
+  });
+
+  it("merges a focused revision without allowing identity changes", () => {
+    const current = {
+      _id: "database-id",
+      title: "Apollo 13",
+      year: 1970,
+      locations: [{ id: "odyssey" }],
+      objectives: [{ id: "investigate" }],
+    };
+
+    const revised = applyRevisionPatch(current, {
+      title: "Changed title",
+      objectives: [{ id: "escape" }],
+    });
+
+    assert.equal(revised.title, "Apollo 13");
+    assert.deepEqual(revised.locations, [{ id: "odyssey" }]);
+    assert.deepEqual(revised.objectives, [{ id: "escape" }]);
   });
 
   it("turns request timeouts into a useful admin error", async () => {

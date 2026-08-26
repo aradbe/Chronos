@@ -34,7 +34,7 @@ const callGemini = async (prompt, { fetchImpl = fetch, retryDelay = 1200 } = {})
   const requestOptions = {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-    signal: AbortSignal.timeout(120000),
+    signal: AbortSignal.timeout(240000),
   };
 
   let response;
@@ -149,7 +149,10 @@ const generateScenario = async (inputs, options) => {
 
 const buildRevisionPrompt = (current, instruction) => [
   "Revise this Chronos scenario according to the admin request.",
-  "Return the entire updated scenario, not a patch. Preserve good content that the request does not affect.",
+  "Return a JSON object containing only the top-level scenario fields that need to change. Do not repeat unchanged fields.",
+  "When changing an array such as locations or objectives, return the complete replacement array for that field.",
+  "Never return database fields such as _id, createdAt, updatedAt, __v, isActive, title, year, or difficulty.",
+  "Preserve good content that the request does not affect.",
   "Keep every id reference, route, objective, gate, item, event, and final condition coherent and playable.",
   "Characters remain at startingLocationId, generated requiredTopics must appear in their hiddenKnowledge, and critical items must not have duplicate acquisition methods.",
   "The current scenario already uses the required Chronos schema. Preserve its field names and nested shapes exactly.",
@@ -158,10 +161,24 @@ const buildRevisionPrompt = (current, instruction) => [
   `CURRENT SCENARIO:\n${JSON.stringify(current)}`,
 ].join("\n\n");
 
+const applyRevisionPatch = (current, patch) => {
+  if (!patch || typeof patch !== "object" || Array.isArray(patch)) {
+    throw new AdminScenarioError("Gemini returned an invalid scenario revision", "SCENARIO_AI_INVALID", 502);
+  }
+
+  const protectedFields = new Set(["_id", "id", "__v", "createdAt", "updatedAt", "isActive", "title", "year", "difficulty"]);
+  const revised = JSON.parse(JSON.stringify(current));
+  for (const [field, value] of Object.entries(patch)) {
+    if (!protectedFields.has(field)) revised[field] = value;
+  }
+  return revised;
+};
+
 const reviseScenario = async (scenario, instruction, options) => {
   const current = typeof scenario.toObject === "function" ? scenario.toObject() : scenario;
   const prompt = buildRevisionPrompt(current, instruction);
-  const revised = await callGemini(prompt, options);
+  const patch = await callGemini(prompt, options);
+  const revised = applyRevisionPatch(current, patch);
   const preserveIdentity = (updated) => {
     updated.title = current.title;
     updated.year = current.year;
@@ -176,6 +193,7 @@ module.exports = {
   FALLBACK_MODEL,
   buildGenerationPrompt,
   buildRevisionPrompt,
+  applyRevisionPatch,
   callGemini,
   generateScenario,
   reviseScenario,
