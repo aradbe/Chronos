@@ -179,6 +179,26 @@ describe("NPC interaction service", () => {
     assert.equal(relevant.completedObjectives[0], "find_marcus");
   });
 
+  it("advances generated topics and answers with relevant NPC knowledge", async () => {
+    const game = createGame({ trust: 50 });
+    game.scenarioId.objectives[0].requiredTopics = ["alarm", "oxygen", "tank"];
+    game.scenarioId.characters[0].hiddenKnowledge = [
+      "Oxygen tank 2 reads zero, and tank 1 is failing rapidly.",
+    ];
+
+    const result = await applyNpcInteraction({
+      characterId: "marcus",
+      game,
+      text: "What happened to oxygen tank 2?",
+    });
+
+    assert.equal(result.completedObjectives[0], "find_marcus");
+    assert.equal(
+      result.reply,
+      "Oxygen tank 2 reads zero, and tank 1 is failing rapidly.",
+    );
+  });
+
   it("only completes the final conversation with required items", async () => {
     const game = createGame();
     game.currentLocationId = "harbor";

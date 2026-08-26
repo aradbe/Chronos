@@ -241,6 +241,15 @@ const findMentionedEntity = (normalizedText, entities = []) => {
   );
 };
 
+const findMatchedScenarioTopics = (normalizedText, objectives = []) => {
+  const topics = objectives.flatMap(({ requiredTopics = [] }) => requiredTopics);
+
+  return [...new Set(topics)]
+    .map((topic) => normalizeText(topic))
+    .filter(Boolean)
+    .filter((topic) => normalizedText.includes(topic));
+};
+
 const detectDialogueSignals = ({ scenario, text }) => {
   const hasQuestionMark = text.includes("?");
   const normalizedText = normalizeText(text);
@@ -252,6 +261,10 @@ const detectDialogueSignals = ({ scenario, text }) => {
   const mentionedCharacter = findMentionedEntity(
     normalizedText,
     scenario.characters || [],
+  );
+  const matchedTopics = findMatchedScenarioTopics(
+    normalizedText,
+    scenario.objectives || [],
   );
 
   const signals = {
@@ -266,6 +279,7 @@ const detectDialogueSignals = ({ scenario, text }) => {
     mentionedCharacter: mentionedCharacter?.id || null,
     mentionedItem: mentionedItem?.id || null,
     mentionedLocation: mentionedLocation?.id || null,
+    matchedTopics,
     mentionsDanger: containsPattern(normalizedText, TOPIC_ALIASES.danger),
     mentionsEscape: containsPattern(normalizedText, TOPIC_ALIASES.escape),
     mentionsItem:
@@ -291,6 +305,8 @@ const detectDialogueSignals = ({ scenario, text }) => {
     signals.primaryTopic = "item";
   } else if (signals.isFearful) {
     signals.primaryTopic = "fear";
+  } else if (matchedTopics.length > 0) {
+    signals.primaryTopic = matchedTopics[0];
   } else {
     signals.primaryTopic = "smallTalk";
   }
@@ -323,6 +339,7 @@ const analyzeMessageQuality = ({ messages = [], signals, text }) => {
       signals.mentionsItem ||
       signals.mentionsMap ||
       signals.mentionsTime ||
+      signals.matchedTopics.length > 0 ||
       signals.mentionedCharacter ||
       signals.mentionedLocation,
   );

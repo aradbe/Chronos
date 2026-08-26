@@ -96,6 +96,29 @@ describe("player message analysis service", () => {
     assert.equal(signals.mentionsTime, true);
   });
 
+  it("recognizes topics supplied by a generated scenario", () => {
+    const generatedScenario = {
+      ...scenario,
+      objectives: [
+        {
+          id: "investigate_explosion",
+          requiredTopics: ["alarm", "oxygen", "tank"],
+        },
+      ],
+    };
+    const signals = detectDialogueSignals({
+      scenario: generatedScenario,
+      text: "What happened to oxygen tank 2?",
+    });
+
+    assert.deepEqual(signals.matchedTopics, ["oxygen", "tank"]);
+    assert.equal(
+      analyzeTrust({ scenario: generatedScenario, text: "What happened to oxygen tank 2?" })
+        .quality.isRelevant,
+      true,
+    );
+  });
+
   it("lowers trust for repeated, demanding and meaningless messages", () => {
     assert.equal(
       analyzeTrust({

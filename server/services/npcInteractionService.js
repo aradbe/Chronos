@@ -6,7 +6,10 @@ const { evaluateFinalConversation } = require("./finalConditionService");
 const { applyLoseCondition, applyWinCondition } = require("./gameOutcomeService");
 const { advanceGameTime } = require("./gameTimeService");
 const { updateScore } = require("./scoreService");
-const { analyzePlayerMessage } = require("./playerMessageAnalysisService");
+const {
+  analyzePlayerMessage,
+  normalizeText,
+} = require("./playerMessageAnalysisService");
 const {
   OBJECTIVE_STATUSES,
   advanceSatisfiedObjectives,
@@ -115,9 +118,15 @@ const applyNpcInteraction = async ({
         OBJECTIVE_STATUSES.ACTIVE,
   );
   const requiredTopics = activeTalkDefinition?.requiredTopics || [];
+  const normalizedRequiredTopics = requiredTopics.map(normalizeText);
   const matchesObjectiveTopic =
     requiredTopics.length === 0 ||
-    requiredTopics.includes(analysis.dialogueSignals.primaryTopic);
+    normalizedRequiredTopics.includes(
+      normalizeText(analysis.dialogueSignals.primaryTopic),
+    ) ||
+    normalizedRequiredTopics.some((topic) =>
+      analysis.dialogueSignals.matchedTopics?.includes(topic),
+    );
   const qualifiesForTalkObjective =
     finalConversation.isFinalConversation ||
     (analysis.messageQuality.isRelevant &&
@@ -141,7 +150,15 @@ const applyNpcInteraction = async ({
     }
   }
 
-  const fallbackReply = buildDialogueReply({
+  const objectiveReply = qualifiesForTalkObjective
+    ? (character.hiddenKnowledge || []).find((knowledge) => {
+        const normalizedKnowledge = normalizeText(knowledge);
+        return normalizedRequiredTopics.some((topic) =>
+          normalizedKnowledge.includes(topic),
+        );
+      })
+    : null;
+  const fallbackReply = objectiveReply || buildDialogueReply({
     analysis,
     character,
     conversationTurn,
