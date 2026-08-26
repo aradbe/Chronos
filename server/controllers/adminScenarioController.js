@@ -64,7 +64,7 @@ const getScenario = async (req, res, next) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.scenarioId)) {
       return res.status(400).json({ error: { message: "A valid scenario ID is required", code: "VALIDATION_ERROR" } });
     }
-    return res.status(200).json(await adminScenarioService.getScenario(req.params.scenarioId));
+    return res.status(200).json(await adminScenarioService.getScenarioForAdmin(req.params.scenarioId));
   } catch (error) { return handleAdminError(error, res, next); }
 };
 
