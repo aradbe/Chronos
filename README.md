@@ -9,7 +9,7 @@ The game is the demo. The engine is the project.
 
 Chronos doesn't hard-code a disaster, a map, or a script. Scenarios are data,
 they're written by an LLM from a couple of sentences of brief, and the server
-refuses to accept one until it has *proved by search* that a player can finish
+refuses to accept one until it has _proved by search_ that a player can finish
 it. Every line a character speaks is generated at request time, inside
 constraints tight enough that the model can't leak a secret or invent a road
 that isn't there.
@@ -21,14 +21,14 @@ notes](docs/frontend-architecture.md) · [Deployment](DEPLOYMENT.md)
 > The API runs on a free Render instance that goes to sleep. The first request
 > after a quiet spell can take half a minute to wake it up.
 
-| | |
-| --- | --- |
-| **Frontend** | React 19, Vite, MobX, React Router 7, plain CSS |
-| **Backend** | Node 20, Express 5, Mongoose 9, MongoDB |
-| **AI** | Gemini for world generation, OpenAI for in-character dialogue, Web Speech API for voices |
-| **Rest** | JWT auth, bcrypt, Cloudinary uploads, Render + Vercel + Atlas |
-| **Size** | ~15,300 lines of JS/JSX in 136 files · 25 service modules · 25 REST endpoints |
-| **Tests** | 218 tests, 39 suites, on Node's built-in runner — no test framework in the dependency list |
+|              |                                                                                            |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| **Frontend** | React 19, Vite, MobX, React Router 7, plain CSS                                            |
+| **Backend**  | Node 20, Express 5, Mongoose 9, MongoDB                                                    |
+| **AI**       | Gemini for world generation, OpenAI for in-character dialogue, Web Speech API for voices   |
+| **Rest**     | JWT auth, bcrypt, Cloudinary uploads, Render + Vercel + Atlas                              |
+| **Size**     | ~15,300 lines of JS/JSX in 136 files · 25 service modules · 25 REST endpoints              |
+| **Tests**    | 218 tests, 39 suites, on Node's built-in runner — no test framework in the dependency list |
 
 ---
 
@@ -60,14 +60,14 @@ wall clock, no timers, no background jobs. A player can close the tab and resume
 a week later on exactly the minute they stopped, and a test can drive a game to
 its final minute in one synchronous loop.
 
-| Action | Cost |
-| --- | --- |
-| Move | 7 minutes (or rush it: 4 minutes and 6 health) |
-| Pick up an item | 3 minutes |
-| Use an item | 1 minute |
-| Talk to someone | 2 minutes |
-| Resolve an encounter | whatever that choice costs |
-| Walk into a locked door | the gate's penalty — and you don't move |
+| Action                  | Cost                                           |
+| ----------------------- | ---------------------------------------------- |
+| Move                    | 7 minutes (or rush it: 4 minutes and 6 health) |
+| Pick up an item         | 3 minutes                                      |
+| Use an item             | 1 minute                                       |
+| Talk to someone         | 2 minutes                                      |
+| Resolve an encounter    | whatever that choice costs                     |
+| Walk into a locked door | the gate's penalty — and you don't move        |
 
 **Progression is deterministic.** Timed events aren't scheduled, they're
 derived: after each clock advance the server asks which events have a trigger
@@ -98,7 +98,7 @@ final condition that decides whether you got out.
 
 An admin types a title, a year, a difficulty and a short brief. Gemini writes
 that entire structure and returns it as one JSON document. Admins can also
-revise an existing scenario in plain English — *"make the second half harder"* —
+revise an existing scenario in plain English — _"make the second half harder"_ —
 and the model returns a partial patch, which is merged field by field against an
 allowlist so it can never touch `_id`, `createdAt`, `isActive` or the scenario's
 identity.
@@ -116,7 +116,7 @@ validator that checks, among other things:
 - every id reference resolves to something that exists
 - every road runs in both directions
 - every location is reachable from the start (BFS flood fill)
-- no location is gated behind an objective that comes *after* the one that needs
+- no location is gated behind an objective that comes _after_ the one that needs
   it (precedence check over the objective order)
 - every progression item has exactly one way to obtain it — lying on the floor
   or handed out by an encounter, never both, never neither
@@ -159,7 +159,7 @@ could plausibly know.
 Every turn assembles a fresh context: who the character is, their personality,
 where they're standing, how much time has burned, the last eight messages
 (truncated), and — the part that matters — an explicit list of the private facts
-they are allowed to reveal *right now*.
+they are allowed to reveal _right now_.
 
 **Secrets are filtered before the model sees them, not after.** A character's
 hidden knowledge is indexed, and only the entries the player has actually earned
@@ -215,7 +215,7 @@ before. Aliases are sorted longest-first so `"ship token"` wins over `"ship"`.
 From there:
 
 - **Intent classification.** An entity plus an intent verb becomes an action.
-  Type *"let's head down to the harbour"* and you actually move, at 95%
+  Type _"let's head down to the harbour"_ and you actually move, at 95%
   confidence; ask to use something you aren't carrying and confidence drops to
   75%.
 - **Message quality heuristics.** Keyboard mashing is caught by a run of five or
@@ -252,19 +252,19 @@ route to arrive is guaranteed to be the shortest. The solver then walks the
 objective chain and re-runs the search after each objective, because completing
 one can open a door that was locked a moment earlier. Consecutive moves are
 folded into a single travel step, annotated with what unlocked each hop, so an
-admin can see *why* the long way round was necessary.
+admin can see _why_ the long way round was necessary.
 
 **What it costs, and what it avoids.** Each search is `O(V + E)` in locations
 and roads, and the solver runs one per objective, so a full walkthrough is
 `O(K · (V + E))` for `K` objectives. Those graphs are small by construction —
 the shipped example has 8 locations and 7 roads — so the runtime was never the
-interesting number. What matters is the search it *doesn't* do.
+interesting number. What matters is the search it _doesn't_ do.
 
 The honest statement of "can this scenario be finished" is a search over
 `location × items carried × objectives completed`, and that space is
 exponential: `V · 2^items · 2^objectives`. The solver never enters it. Because
 the objective chain is authored and ordered, the carried set and the completed
-set are *fixed* for the duration of any single search, which collapses the
+set are _fixed_ for the duration of any single search, which collapses the
 dynamic graph into an ordinary static one for that step. Gating then prunes
 instead of branching — a closed gate is skipped during expansion rather than
 forking a "with the key" and "without the key" world. The dynamics come back by
@@ -272,7 +272,7 @@ replaying the chain: two `Set`s accumulate items and completions between
 searches, so each step searches the graph exactly as it looks at that moment.
 
 That's the tradeoff, stated plainly. Following the authored order gives up
-proving that *no* route exists, in exchange for linear cost and a route that is
+proving that _no_ route exists, in exchange for linear cost and a route that is
 provably walkable. Proving unsolvability is the validator's job, and it does it
 with cheaper structural checks rather than by exploring the full state space.
 
@@ -377,7 +377,7 @@ came from Express, Mongoose or the network.
 A couple of details worth mentioning:
 
 - **Optimistic map state.** `client/src/utils/mapState.js` mirrors the server's
-  route-blocking rule so a destroyed road can be greyed out *before* the player
+  route-blocking rule so a destroyed road can be greyed out _before_ the player
   clicks it. The mirror is explicitly documented as a mirror — the server stays
   the authority, and a move it refuses fails regardless of what the map thought.
 - **Error targeting.** The game store records which action produced an error, so
@@ -474,7 +474,7 @@ than by folder: accounts and dialogue, scenarios and content, gameplay and
 sessions.
 
 The API contract came first. We agreed the request and response shape of every
-endpoint in [`docs/api-contract.md`](docs/api-contract.md) *before* the code
+endpoint in [`docs/api-contract.md`](docs/api-contract.md) _before_ the code
 existed, which let the client be built against endpoints the server hadn't
 finished yet. Changing a shape meant updating the contract and telling everyone.
 
