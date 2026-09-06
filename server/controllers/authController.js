@@ -1,3 +1,4 @@
+const crypto = require("node:crypto");
 const User = require("../models/User");
 const { comparePassword, hashPassword } = require("../utils/password");
 const { createToken } = require("../utils/token");
@@ -102,7 +103,52 @@ const login = async (req, res) => {
   }
 };
 
+// Creates a throwaway account so a visitor can play without giving an email.
+//
+// The account is real: it gets a row, an id, and an ordinary token, so every
+// protected route, every ownership check and every store keeps working with no
+// idea a guest is involved. What makes it a guest is that nobody — including
+// us — knows its password, so it can never be logged into again. The run is
+// saved (a refresh does not lose it) but it belongs to nothing.
+const playAsGuest = async (req, res) => {
+  try {
+    const suffix = crypto.randomBytes(6).toString("hex");
+    const passwordHash = await hashPassword(
+      crypto.randomBytes(24).toString("hex"),
+    );
+
+    const user = await User.create({
+      name: "Guest",
+      email: `guest_${suffix}@chronos.guest`,
+      passwordHash,
+      isGuest: true,
+    });
+
+    const token = createToken(user);
+
+    return res.status(201).json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        isGuest: user.isGuest,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: {
+        message: "Server error",
+        code: "SERVER_ERROR",
+      },
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
+  playAsGuest,
 };

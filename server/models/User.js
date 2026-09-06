@@ -43,6 +43,15 @@ const userSchema = new mongoose.Schema(
       default: "player",
     },
 
+    // A guest is a real user row with a thrown-away password, created by
+    // POST /api/auth/guest so a visitor can play without handing over an
+    // email. The flag exists so guests can be found and cleared out later —
+    // nothing in the game logic reads it.
+    isGuest: {
+      type: Boolean,
+      default: false,
+    },
+
     avatar: {
       type: avatarSchema,
       default: () => ({}),

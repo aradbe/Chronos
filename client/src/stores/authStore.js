@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import {
   getCurrentUser,
+  guestLogin,
   loginUser,
   registerUser,
   updateAvatar,
@@ -105,6 +106,36 @@ export class AuthStore {
 
       throw error;
     }
+  }
+
+  // Same shape as login(), because the server answers the same { token, user }.
+  // From here on the app cannot tell a guest from a registered player, which is
+  // the whole point — nothing downstream needed changing.
+  async playAsGuest() {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      const session = await guestLogin();
+
+      runInAction(() => {
+        this.setAuthSession(session);
+        this.loading = false;
+      });
+
+      return session;
+    } catch (error) {
+      runInAction(() => {
+        this.error = error;
+        this.loading = false;
+      });
+
+      throw error;
+    }
+  }
+
+  get isGuest() {
+    return Boolean(this.user?.isGuest);
   }
 
   logout() {
