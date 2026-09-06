@@ -81,10 +81,15 @@ export const MyGamesPage = observer(function MyGamesPage() {
               <span className="my-games-page__summary-label">Player</span>
               <strong>{user?.name || "Unknown player"}</strong>
             </div>
-            <div>
-              <span className="my-games-page__summary-label">Email</span>
-              <strong>{user?.email || "No email loaded"}</strong>
-            </div>
+            {/* A guest's email is invented by the server and means nothing to
+                the person reading it, so it is hidden. Registered players
+                still see theirs. */}
+            {authStore.isGuest ? null : (
+              <div>
+                <span className="my-games-page__summary-label">Email</span>
+                <strong>{user?.email || "No email loaded"}</strong>
+              </div>
+            )}
             <div>
               <span className="my-games-page__summary-label">Role</span>
               <strong>{user?.role || "player"}</strong>

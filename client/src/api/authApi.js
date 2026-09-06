@@ -14,6 +14,14 @@ export const loginUser = ({ email, password }) => {
   });
 };
 
+// No body: the server invents the whole account. Answers the same
+// { token, user } shape as register and login.
+export const guestLogin = () => {
+  return httpClient("/auth/guest", {
+    method: "POST",
+  });
+};
+
 export const getCurrentUser = (token) => {
   return httpClient("/users/me", { token });
 };

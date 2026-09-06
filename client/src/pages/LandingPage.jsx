@@ -51,7 +51,7 @@ export const LandingPage = observer(function LandingPage() {
         <p className="landing-page__note">
           {authStore.isAuthenticated
             ? `Welcome back, ${authStore.user?.name}.`
-            : "Browsing is open to everyone. You only need an account to play."}
+            : "Browsing is open to everyone. You can play as a guest, or create an account to keep your games."}
         </p>
       </section>
 

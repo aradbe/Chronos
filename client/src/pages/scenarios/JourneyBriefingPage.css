@@ -217,6 +217,87 @@
 .journey-briefing__footer button:disabled { opacity: 0.6; cursor: progress; }
 .journey-briefing__error { margin-top: var(--space-4); color: var(--color-danger); text-align: right; }
 
+.journey-gate {
+  margin-top: var(--space-5);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: clamp(20px, 3vw, 28px);
+  background: linear-gradient(145deg, rgba(20, 35, 50, 0.95), rgba(12, 24, 35, 0.95));
+  box-shadow: var(--shadow-sm);
+}
+
+.journey-gate h2 {
+  margin: 0 0 var(--space-3);
+  color: var(--color-bronze);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  letter-spacing: 0;
+}
+
+.journey-gate p {
+  margin: 0 0 var(--space-5);
+  max-width: 62ch;
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+/* Flex, not grid, so the four controls wrap by their own widths and a short
+   final row does not leave a hole where a fixed column would be. */
+.journey-gate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.journey-gate__primary,
+.journey-gate__link,
+.journey-gate__cancel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  border-radius: var(--radius-sm);
+  padding: 0 22px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.journey-gate__primary {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-bg-deep);
+}
+
+.journey-gate__primary:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.journey-gate__primary:disabled { opacity: 0.6; cursor: progress; }
+
+.journey-gate__link {
+  border: 1px solid var(--color-border-warm);
+  color: var(--color-bronze);
+  background: transparent;
+}
+
+.journey-gate__link:hover { border-color: var(--color-bronze); transform: translateY(-1px); }
+
+.journey-gate__cancel {
+  margin-left: auto;
+  border: none;
+  padding: 0;
+  color: var(--color-muted);
+  background: transparent;
+}
+
+.journey-gate__cancel:hover { color: var(--color-primary); }
+
 @media (max-width: 720px) {
   .journey-briefing__hero { grid-template-columns: 1fr; }
   .journey-briefing__seal { width: 112px; height: 112px; }
@@ -233,4 +314,10 @@
   .journey-briefing__footer { align-items: stretch; grid-template-columns: 1fr; }
   .journey-briefing__footer { flex-direction: column; }
   .journey-briefing__footer button { width: 100%; }
+
+  .journey-gate__actions { flex-direction: column; align-items: stretch; }
+  .journey-gate__primary,
+  .journey-gate__link,
+  .journey-gate__cancel { justify-content: center; }
+  .journey-gate__cancel { margin-left: 0; }
 }

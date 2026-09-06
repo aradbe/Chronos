@@ -51,6 +51,9 @@ export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
   const navigate = useNavigate();
   const { authStore, scenarioStore } = useStores();
   const [startError, setStartError] = useState("");
+  // Shown instead of throwing a visitor out to the login page. They stay on
+  // the briefing, so cancelling costs them nothing.
+  const [showGate, setShowGate] = useState(false);
 
   useEffect(() => {
     if (scenarioStore.currentScenario?._id !== scenarioId) {
@@ -60,18 +63,34 @@ export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
 
   const scenario = scenarioStore.currentScenario;
 
-  const handleEnter = async () => {
-    if (!authStore.isAuthenticated) {
-      navigate("/login", { state: { from: `/scenarios/${scenarioId}/briefing` } });
-      return;
-    }
-
+  const startJourney = async () => {
     setStartError("");
     try {
       const game = await scenarioStore.startGame(scenarioId);
       navigate(`/games/${game._id}`);
     } catch (error) {
       setStartError(error.message || "The journey could not be started.");
+    }
+  };
+
+  const handleEnter = async () => {
+    if (!authStore.isAuthenticated) {
+      setShowGate(true);
+      return;
+    }
+
+    await startJourney();
+  };
+
+  // One click for a visitor: make the guest account, then start the game
+  // without sending them anywhere in between.
+  const handleGuest = async () => {
+    setStartError("");
+    try {
+      await authStore.playAsGuest();
+      await startJourney();
+    } catch (error) {
+      setStartError(error.message || "A guest session could not be started.");
     }
   };
 
@@ -149,6 +168,47 @@ export const JourneyBriefingPage = observer(function JourneyBriefingPage() {
           <span>Your choices are saved automatically.</span>
         </div>
       </footer>
+
+      {showGate ? (
+        <section className="journey-gate" aria-label="Choose how to play">
+          <h2>How do you want to play?</h2>
+          <p>
+            A guest session needs no email and no password — you can start
+            right now. An account keeps your games so you can come back to
+            them later.
+          </p>
+
+          <div className="journey-gate__actions">
+            <button
+              className="journey-gate__primary"
+              disabled={authStore.loading || scenarioStore.starting}
+              onClick={handleGuest}
+              type="button"
+            >
+              {authStore.loading || scenarioStore.starting
+                ? "Opening a session..."
+                : "Play as guest"}
+            </button>
+            <Link
+              className="journey-gate__link"
+              to="/login"
+              state={{ from: `/scenarios/${scenarioId}/briefing` }}
+            >
+              Log in
+            </Link>
+            <Link className="journey-gate__link" to="/register">
+              Create an account
+            </Link>
+            <button
+              className="journey-gate__cancel"
+              onClick={() => setShowGate(false)}
+              type="button"
+            >
+              &larr; Back to the briefing
+            </button>
+          </div>
+        </section>
+      ) : null}
 
       {startError ? <p className="journey-briefing__error" role="alert">{startError}</p> : null}
     </main>

@@ -33,7 +33,7 @@ export const AppShell = observer(function AppShell() {
       {!isPlaying ? <header className="app-shell__header">
         <NavLink
           className="app-shell__brand"
-          to={authStore.isAuthenticated ? "/scenarios" : "/register"}
+          to={authStore.isAuthenticated ? "/scenarios" : "/"}
         >
           <span className="app-shell__brand-mark" aria-hidden="true">⌛</span>
           <span>

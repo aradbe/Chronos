@@ -61,6 +61,39 @@ Response:
 
 ---
 
+## POST /api/auth/guest
+
+Creates a throwaway account so a visitor can play without giving an email.
+
+No request body.
+
+Response: 201
+
+{
+"token": "JWT_TOKEN",
+"user": {
+"\_id": "USER_ID",
+"name": "Guest",
+"email": "guest_3823ba7f0d2b@chronos.guest",
+"role": "player",
+"isGuest": true
+}
+}
+
+The token is an ordinary one — same claims, same 7 day expiry — so every
+protected endpoint treats a guest exactly like a registered player. Nothing
+else in the API changed.
+
+The account is real and its games are saved, which is why a refresh does not
+lose a run. What makes it a guest is that its password is random and is never
+returned, so the account can never be logged into again. `isGuest` is stored on
+the user so guest rows can be found and cleared out later.
+
+Guests are always `role: "player"`. There is no way to obtain an admin token
+from this endpoint.
+
+---
+
 ## GET /api/users/me
 
 Protected.
